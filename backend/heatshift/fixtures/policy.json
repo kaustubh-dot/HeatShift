@@ -1,0 +1,80 @@
+{
+  "id": "demo-city-hs-01",
+  "name": "Demo City Policy HS-01",
+  "synthetic": true,
+  "disclaimer": "Synthetic demonstration policy. Not medical, legal, or workplace-safety guidance. Organizations must supply and approve their own policy.",
+  "band_thresholds_c": {
+    "elevated": 32,
+    "severe": 38,
+    "extreme": 42
+  },
+  "rolling_window_slots": 4,
+  "eligible_recovery_profiles": ["cooled-vehicle-stationary"],
+  "travel_counts_as_recovery": false,
+  "rules": [
+    {
+      "id": "hs01-heavy-normal",
+      "band": "normal",
+      "exertion": "heavy",
+      "max_active_slots": 4,
+      "min_recovery_slots": 0,
+      "stop_work": false
+    },
+    {
+      "id": "hs01-moderate-normal",
+      "band": "normal",
+      "exertion": "moderate",
+      "max_active_slots": 4,
+      "min_recovery_slots": 0,
+      "stop_work": false
+    },
+    {
+      "id": "hs01-heavy-elevated",
+      "band": "elevated",
+      "exertion": "heavy",
+      "max_active_slots": 3,
+      "min_recovery_slots": 1,
+      "stop_work": false
+    },
+    {
+      "id": "hs01-moderate-elevated",
+      "band": "elevated",
+      "exertion": "moderate",
+      "max_active_slots": 4,
+      "min_recovery_slots": 0,
+      "stop_work": false
+    },
+    {
+      "id": "hs01-heavy-severe",
+      "band": "severe",
+      "exertion": "heavy",
+      "max_active_slots": 2,
+      "min_recovery_slots": 2,
+      "stop_work": false
+    },
+    {
+      "id": "hs01-moderate-severe",
+      "band": "severe",
+      "exertion": "moderate",
+      "max_active_slots": 3,
+      "min_recovery_slots": 1,
+      "stop_work": false
+    },
+    {
+      "id": "hs01-heavy-extreme",
+      "band": "extreme",
+      "exertion": "heavy",
+      "max_active_slots": 0,
+      "min_recovery_slots": 4,
+      "stop_work": true
+    },
+    {
+      "id": "hs01-moderate-extreme",
+      "band": "extreme",
+      "exertion": "moderate",
+      "max_active_slots": 2,
+      "min_recovery_slots": 2,
+      "stop_work": false
+    }
+  ]
+}
