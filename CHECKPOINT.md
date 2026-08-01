@@ -2,7 +2,7 @@
 
 **Last updated:** 2026-08-01
 **Phase:** Planning frozen; backend implementation underway
-**Overall status:** B01 complete; B02 active
+**Overall status:** B02 complete; B03 active
 
 ## Locked product
 
@@ -45,22 +45,22 @@ The final planning pass made previously implicit behavior explicit:
 - Product and engineering specifications exist under `docs/`.
 - `docs/DESIGN.md` and `docs/FRONTEND_PLAN.md` have been reviewed for judge clarity, accessibility, contract fidelity, offline presentation, and deadline feasibility.
 - `docs/IMPLEMENTATION_MASTER_PLAN.md` and `docs/BACKEND_IMPLEMENTATION_PLAN.md` define atomic, gated tasks for low-context implementation agents.
-- Canonical Pydantic models and focused model tests now exist; scenario fixtures, solver output, and frontend work have not started.
+- Canonical Pydantic models, focused model tests, and pure time-grid/heat/matrix helpers now exist; scenario fixtures, solver output, and frontend work have not started.
 - The root `.venv` uses Python 3.12.13 and contains the verified runtime and test dependencies.
 - The implementation branch is `agent/lock-planning-docs`.
 
 ## Active implementation checkpoint
 
-- Last completed task: B01
-- Verification command: `.venv/bin/python -m pytest tests/unit/test_models.py -q`
-- Result: `9 passed in 0.08s`
-- Files created/changed: `backend/heatshift/models.py`, `tests/unit/test_models.py`, `TODO.md`, `CHECKPOINT.md`
-- Known limitation: Cross-reference and semantic validation remain assigned to B04; no solver or fixture logic was added.
-- Next task: B02 — Time-grid, temperature remapping, and matrix helpers
+- Last completed task: B02
+- Verification command: `.venv/bin/python -m pytest tests/unit/test_timegrid.py -q`
+- Result: `10 passed in 0.07s`
+- Files created/changed: `backend/heatshift/timegrid.py`, `tests/unit/test_timegrid.py`, `TODO.md`, `CHECKPOINT.md`
+- Known limitation: Missing threshold-key and cross-reference validation remain assigned to B04; no fixture or solver logic was added.
+- Next task: B03 — Deterministic scenario and policy fixtures
 
 ## Immediate next action
 
-Execute **B02 only** from [docs/IMPLEMENTATION_MASTER_PLAN.md](docs/IMPLEMENTATION_MASTER_PLAN.md) and [docs/BACKEND_IMPLEMENTATION_PLAN.md](docs/BACKEND_IMPLEMENTATION_PLAN.md). Stop after its verification and checkpoint handoff.
+Execute **B03 only** from [docs/IMPLEMENTATION_MASTER_PLAN.md](docs/IMPLEMENTATION_MASTER_PLAN.md) and [docs/BACKEND_IMPLEMENTATION_PLAN.md](docs/BACKEND_IMPLEMENTATION_PLAN.md). Stop after its verification and checkpoint handoff.
 
 Do not begin frontend polish until the solver release gates in [docs/TEST_PLAN.md](docs/TEST_PLAN.md) pass.
 
