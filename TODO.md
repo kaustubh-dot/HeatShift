@@ -4,11 +4,12 @@ This is the implementation ledger. Execute tasks in ID order using [docs/IMPLEME
 
 ## Active task
 
-- [ ] **B01** — Implement strict canonical Pydantic models.
+- [ ] **B02** — Implement tested time-grid, heat-remapping, and matrix helpers.
 
 ## Gate G1 — Inputs and patterns
 
 - [x] **B00** — Create the Python 3.12 project and pin the verified runtime/test environment.
+- [x] **B01** — Implement strict canonical Pydantic models.
 - [ ] **B02** — Implement tested time-grid, heat-remapping, and matrix helpers.
 - [ ] **B03** — Encode the locked deterministic scenario and policy fixtures.
 - [ ] **B04** — Implement cross-reference and semantic validation with stable error paths.
