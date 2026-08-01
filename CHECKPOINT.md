@@ -1,8 +1,8 @@
 # Checkpoint
 
 **Last updated:** 2026-08-01
-**Phase:** Planning frozen; B00 is next
-**Overall status:** Product, contracts, design, and implementation sequence locked
+**Phase:** Planning frozen; backend implementation underway
+**Overall status:** B00 complete; B01 active
 
 ## Locked product
 
@@ -45,13 +45,28 @@ The final planning pass made previously implicit behavior explicit:
 - Product and engineering specifications exist under `docs/`.
 - `docs/DESIGN.md` and `docs/FRONTEND_PLAN.md` have been reviewed for judge clarity, accessibility, contract fidelity, offline presentation, and deadline feasibility.
 - `docs/IMPLEMENTATION_MASTER_PLAN.md` and `docs/BACKEND_IMPLEMENTATION_PLAN.md` define atomic, gated tasks for low-context implementation agents.
-- No application code, scenario fixture, solver output, tests, or frontend exists yet.
-- A partially created `.venv` from the aborted implementation start was removed; the workspace remains documentation-only.
-- The workspace was not a Git repository at the time of this checkpoint.
+- No application logic, scenario fixture, solver output, tests, or frontend exists yet; B00 environment files are present.
+- The root `.venv` uses Python 3.12.13 and contains the verified runtime and test dependencies.
+- The implementation branch is `agent/lock-planning-docs`.
+
+## Active implementation checkpoint
+
+- Last completed task: B00
+- Verification commands and results:
+  - `/opt/homebrew/bin/python3.12 --version` → `Python 3.12.13`
+  - `/opt/homebrew/bin/python3.12 -m venv .venv` → exit 0
+  - `.venv/bin/python -m ensurepip --upgrade` → pip 26.1.2 available
+  - `.venv/bin/python -m pip install ortools pydantic fastapi uvicorn` → installed OR-Tools 9.15.6755, Pydantic 2.13.4, FastAPI 0.141.1, Uvicorn 0.52.0
+  - `.venv/bin/python -m pip install pytest httpx` → installed Pytest 9.1.1 and HTTPX 0.28.1
+  - `.venv/bin/python -c "import ortools, pydantic, fastapi, pytest; print('imports-ok')"` → `imports-ok`
+  - `.venv/bin/python -m pip check` → `No broken requirements found.`
+- Files created/changed: `backend/requirements.txt`, `backend/requirements-dev.txt`, `backend/heatshift/__init__.py`, `TODO.md`, `CHECKPOINT.md`
+- Known limitation: None
+- Next task: B01 — Canonical Pydantic models
 
 ## Immediate next action
 
-Execute **B00 only** from [docs/IMPLEMENTATION_MASTER_PLAN.md](docs/IMPLEMENTATION_MASTER_PLAN.md) and [docs/BACKEND_IMPLEMENTATION_PLAN.md](docs/BACKEND_IMPLEMENTATION_PLAN.md). Stop after its verification and checkpoint handoff.
+Execute **B01 only** from [docs/IMPLEMENTATION_MASTER_PLAN.md](docs/IMPLEMENTATION_MASTER_PLAN.md) and [docs/BACKEND_IMPLEMENTATION_PLAN.md](docs/BACKEND_IMPLEMENTATION_PLAN.md). Stop after its verification and checkpoint handoff.
 
 Do not begin frontend polish until the solver release gates in [docs/TEST_PLAN.md](docs/TEST_PLAN.md) pass.
 
