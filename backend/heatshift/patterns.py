@@ -281,21 +281,26 @@ def _build_constrained_pattern(
         rules_by_slot[slot] = rules
 
     @lru_cache(maxsize=None)
-    def search(current_slot: int, work_count: int, states: tuple[TimelineState, ...]) -> tuple[TimelineState, ...] | None:
+    def search(
+        current_slot: int,
+        work_count: int,
+        recent_states: tuple[TimelineState, ...],
+    ) -> tuple[TimelineState, ...] | None:
         if work_count == active_slots:
-            end_slot = start_slot + len(states)
             if _operationally_reachable(
                 scenario,
                 job,
                 crew,
                 start_slot,
-                end_slot,
+                current_slot,
                 horizon_slots,
                 matrix_index,
             ):
-                return states
+                return ()
             return None
         if current_slot >= horizon_slots or current_slot >= window_end_slot:
+            return None
+        if active_slots - work_count > window_end_slot - current_slot:
             return None
 
         rules = rules_by_slot.get(current_slot, ())
@@ -311,28 +316,23 @@ def _build_constrained_pattern(
             choices = (TimelineState.WORK,)
 
         for state in choices:
-            next_states = states + (state,)
-            if state is TimelineState.WORK:
-                next_work_count = work_count + 1
-                if not _windows_valid(
-                    start_slot,
-                    next_states,
-                    rules_by_slot,
-                    policy,
-                ):
-                    continue
-            else:
-                next_work_count = work_count
-                if not _windows_valid(
-                    start_slot,
-                    next_states,
-                    rules_by_slot,
-                    policy,
-                ):
-                    continue
-            result = search(current_slot + 1, next_work_count, next_states)
+            if not _new_window_valid(
+                current_slot,
+                recent_states,
+                state,
+                rules_by_slot,
+                policy,
+            ):
+                continue
+            next_work_count = work_count + (state is TimelineState.WORK)
+            next_recent_states = recent_states + (state,)
+            if policy.rolling_window_slots == 1:
+                next_recent_states = ()
+            elif len(next_recent_states) >= policy.rolling_window_slots:
+                next_recent_states = next_recent_states[-(policy.rolling_window_slots - 1) :]
+            result = search(current_slot + 1, next_work_count, next_recent_states)
             if result is not None:
-                return result
+                return (state,) + result
         return None
 
     state_sequence = search(start_slot, 0, ())
@@ -378,35 +378,41 @@ def _build_constrained_pattern(
     )
 
 
-def _windows_valid(
-    start_slot: int,
-    states: tuple[TimelineState, ...],
+def _new_window_valid(
+    current_slot: int,
+    recent_states: tuple[TimelineState, ...],
+    next_state: TimelineState,
     rules_by_slot: dict[int, tuple[PolicyRule, ...]],
     policy: Policy,
 ) -> bool:
     rolling_slots = policy.rolling_window_slots
     if rolling_slots <= 0:
         return False
-    if len(states) < rolling_slots:
+    candidate = recent_states + (next_state,)
+    if len(candidate) < rolling_slots:
         return True
+    if len(candidate) > rolling_slots:
+        candidate = candidate[-rolling_slots:]
 
-    for window_offset in range(0, len(states) - rolling_slots + 1):
-        window_offsets = range(window_offset, window_offset + rolling_slots)
-        work_offsets = [offset for offset in window_offsets if states[offset] is TimelineState.WORK]
-        work_slots = [start_slot + offset for offset in work_offsets]
-        if not work_slots:
-            continue
-        triggered_rules = {
-            rule.id: rule
-            for slot in work_slots
-            for rule in rules_by_slot.get(slot, ())
-        }
-        recovery_count = sum(states[offset] is TimelineState.RECOVERY for offset in window_offsets)
-        for rule in sorted(triggered_rules.values(), key=lambda item: item.id):
-            if len(work_slots) > rule.max_active_slots:
-                return False
-            if recovery_count < rule.min_recovery_slots:
-                return False
+    window_start = current_slot - rolling_slots + 1
+    work_slots = [
+        window_start + offset
+        for offset, state in enumerate(candidate)
+        if state is TimelineState.WORK
+    ]
+    if not work_slots:
+        return True
+    triggered_rules = {
+        rule.id: rule
+        for slot in work_slots
+        for rule in rules_by_slot.get(slot, ())
+    }
+    recovery_count = sum(state is TimelineState.RECOVERY for state in candidate)
+    for rule in sorted(triggered_rules.values(), key=lambda item: item.id):
+        if len(work_slots) > rule.max_active_slots:
+            return False
+        if recovery_count < rule.min_recovery_slots:
+            return False
     return True
 
 
