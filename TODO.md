@@ -4,7 +4,7 @@ This is the implementation ledger. Execute tasks in ID order using [docs/IMPLEME
 
 ## Active task
 
-- [ ] **B16** — Implement the three FastAPI endpoints and canonical errors.
+- [ ] **B17** — Pass the complete backend release gate and write release evidence.
 
 ## Gate G1 — Inputs and patterns
 
@@ -30,7 +30,7 @@ This is the implementation ledger. Execute tasks in ID order using [docs/IMPLEME
 
 ## Gate G3 — API and backend release
 
-- [ ] **B16** — Implement the three FastAPI endpoints and canonical errors.
+- [x] **B16** — Implement the three FastAPI endpoints and canonical errors.
 - [ ] **B17** — Pass the complete backend release gate and write release evidence.
 
 ## Gate G4 — Frontend
