@@ -4,13 +4,24 @@ from __future__ import annotations
 
 from collections import defaultdict
 from dataclasses import dataclass
+import time
 from typing import Any
 
 from ortools.sat.python import cp_model
 
-from .models import Crew, Job, Policy, Priority, Scenario
+from .models import Crew, Job, Policy, Priority, Scenario, SolverStatus, StageName
 from .patterns import ExecutionPattern
 from .timegrid import parse_time, travel_to_slots
+
+
+SOLVER_RANDOM_SEED = 7
+SOLVER_NUM_SEARCH_WORKERS = 1
+_REQUIRED_STAGE_NAMES = (
+    StageName.CRITICAL_SERVICE,
+    StageName.PLANNED_SERVICE_VALUE,
+    StageName.TRAVEL_MINUTES,
+    StageName.OVERTIME_MINUTES,
+)
 
 
 @dataclass(slots=True)
@@ -22,6 +33,47 @@ class ObjectiveExpressions:
     travel_minutes: Any
     overtime_minutes: Any
     standalone_recovery: Any
+
+
+@dataclass(frozen=True, slots=True)
+class SolverStage:
+    """Internal proof record for one lexicographic objective stage."""
+
+    name: StageName
+    status: SolverStatus
+    objective_value: int | float | None
+    best_bound: int | float | None
+    wall_time_seconds: float
+
+
+@dataclass(frozen=True, slots=True)
+class StagedSolveResult:
+    """Internal result consumed by later extraction and service packets."""
+
+    status: SolverStatus
+    maximum_claim_allowed: bool
+    stages: tuple[SolverStage, ...]
+    selected_pattern_indices: tuple[int, ...]
+    selected_pattern_ids: tuple[str, ...]
+    selected_start_arc_indices: tuple[int, ...]
+    selected_route_arc_indices: tuple[tuple[int, int], ...]
+    selected_end_arc_indices: tuple[int, ...]
+    selected_standalone_recovery: tuple[tuple[str, int], ...]
+
+    @property
+    def selected_start_arc_ids(self) -> tuple[str, ...]:
+        return tuple(f"start:{index}" for index in self.selected_start_arc_indices)
+
+    @property
+    def selected_route_arc_ids(self) -> tuple[str, ...]:
+        return tuple(
+            f"route:{left_index}->{right_index}"
+            for left_index, right_index in self.selected_route_arc_indices
+        )
+
+    @property
+    def selected_end_arc_ids(self) -> tuple[str, ...]:
+        return tuple(f"end:{index}" for index in self.selected_end_arc_indices)
 
 
 @dataclass(slots=True)
@@ -52,6 +104,232 @@ class OptimizerModel:
         """Descriptive alias for the pattern-selection variables."""
 
         return self.x
+
+
+def map_solver_status(status: int) -> SolverStatus:
+    """Map every OR-Tools status through one conservative, tested function."""
+
+    mapping = {
+        cp_model.OPTIMAL: SolverStatus.OPTIMAL,
+        cp_model.FEASIBLE: SolverStatus.FEASIBLE,
+        cp_model.INFEASIBLE: SolverStatus.INFEASIBLE,
+        cp_model.UNKNOWN: SolverStatus.UNKNOWN,
+        cp_model.MODEL_INVALID: SolverStatus.MODEL_INVALID,
+    }
+    return mapping.get(status, SolverStatus.MODEL_INVALID)
+
+
+def solve_staged(
+    optimizer_model: OptimizerModel,
+    time_limit_seconds: float,
+) -> StagedSolveResult:
+    """Run the four required stages and the non-claiming recovery tie-breaker."""
+
+    if time_limit_seconds < 0:
+        raise ValueError("time_limit_seconds must be non-negative")
+
+    stage_specs = (
+        (StageName.CRITICAL_SERVICE, optimizer_model.objective_expressions.critical_service, True),
+        (StageName.PLANNED_SERVICE_VALUE, optimizer_model.objective_expressions.planned_service_value, True),
+        (StageName.TRAVEL_MINUTES, optimizer_model.objective_expressions.travel_minutes, False),
+        (StageName.OVERTIME_MINUTES, optimizer_model.objective_expressions.overtime_minutes, False),
+    )
+    housekeeping_spec = (
+        StageName.STANDALONE_RECOVERY,
+        optimizer_model.objective_expressions.standalone_recovery,
+        False,
+    )
+    started_at = time.perf_counter()
+    stage_results: list[SolverStage] = []
+    selected_values: _SelectedValues | None = None
+
+    for stage_name, expression, maximize in stage_specs:
+        remaining = _remaining_budget(time_limit_seconds, started_at)
+        if remaining <= 0:
+            stage_results.append(_budget_exhausted_stage(stage_name))
+            return _staged_result(
+                SolverStatus.UNKNOWN,
+                stage_results,
+                selected_values,
+                optimizer_model,
+            )
+
+        solver = _configured_solver(remaining)
+        _set_objective(optimizer_model.model, expression, maximize)
+        solve_started_at = time.perf_counter()
+        raw_status = solver.Solve(optimizer_model.model)
+        wall_time = time.perf_counter() - solve_started_at
+        status = map_solver_status(raw_status)
+        objective_value, best_bound = _capture_objective_bounds(solver, status)
+        stage_results.append(
+            SolverStage(
+                name=stage_name,
+                status=status,
+                objective_value=objective_value,
+                best_bound=best_bound,
+                wall_time_seconds=wall_time,
+            )
+        )
+
+        if status in (SolverStatus.OPTIMAL, SolverStatus.FEASIBLE):
+            selected_values = _capture_selected_values(solver, optimizer_model)
+        if status is SolverStatus.OPTIMAL:
+            assert objective_value is not None
+            optimizer_model.model.Add(expression == objective_value)
+            continue
+        return _staged_result(status, stage_results, selected_values, optimizer_model)
+
+    # The fifth stage only chooses among plans whose four required objectives
+    # are already fixed. Its proof status cannot revoke the maximum claim.
+    stage_name, expression, maximize = housekeeping_spec
+    remaining = _remaining_budget(time_limit_seconds, started_at)
+    if remaining <= 0:
+        stage_results.append(_budget_exhausted_stage(stage_name))
+        return _staged_result(
+            SolverStatus.OPTIMAL,
+            stage_results,
+            selected_values,
+            optimizer_model,
+        )
+
+    solver = _configured_solver(remaining)
+    _set_objective(optimizer_model.model, expression, maximize)
+    solve_started_at = time.perf_counter()
+    raw_status = solver.Solve(optimizer_model.model)
+    wall_time = time.perf_counter() - solve_started_at
+    status = map_solver_status(raw_status)
+    objective_value, best_bound = _capture_objective_bounds(solver, status)
+    stage_results.append(
+        SolverStage(
+            name=stage_name,
+            status=status,
+            objective_value=objective_value,
+            best_bound=best_bound,
+            wall_time_seconds=wall_time,
+        )
+    )
+    if status in (SolverStatus.OPTIMAL, SolverStatus.FEASIBLE):
+        selected_values = _capture_selected_values(solver, optimizer_model)
+
+    return _staged_result(
+        SolverStatus.OPTIMAL,
+        stage_results,
+        selected_values,
+        optimizer_model,
+    )
+
+
+@dataclass(frozen=True, slots=True)
+class _SelectedValues:
+    pattern_indices: tuple[int, ...]
+    start_arc_indices: tuple[int, ...]
+    route_arc_indices: tuple[tuple[int, int], ...]
+    end_arc_indices: tuple[int, ...]
+    standalone_recovery: tuple[tuple[str, int], ...]
+
+
+def _configured_solver(time_limit_seconds: float) -> cp_model.CpSolver:
+    solver = cp_model.CpSolver()
+    solver.parameters.random_seed = SOLVER_RANDOM_SEED
+    solver.parameters.num_search_workers = SOLVER_NUM_SEARCH_WORKERS
+    solver.parameters.log_search_progress = False
+    solver.parameters.max_time_in_seconds = max(0.0, time_limit_seconds)
+    return solver
+
+
+def _set_objective(model: cp_model.CpModel, expression: Any, maximize: bool) -> None:
+    model.ClearObjective()
+    if maximize:
+        model.Maximize(expression)
+    else:
+        model.Minimize(expression)
+
+
+def _remaining_budget(time_limit_seconds: float, started_at: float) -> float:
+    return time_limit_seconds - (time.perf_counter() - started_at)
+
+
+def _budget_exhausted_stage(stage_name: StageName) -> SolverStage:
+    return SolverStage(
+        name=stage_name,
+        status=SolverStatus.UNKNOWN,
+        objective_value=None,
+        best_bound=None,
+        wall_time_seconds=0.0,
+    )
+
+
+def _capture_objective_bounds(
+    solver: cp_model.CpSolver,
+    status: SolverStatus,
+) -> tuple[int | float | None, int | float | None]:
+    if status not in (SolverStatus.OPTIMAL, SolverStatus.FEASIBLE):
+        return None, None
+    return _normalize_number(solver.ObjectiveValue()), _normalize_number(solver.BestObjectiveBound())
+
+
+def _normalize_number(value: float | int) -> int | float:
+    rounded = round(float(value))
+    if abs(float(value) - rounded) < 1e-7:
+        return int(rounded)
+    return float(value)
+
+
+def _capture_selected_values(
+    solver: cp_model.CpSolver,
+    optimizer_model: OptimizerModel,
+) -> _SelectedValues:
+    pattern_indices = tuple(
+        index for index, variable in enumerate(optimizer_model.x) if solver.Value(variable)
+    )
+    start_arc_indices = tuple(
+        index for index, variable in sorted(optimizer_model.start_arc.items()) if solver.Value(variable)
+    )
+    route_arc_indices = tuple(
+        key for key, variable in sorted(optimizer_model.route_arc.items()) if solver.Value(variable)
+    )
+    end_arc_indices = tuple(
+        index for index, variable in sorted(optimizer_model.end_arc.items()) if solver.Value(variable)
+    )
+    standalone_recovery = tuple(
+        key
+        for key, variable in sorted(optimizer_model.standalone_recovery.items())
+        if solver.Value(variable)
+    )
+    return _SelectedValues(
+        pattern_indices=pattern_indices,
+        start_arc_indices=start_arc_indices,
+        route_arc_indices=route_arc_indices,
+        end_arc_indices=end_arc_indices,
+        standalone_recovery=standalone_recovery,
+    )
+
+
+def _staged_result(
+    status: SolverStatus,
+    stage_results: list[SolverStage],
+    selected_values: _SelectedValues | None,
+    optimizer_model: OptimizerModel,
+) -> StagedSolveResult:
+    selected_values = selected_values or _SelectedValues((), (), (), (), ())
+    required_optimal = all(
+        any(stage.name is name and stage.status is SolverStatus.OPTIMAL for stage in stage_results)
+        for name in _REQUIRED_STAGE_NAMES
+    )
+    return StagedSolveResult(
+        status=status,
+        maximum_claim_allowed=required_optimal,
+        stages=tuple(stage_results),
+        selected_pattern_indices=selected_values.pattern_indices,
+        selected_pattern_ids=tuple(
+            optimizer_model.patterns[index].pattern_id
+            for index in selected_values.pattern_indices
+        ),
+        selected_start_arc_indices=selected_values.start_arc_indices,
+        selected_route_arc_indices=selected_values.route_arc_indices,
+        selected_end_arc_indices=selected_values.end_arc_indices,
+        selected_standalone_recovery=selected_values.standalone_recovery,
+    )
 
 
 def build_optimizer_model(

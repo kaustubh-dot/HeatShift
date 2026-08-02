@@ -2,7 +2,7 @@
 
 **Last updated:** 2026-08-02
 **Phase:** Planning frozen; backend implementation underway
-**Overall status:** B06 complete; B07 active
+**Overall status:** B07 complete; B08 active
 
 ## Locked product
 
@@ -45,27 +45,27 @@ The final planning pass made previously implicit behavior explicit:
 - Product and engineering specifications exist under `docs/`.
 - `docs/DESIGN.md` and `docs/FRONTEND_PLAN.md` have been reviewed for judge clarity, accessibility, contract fidelity, offline presentation, and deadline feasibility.
 - `docs/IMPLEMENTATION_MASTER_PLAN.md` and `docs/BACKEND_IMPLEMENTATION_PLAN.md` define atomic, gated tasks for low-context implementation agents.
-- Canonical models, pure time-grid/heat/matrix helpers, deterministic scenario/policy fixtures, solver-free validation, deterministic execution patterns, and CP-SAT selection/route/occupancy/global-policy model construction now exist; serialized solver output and frontend work have not started.
+- Canonical models, pure time-grid/heat/matrix helpers, deterministic scenario/policy fixtures, solver-free validation, deterministic execution patterns, CP-SAT model construction, and staged lexicographic proof capture now exist; timeline/metrics serialization and frontend work have not started.
 - The root `.venv` uses Python 3.12.13 and contains the verified runtime and test dependencies.
 - The implementation branch is `agent/lock-planning-docs`.
 
 ## Active implementation checkpoint
 
-- Last completed task: B06
+- Last completed task: B07
 - Verification commands:
-  - `.venv/bin/python -m pytest tests/unit/test_optimizer_constraints.py -q`
+  - `.venv/bin/python -m pytest tests/unit/test_objectives_and_status.py -q`
   - `.venv/bin/python -m pytest tests/unit -q`
   - `.venv/bin/python -m compileall -q backend/heatshift`
   - `git diff --check`
-- Results: `8 passed in 0.34s`; `56 passed in 0.37s`; compileall passed; `git diff --check` passed.
-- Full-fixture smoke: `508` baseline and `467` constrained patterns generated; baseline model built in `0.654s` and returned `UNKNOWN` at a deliberately short 2-second exploratory limit; constrained model built in `0.603s` and returned `OPTIMAL` with objective `368` at the same limit. Staged objective/proof policy remains B07.
-- Files created/changed: `backend/heatshift/optimizer.py`, `tests/unit/test_optimizer_constraints.py`, `TODO.md`, `CHECKPOINT.md`
-- Known limitation: B06 constructs and constrains the CP-SAT model but does not stage objectives, serialize proof state, extract timelines/metrics, or produce API output.
-- Next task: B07 — Staged lexicographic solving and proof capture
+- Results: `5 passed in 0.46s`; `61 passed in 0.48s`; compileall passed; `git diff --check` passed.
+- Full-fixture staged smoke: `467` constrained patterns; stages `critical_service=OPTIMAL(3)`, `planned_service_value=OPTIMAL(368)`, `travel_minutes=OPTIMAL(160)`, `overtime_minutes=OPTIMAL(0)`, `standalone_recovery=OPTIMAL(0)`; overall `OPTIMAL`, `maximum_claim_allowed=true`, elapsed `2.932s` with a 5-second request budget.
+- Files created/changed: `backend/heatshift/optimizer.py`, `tests/unit/test_objectives_and_status.py`, `TODO.md`, `CHECKPOINT.md`
+- Known limitation: Results are internal proof records only; canonical timeline, route, metrics, conflict reconciliation, and API serialization remain assigned to B08 and later packets.
+- Next task: B08 — Timeline, route, metrics, and conflict reconciliation
 
 ## Immediate next action
 
-Execute **B07 only** from [docs/IMPLEMENTATION_MASTER_PLAN.md](docs/IMPLEMENTATION_MASTER_PLAN.md) and [docs/BACKEND_IMPLEMENTATION_PLAN.md](docs/BACKEND_IMPLEMENTATION_PLAN.md). Stop after its verification and checkpoint handoff.
+Execute **B08 only** from [docs/IMPLEMENTATION_MASTER_PLAN.md](docs/IMPLEMENTATION_MASTER_PLAN.md) and [docs/BACKEND_IMPLEMENTATION_PLAN.md](docs/BACKEND_IMPLEMENTATION_PLAN.md). Stop after its verification and checkpoint handoff.
 
 Do not begin frontend polish until the solver release gates in [docs/TEST_PLAN.md](docs/TEST_PLAN.md) pass.
 
