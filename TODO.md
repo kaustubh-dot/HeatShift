@@ -4,7 +4,7 @@ This is the implementation ledger. Execute tasks in ID order using [docs/IMPLEME
 
 ## Active task
 
-- [ ] **B12** — Implement the bounded intervention catalogue.
+- [ ] **B13** — Implement +2°C remapping and re-solve.
 
 ## Gate G1 — Inputs and patterns
 
@@ -23,7 +23,7 @@ This is the implementation ledger. Execute tasks in ID order using [docs/IMPLEME
 - [x] **B09** — Orchestrate service-first and policy-constrained solves.
 - [x] **B10** — Derive explicit plan differences.
 - [x] **B11** — Implement forced-inclusion diagnosis.
-- [ ] **B12** — Implement the bounded intervention catalogue.
+- [x] **B12** — Implement the bounded intervention catalogue.
 - [ ] **B13** — Implement +2°C remapping and re-solve.
 - [ ] **B14** — Perform at most one declared fixture-tuning pass and pass scenario gates.
 - [ ] **B15** — Generate deterministic saved outputs and a hash manifest.

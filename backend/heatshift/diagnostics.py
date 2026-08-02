@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+from dataclasses import dataclass
 import math
 
 from .metrics import ModelReconciliationError, PlanFacts, extract_plan_facts
@@ -9,15 +10,32 @@ from .models import (
     ApiErrorDetail,
     DiagnosisClassification,
     DiagnosisResponse,
+    InterventionType,
     ObjectiveDelta,
     Policy,
     Scenario,
     SolverStatus,
+    TestedIntervention,
 )
 from .optimizer import StagedSolveResult, build_optimizer_model, solve_staged
-from .patterns import ExecutionPattern, generate_policy_constrained_patterns
-from .timegrid import adjust_heat_series
+from .patterns import ExecutionPattern, eligible_crews, generate_policy_constrained_patterns
+from .timegrid import adjust_heat_series, format_time, parse_time
 from .validation import validate_scenario
+
+
+_INTERVENTION_CATALOGUE = (
+    (InterventionType.DEADLINE_EXTENSION, 15),
+    (InterventionType.DEADLINE_EXTENSION, 30),
+    (InterventionType.OVERTIME_ALLOWANCE, 15),
+    (InterventionType.OVERTIME_ALLOWANCE, 30),
+)
+
+
+@dataclass(frozen=True, slots=True)
+class _ForcedSolve:
+    patterns: list[ExecutionPattern]
+    result: StagedSolveResult
+    facts: PlanFacts | None
 
 
 class DiagnosisValidationError(ValueError):
@@ -58,34 +76,18 @@ def diagnose_job(
     )
 
     adjusted_scenario = _adjust_scenario(scenario, policy, heat_adjustment_c)
-    patterns = generate_policy_constrained_patterns(adjusted_scenario, policy)
-    forced_model = build_optimizer_model(
+    adjusted_issues = validate_scenario(adjusted_scenario, policy)
+    if adjusted_issues:
+        raise DiagnosisValidationError(adjusted_issues)
+    forced_solve = _solve_forced(
         adjusted_scenario,
         policy,
-        patterns,
-        enforce_policy=True,
+        original_facts,
+        job_id,
+        float(time_limit_seconds),
     )
-    forced_model.model.Add(forced_model.serve[job_id] == 1)
-    forced_model.model.Add(
-        forced_model.objective_expressions.critical_service
-        >= original_facts.metrics.critical_jobs_scheduled
-    )
-    forced_result = solve_staged(forced_model, float(time_limit_seconds))
-
-    forced_facts: PlanFacts | None = None
-    if forced_result.selected_pattern_indices:
-        try:
-            forced_facts = extract_plan_facts(forced_model, forced_result)
-        except ModelReconciliationError as error:
-            raise DiagnosisValidationError(
-                (
-                    ApiErrorDetail(
-                        path="forced_solver_result",
-                        code="MODEL_RECONCILIATION",
-                        message=str(error),
-                    ),
-                )
-            ) from error
+    forced_result = forced_solve.result
+    forced_facts = forced_solve.facts
 
     classification = _classify(
         original_facts,
@@ -116,10 +118,57 @@ def diagnose_job(
             policy,
             original_facts,
             forced_facts,
-            patterns,
+            forced_solve.patterns,
         ),
-        tested_interventions=[],
+        tested_interventions=_test_interventions(
+            scenario,
+            policy,
+            original_facts,
+            job_id,
+            heat_adjustment_c,
+            float(time_limit_seconds),
+        ),
     )
+
+
+def _solve_forced(
+    scenario: Scenario,
+    policy: Policy,
+    original_facts: PlanFacts,
+    job_id: str,
+    time_limit_seconds: float,
+) -> _ForcedSolve:
+    """Solve one forced model built from the supplied scenario copy."""
+
+    patterns = generate_policy_constrained_patterns(scenario, policy)
+    forced_model = build_optimizer_model(
+        scenario,
+        policy,
+        patterns,
+        enforce_policy=True,
+    )
+    forced_model.model.Add(forced_model.serve[job_id] == 1)
+    forced_model.model.Add(
+        forced_model.objective_expressions.critical_service
+        >= original_facts.metrics.critical_jobs_scheduled
+    )
+    forced_result = solve_staged(forced_model, float(time_limit_seconds))
+
+    forced_facts: PlanFacts | None = None
+    if forced_result.selected_pattern_indices:
+        try:
+            forced_facts = extract_plan_facts(forced_model, forced_result)
+        except ModelReconciliationError as error:
+            raise DiagnosisValidationError(
+                (
+                    ApiErrorDetail(
+                        path="forced_solver_result",
+                        code="MODEL_RECONCILIATION",
+                        message=str(error),
+                    ),
+                )
+            ) from error
+    return _ForcedSolve(patterns=patterns, result=forced_result, facts=forced_facts)
 
 
 def diagnose_forced_inclusion(
@@ -245,6 +294,117 @@ def _adjust_scenario(scenario: Scenario, policy: Policy, heat_adjustment_c: floa
                 policy.band_thresholds_c,
             )
         },
+    )
+
+
+def _test_interventions(
+    scenario: Scenario,
+    policy: Policy,
+    original_facts: PlanFacts,
+    job_id: str,
+    heat_adjustment_c: float | int,
+    time_limit_seconds: float,
+) -> list[TestedIntervention]:
+    """Run the fixed intervention catalogue independently from original input."""
+
+    tested: list[TestedIntervention] = []
+    for intervention_type, value_minutes in _INTERVENTION_CATALOGUE:
+        candidate_policy = policy.model_copy(deep=True)
+        try:
+            candidate_scenario = _apply_intervention(
+                scenario,
+                job_id,
+                intervention_type,
+                value_minutes,
+            )
+        except (TypeError, ValueError):
+            tested.append(
+                _invalid_intervention(intervention_type, value_minutes)
+            )
+            continue
+
+        candidate_issues = validate_scenario(candidate_scenario, candidate_policy)
+        if candidate_issues:
+            tested.append(
+                _invalid_intervention(intervention_type, value_minutes)
+            )
+            continue
+
+        adjusted_candidate = _adjust_scenario(
+            candidate_scenario,
+            candidate_policy,
+            heat_adjustment_c,
+        )
+        adjusted_issues = validate_scenario(adjusted_candidate, candidate_policy)
+        if adjusted_issues:
+            tested.append(
+                _invalid_intervention(intervention_type, value_minutes)
+            )
+            continue
+
+        forced_solve = _solve_forced(
+            adjusted_candidate,
+            candidate_policy,
+            original_facts,
+            job_id,
+            time_limit_seconds,
+        )
+        delta = (
+            _objective_delta(original_facts, forced_solve.facts)
+            if forced_solve.facts is not None
+            else _zero_delta()
+        )
+        tested.append(
+            TestedIntervention(
+                type=intervention_type,
+                value_minutes=value_minutes,
+                status=forced_solve.result.status,
+                objective_delta=delta,
+            )
+        )
+    return tested
+
+
+def _apply_intervention(
+    scenario: Scenario,
+    job_id: str,
+    intervention_type: InterventionType,
+    value_minutes: int,
+) -> Scenario:
+    candidate = scenario.model_copy(deep=True)
+    if intervention_type is InterventionType.DEADLINE_EXTENSION:
+        jobs = list(candidate.jobs)
+        target_index = next(index for index, job in enumerate(jobs) if job.id == job_id)
+        target = jobs[target_index]
+        jobs[target_index] = target.model_copy(
+            update={
+                "window_end": format_time(parse_time(target.window_end) + value_minutes),
+            }
+        )
+        return candidate.model_copy(update={"jobs": jobs})
+
+    target = next(job for job in candidate.jobs if job.id == job_id)
+    eligible_crew_ids = {crew.id for crew in eligible_crews(target, candidate.crews)}
+    crews = [
+        crew.model_copy(
+            update={"max_overtime_minutes": crew.max_overtime_minutes + value_minutes}
+        )
+        if crew.id in eligible_crew_ids
+        else crew
+        for crew in candidate.crews
+    ]
+    return candidate.model_copy(update={"crews": crews})
+
+
+def _invalid_intervention(
+    intervention_type: InterventionType,
+    value_minutes: int,
+) -> TestedIntervention:
+    return TestedIntervention(
+        type=intervention_type,
+        value_minutes=value_minutes,
+        status=SolverStatus.MODEL_INVALID,
+        objective_delta=_zero_delta(),
     )
 
 
