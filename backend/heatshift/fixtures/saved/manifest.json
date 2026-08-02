@@ -5,7 +5,7 @@
   "canonical_hash_format": "sorted JSON with compact separators and a trailing newline",
   "designated_diagnosis_job_id": "job-bus-route",
   "fixture_version": "demo-v1",
-  "generated_at": "2026-08-02T19:01:48Z",
+  "generated_at": "2026-08-02T19:21:21Z",
   "input_hashes": {
     "policy.json": "316914a5b9a3580d75881992def6eef05d7226e4cba517caf6e52de1b10cdc77",
     "scenario.json": "1ed426b915ecb762b12fa6bfb9542b92ca0a10a438af8a004c8d460f54ae2b8c"

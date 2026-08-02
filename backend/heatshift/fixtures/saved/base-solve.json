@@ -441,35 +441,35 @@
           "name": "critical_service",
           "objective_value": 3,
           "status": "OPTIMAL",
-          "wall_time_seconds": 0.46008829202037305
+          "wall_time_seconds": 0.47179954100283794
         },
         {
           "best_bound": 368,
           "name": "planned_service_value",
           "objective_value": 368,
           "status": "OPTIMAL",
-          "wall_time_seconds": 0.4710620419937186
+          "wall_time_seconds": 0.48067754198564216
         },
         {
           "best_bound": 160,
           "name": "travel_minutes",
           "objective_value": 160,
           "status": "OPTIMAL",
-          "wall_time_seconds": 0.2872263340104837
+          "wall_time_seconds": 0.29488025000318885
         },
         {
           "best_bound": 0,
           "name": "overtime_minutes",
           "objective_value": 0,
           "status": "OPTIMAL",
-          "wall_time_seconds": 0.31173633300932124
+          "wall_time_seconds": 0.31939091699314304
         },
         {
           "best_bound": 0,
           "name": "standalone_recovery",
           "objective_value": 0,
           "status": "OPTIMAL",
-          "wall_time_seconds": 0.2891574999957811
+          "wall_time_seconds": 0.2973744579940103
         }
       ],
       "status": "OPTIMAL",
@@ -815,7 +815,7 @@
           "state": "unavailable"
         }
       ],
-      "wall_time_seconds": 1.8192705010296777
+      "wall_time_seconds": 1.8641227079788223
     },
     "service_first": {
       "jobs": [
@@ -1032,7 +1032,7 @@
           "name": "critical_service",
           "objective_value": 4,
           "status": "FEASIBLE",
-          "wall_time_seconds": 2.5015816249942873
+          "wall_time_seconds": 2.5036458329996094
         }
       ],
       "status": "FEASIBLE",
@@ -1230,7 +1230,7 @@
           "state": "unavailable"
         }
       ],
-      "wall_time_seconds": 2.5015816249942873
+      "wall_time_seconds": 2.5036458329996094
     }
   },
   "scenario": {

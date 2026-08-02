@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+from concurrent.futures import ThreadPoolExecutor
 from dataclasses import dataclass
 
 from .differences import derive_plan_diff
@@ -71,18 +72,27 @@ def solve_scenario(
     plan_count = 2 if heat_adjustment_c == 0 else 3
     per_plan_budget = float(time_limit_seconds) / plan_count if plan_count else 0.0
 
-    baseline_facts, baseline_result = _solve_facts(
-        scenario,
-        policy,
-        per_plan_budget,
-        constrained=False,
-    )
-    constrained_facts, constrained_result = _solve_facts(
-        scenario,
-        policy,
-        per_plan_budget,
-        constrained=True,
-    )
+    # The two base branches read the same immutable inputs but build independent
+    # CP-SAT models. Running them concurrently preserves the per-branch budget
+    # and deterministic one-worker solver configuration while keeping the
+    # request wall time close to the slower branch rather than their sum.
+    with ThreadPoolExecutor(max_workers=2, thread_name_prefix="heatshift-solve") as executor:
+        baseline_future = executor.submit(
+            _solve_facts,
+            scenario,
+            policy,
+            per_plan_budget,
+            constrained=False,
+        )
+        constrained_future = executor.submit(
+            _solve_facts,
+            scenario,
+            policy,
+            per_plan_budget,
+            constrained=True,
+        )
+        baseline_facts, baseline_result = baseline_future.result()
+        constrained_facts, constrained_result = constrained_future.result()
     if constrained_facts.conflicts.count != 0:
         raise SolveServiceError(
             code=ApiErrorCode.MODEL_INVALID,

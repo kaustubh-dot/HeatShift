@@ -4,7 +4,7 @@ This is the implementation ledger. Execute tasks in ID order using [docs/IMPLEME
 
 ## Active task
 
-- [ ] **B17** — Pass the complete backend release gate and write release evidence.
+- [ ] **F00** — Create and pin the minimal React/TypeScript/Vite shell.
 
 ## Gate G1 — Inputs and patterns
 
@@ -31,7 +31,7 @@ This is the implementation ledger. Execute tasks in ID order using [docs/IMPLEME
 ## Gate G3 — API and backend release
 
 - [x] **B16** — Implement the three FastAPI endpoints and canonical errors.
-- [ ] **B17** — Pass the complete backend release gate and write release evidence.
+- [x] **B17** — Pass the complete backend release gate and write release evidence.
 
 ## Gate G4 — Frontend
 
