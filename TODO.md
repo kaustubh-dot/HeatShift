@@ -4,7 +4,7 @@ This is the implementation ledger. Execute tasks in ID order using [docs/IMPLEME
 
 ## Active task
 
-- [ ] **B06** — Implement CP-SAT selection, route flow, occupancy, and global rolling constraints.
+- [ ] **B07** — Implement staged lexicographic objectives and honest proof capture.
 
 ## Gate G1 — Inputs and patterns
 
@@ -17,7 +17,7 @@ This is the implementation ledger. Execute tasks in ID order using [docs/IMPLEME
 
 ## Gate G2 — Solver evidence
 
-- [ ] **B06** — Implement CP-SAT selection, route flow, occupancy, and global rolling constraints.
+- [x] **B06** — Implement CP-SAT selection, route flow, occupancy, and global rolling constraints.
 - [ ] **B07** — Implement staged lexicographic objectives and honest proof capture.
 - [ ] **B08** — Extract and reconcile timeline, route, metrics, and policy conflicts.
 - [ ] **B09** — Orchestrate service-first and policy-constrained solves.
