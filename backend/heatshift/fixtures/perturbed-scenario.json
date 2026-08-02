@@ -160,7 +160,7 @@
       "id": "job-drain-inspection",
       "name": "Drainage inspection",
       "location_id": "loc-drain-inspection",
-      "active_minutes": 30,
+      "active_minutes": 45,
       "exertion": "moderate",
       "priority": "planned",
       "service_value": 6,
@@ -295,19 +295,9 @@
     {"slot": 39, "start": "16:45", "temperature_c": 34, "band": "elevated"}
   ],
   "travel_matrix_location_ids": [
-    "depot-central",
-    "loc-school",
-    "loc-bus-route",
-    "loc-residential",
-    "loc-utility-cut",
-    "loc-blocked-inlet",
-    "loc-catch-basin",
-    "loc-culvert",
-    "loc-drain-inspection",
-    "loc-stop-sign",
-    "loc-roadside-debris",
-    "loc-guardrail",
-    "loc-sidewalk"
+    "depot-central", "loc-school", "loc-bus-route", "loc-residential", "loc-utility-cut",
+    "loc-blocked-inlet", "loc-catch-basin", "loc-culvert", "loc-drain-inspection",
+    "loc-stop-sign", "loc-roadside-debris", "loc-guardrail", "loc-sidewalk"
   ],
   "travel_matrix_minutes": [
     [0, 12, 18, 22, 10, 20, 24, 28, 16, 11, 17, 25, 21],
