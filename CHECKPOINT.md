@@ -2,7 +2,7 @@
 
 **Last updated:** 2026-08-02
 **Phase:** Planning frozen; backend implementation underway
-**Overall status:** B09 complete; B10 active
+**Overall status:** B10 complete; B11 active
 
 ## Locked product
 
@@ -45,27 +45,29 @@ The final planning pass made previously implicit behavior explicit:
 - Product and engineering specifications exist under `docs/`.
 - `docs/DESIGN.md` and `docs/FRONTEND_PLAN.md` have been reviewed for judge clarity, accessibility, contract fidelity, offline presentation, and deadline feasibility.
 - `docs/IMPLEMENTATION_MASTER_PLAN.md` and `docs/BACKEND_IMPLEMENTATION_PLAN.md` define atomic, gated tasks for low-context implementation agents.
-- Canonical models, pure time-grid/heat/matrix helpers, deterministic scenario/policy fixtures, solver-free validation, deterministic execution patterns, CP-SAT model construction, staged proof capture, timeline/route extraction, metrics, independent policy reconciliation, and service orchestration now exist; API/frontend work has not started.
+- Canonical models, pure time-grid/heat/matrix helpers, deterministic scenario/policy fixtures, solver-free validation, deterministic execution patterns, CP-SAT model construction, staged proof capture, timeline/route extraction, metrics, independent policy reconciliation, service orchestration, and evidence-backed plan differences now exist; API/frontend work has not started.
 - The root `.venv` uses Python 3.12.13 and contains the verified runtime and test dependencies.
 - The implementation branch is `agent/lock-planning-docs`.
 
 ## Active implementation checkpoint
 
-- Last completed task: B09
+- Last completed task: B10
 - Verification commands:
-  - `.venv/bin/python -m pytest tests/integration/test_solve_service.py -q`
+  - `.venv/bin/python -m pytest tests/unit/test_differences.py tests/integration/test_solve_service.py -q`
   - `.venv/bin/python -m pytest tests/unit tests/integration -q`
   - `.venv/bin/python -m compileall -q backend/heatshift`
   - `git diff --check`
-- Results: `4 passed in 0.58s`; `69 passed in 0.43s`; compileall passed; `git diff --check` passed.
-- Full-fixture service smoke with a 5-second request budget: service-first `FEASIBLE` with metrics `{critical_jobs_scheduled: 4, critical_jobs_total: 4, planned_service_value: 400, mandatory_policy_conflicts: 11, travel_minutes: 82, overtime_minutes: 0, active_work_minutes: 300, eligible_recovery_minutes: 0}`; policy-constrained `OPTIMAL` with `{critical_jobs_scheduled: 3, critical_jobs_total: 4, planned_service_value: 368, mandatory_policy_conflicts: 0, travel_minutes: 160, overtime_minutes: 0, active_work_minutes: 390, eligible_recovery_minutes: 0}`; elapsed `5.919s` including generation/build overhead.
-- Files created/changed: `backend/heatshift/service.py`, `tests/integration/test_solve_service.py`, `TODO.md`, `CHECKPOINT.md`
-- Known limitation: `plan_diff` remains empty until B10 derives evidence-backed changes; diagnosis and API routes remain later packets. The untuned full fixture can return a bounded `FEASIBLE` baseline rather than a proven optimum.
-- Next task: B10 — Plan differences
+-- Results: `6 passed in 0.35s`; `71 passed in 0.40s`; compileall passed; `git diff --check` passed.
+- Full-fixture service smoke command:
+  - `.venv/bin/python -c 'import json; from pathlib import Path; from backend.heatshift.models import Policy, Scenario; from backend.heatshift.service import solve_scenario; root=Path("backend/heatshift/fixtures"); scenario=Scenario.model_validate(json.loads((root/"scenario.json").read_text())); policy=Policy.model_validate(json.loads((root/"policy.json").read_text())); response=solve_scenario(scenario, policy, heat_adjustment_c=0, time_limit_seconds=5); print("status", response.plans.service_first.status.value, response.plans.policy_constrained.status.value); print("changes", [(item.job_id, item.change.value, item.binding_rule_ids) for item in response.plan_diff]); print("count", len(response.plan_diff), "jobs", len(scenario.jobs))'`
+- Full-fixture result: `status FEASIBLE OPTIMAL`; 12 diff records for 12 jobs, including `moved_time`, `deferred`, `served`, `unchanged`, and evidence-backed rule IDs such as `hs01-heavy-elevated` and `hs01-moderate-normal`.
+- Files created/changed: `backend/heatshift/differences.py`, `backend/heatshift/service.py`, `tests/unit/test_differences.py`, `tests/integration/test_solve_service.py`, `TODO.md`, `CHECKPOINT.md`
+- Known limitation: forced-inclusion diagnosis, API routes, saved evidence, and frontend work remain later packets. The untuned full fixture can return a bounded `FEASIBLE` baseline rather than a proven optimum.
+- Next task: B11 — Forced-inclusion diagnosis
 
 ## Immediate next action
 
-Execute **B10 only** from [docs/IMPLEMENTATION_MASTER_PLAN.md](docs/IMPLEMENTATION_MASTER_PLAN.md) and [docs/BACKEND_IMPLEMENTATION_PLAN.md](docs/BACKEND_IMPLEMENTATION_PLAN.md). Stop after its verification and checkpoint handoff.
+Execute **B11 only** from [docs/IMPLEMENTATION_MASTER_PLAN.md](docs/IMPLEMENTATION_MASTER_PLAN.md) and [docs/BACKEND_IMPLEMENTATION_PLAN.md](docs/BACKEND_IMPLEMENTATION_PLAN.md). Stop after its verification and checkpoint handoff.
 
 Do not begin frontend polish until the solver release gates in [docs/TEST_PLAN.md](docs/TEST_PLAN.md) pass.
 

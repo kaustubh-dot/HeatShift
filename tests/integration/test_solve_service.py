@@ -18,7 +18,11 @@ def test_solve_service_returns_canonical_zero_adjustment_response() -> None:
     assert response.plans.service_first.metrics.active_work_minutes == 45
     assert response.plans.policy_constrained.metrics.mandatory_policy_conflicts == 0
     assert response.plans.service_first.metrics.planned_service_value == 8
-    assert response.plan_diff == []
+    assert len(response.plan_diff) == len(scenario.jobs)
+    assert response.plan_diff[0].job_id == scenario.jobs[0].id
+    assert response.plan_diff[0].change.value == "moved_time"
+    assert response.plan_diff[0].before is not None
+    assert response.plan_diff[0].after is not None
     assert response.model_validate(response.model_dump(mode="json")) == response
 
 

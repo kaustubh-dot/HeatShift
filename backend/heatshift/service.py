@@ -4,6 +4,7 @@ from __future__ import annotations
 
 from dataclasses import dataclass
 
+from .differences import derive_plan_diff
 from .metrics import ModelReconciliationError, PlanFacts, extract_plan_facts
 from .models import (
     ApiErrorCode,
@@ -129,6 +130,10 @@ def solve_scenario(
             )
         heat_shock_plan = _to_plan("heat_shock_policy_constrained_plan", shock_facts, shock_result)
 
+    comparison_before = constrained_facts if heat_adjustment_c != 0 else baseline_facts
+    comparison_after = shock_facts if heat_adjustment_c != 0 else constrained_facts
+    assert comparison_after is not None
+
     response = SolveResponse(
         scenario=SolveScenario(
             id=scenario.id,
@@ -146,9 +151,7 @@ def solve_scenario(
             ),
             heat_shock=heat_shock_plan,
         ),
-        # B10 owns this evidence. Keeping the field explicitly empty here is
-        # preferable to inventing a change explanation at the service layer.
-        plan_diff=[],
+        plan_diff=derive_plan_diff(comparison_before, comparison_after),
         diagnostics={
             "baseline_policy_conflict_count": baseline_facts.conflicts.count,
             "baseline_policy_conflict_rule_ids": list(baseline_facts.conflicts.rule_ids),
