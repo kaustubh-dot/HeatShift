@@ -2,6 +2,7 @@ import { useEffect } from "react";
 
 import { BriefChapter } from "./components/BriefChapter";
 import { AppShell } from "./components/AppShell";
+import { PlanChapter } from "./components/PlanChapter";
 import { loadFallbackDemo } from "./api/fallback";
 import { useAppDispatch, useAppState } from "./state/appState";
 
@@ -56,10 +57,12 @@ export default function App() {
         fixtureError={state.request.demo.error}
         onGenerate={() => dispatch({ type: "navigate", chapter: "plan" })}
       />
-    ) : state.chapter === "plan" ? (
-      <PendingChapter
-        heading="Plan Transformation"
-        description="The next packet will render the service-first plan and its policy-constrained transformation."
+    ) : state.chapter === "plan" && state.solveResult !== null ? (
+      <PlanChapter
+        scenario={state.scenario}
+        plan={state.solveResult.plans.policy_constrained}
+        selectedJobId={state.selectedJobId}
+        onJobClick={(jobId) => dispatch({ type: "select_job", jobId })}
       />
     ) : (
       <PendingChapter

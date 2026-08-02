@@ -4,7 +4,7 @@ This is the implementation ledger. Execute tasks in ID order using [docs/IMPLEME
 
 ## Active task
 
-- [ ] **F04** — Implement the complete-day accessible timeline.
+- [ ] **F05** — Implement metrics and plan-difference evidence.
 
 ## Gate G1 — Inputs and patterns
 
@@ -39,7 +39,7 @@ This is the implementation ledger. Execute tasks in ID order using [docs/IMPLEME
 - [x] **F01** — Implement contract types, genuine fallback loading, and reducer state.
 - [x] **F02** — Implement tokens, bundled fonts, shell, navigation, and TrustBar.
 - [x] **F03** — Implement Tomorrow's Brief.
-- [ ] **F04** — Implement the complete-day accessible timeline.
+- [x] **F04** — Implement the complete-day accessible timeline.
 - [ ] **F05** — Implement metrics and plan-difference evidence.
 - [ ] **F06** — Implement the schematic map and synchronized selection.
 - [ ] **F07** — Implement the short transformation and reduced-motion path.
