@@ -1,15 +1,74 @@
+import { useEffect } from "react";
+
+import { BriefChapter } from "./components/BriefChapter";
 import { AppShell } from "./components/AppShell";
+import { loadFallbackDemo } from "./api/fallback";
+import { useAppDispatch, useAppState } from "./state/appState";
+
+function PendingChapter({ heading, description }: { heading: string; description: string }) {
+  return (
+    <section className="chapter-placeholder" aria-labelledby="pending-chapter-heading">
+      <p className="label-caps">Chapter ready</p>
+      <h1 id="pending-chapter-heading">{heading}</h1>
+      <p>{description}</p>
+    </section>
+  );
+}
 
 export default function App() {
-  return (
-    <AppShell>
-      <section className="shell-placeholder" aria-labelledby="shell-heading">
-        <p className="label-caps">Frontend foundation</p>
-        <h1 id="shell-heading">HeatShift</h1>
-        <p>
-          The evidence-driven municipal planning experience is loading its first chapter.
-        </p>
+  const state = useAppState();
+  const dispatch = useAppDispatch();
+
+  useEffect(() => {
+    if (state.scenario !== null || state.request.demo.status !== "idle") return;
+    let active = true;
+    dispatch({ type: "request_started", request: "demo" });
+    loadFallbackDemo()
+      .then((bundle) => {
+        if (active) dispatch({ type: "demo_loaded", bundle, source: "saved" });
+      })
+      .catch((error: unknown) => {
+        if (!active) return;
+        const message = error instanceof Error ? error.message : "Saved demo data could not be loaded.";
+        dispatch({ type: "request_failed", request: "demo", message });
+      });
+    return () => {
+      active = false;
+    };
+  }, [dispatch, state.request.demo.status, state.scenario]);
+
+  const content =
+    state.request.demo.status === "error" ? (
+      <section className="fixture-error" role="alert" aria-labelledby="demo-error-heading">
+        <p className="label-caps">Saved demo error</p>
+        <h1 id="demo-error-heading">The locked demo could not load.</h1>
+        <p>{state.request.demo.error ?? "The fallback response was not available."}</p>
       </section>
-    </AppShell>
+    ) : state.request.demo.status === "loading" || state.scenario === null ? (
+      <section className="chapter-placeholder" aria-labelledby="loading-heading" role="status">
+        <p className="label-caps">Locked demo scenario</p>
+        <h1 id="loading-heading">Loading the saved solver run.</h1>
+        <p>The first chapter will open when the genuine scenario and policy are ready.</p>
+      </section>
+    ) : state.chapter === "brief" ? (
+      <BriefChapter
+        scenario={state.scenario}
+        fixtureError={state.request.demo.error}
+        onGenerate={() => dispatch({ type: "navigate", chapter: "plan" })}
+      />
+    ) : state.chapter === "plan" ? (
+      <PendingChapter
+        heading="Plan Transformation"
+        description="The next packet will render the service-first plan and its policy-constrained transformation."
+      />
+    ) : (
+      <PendingChapter
+        heading="Why / What-if"
+        description="The next packets will expose the forced-inclusion diagnosis and +2°C counterfactual."
+      />
+    );
+
+  return (
+    <AppShell>{content}</AppShell>
   );
 }
