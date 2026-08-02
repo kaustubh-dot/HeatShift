@@ -4,7 +4,7 @@ This is the implementation ledger. Execute tasks in ID order using [docs/IMPLEME
 
 ## Active task
 
-- [ ] **F00** — Create and pin the minimal React/TypeScript/Vite shell.
+- [ ] **F01** — Implement contract types, genuine fallback loading, and reducer state.
 
 ## Gate G1 — Inputs and patterns
 
@@ -35,7 +35,7 @@ This is the implementation ledger. Execute tasks in ID order using [docs/IMPLEME
 
 ## Gate G4 — Frontend
 
-- [ ] **F00** — Create and pin the minimal React/TypeScript/Vite shell.
+- [x] **F00** — Create and pin the minimal React/TypeScript/Vite shell.
 - [ ] **F01** — Implement contract types, genuine fallback loading, and reducer state.
 - [ ] **F02** — Implement tokens, bundled fonts, shell, navigation, and TrustBar.
 - [ ] **F03** — Implement Tomorrow's Brief.
