@@ -1,8 +1,8 @@
 # Checkpoint
 
-**Last updated:** 2026-08-01
+**Last updated:** 2026-08-02
 **Phase:** Planning frozen; backend implementation underway
-**Overall status:** B03 complete; B04 active
+**Overall status:** B05 complete; B06 active
 
 ## Locked product
 
@@ -45,22 +45,26 @@ The final planning pass made previously implicit behavior explicit:
 - Product and engineering specifications exist under `docs/`.
 - `docs/DESIGN.md` and `docs/FRONTEND_PLAN.md` have been reviewed for judge clarity, accessibility, contract fidelity, offline presentation, and deadline feasibility.
 - `docs/IMPLEMENTATION_MASTER_PLAN.md` and `docs/BACKEND_IMPLEMENTATION_PLAN.md` define atomic, gated tasks for low-context implementation agents.
-- Canonical models, pure time-grid/heat/matrix helpers, and deterministic scenario/policy fixtures now exist; solver output and frontend work have not started.
+- Canonical models, pure time-grid/heat/matrix helpers, deterministic scenario/policy fixtures, solver-free validation, and deterministic baseline/policy-constrained execution patterns now exist; CP-SAT output and frontend work have not started.
 - The root `.venv` uses Python 3.12.13 and contains the verified runtime and test dependencies.
 - The implementation branch is `agent/lock-planning-docs`.
 
 ## Active implementation checkpoint
 
-- Last completed task: B03
-- Verification command: `.venv/bin/python -m pytest tests/unit/test_fixture_shape.py -q`
-- Result: `3 passed in 0.09s`
-- Files created/changed: `backend/heatshift/fixtures/scenario.json`, `backend/heatshift/fixtures/policy.json`, `tests/unit/test_fixture_shape.py`, `TODO.md`, `CHECKPOINT.md`
-- Known limitation: Full cross-reference and semantic validation remain assigned to B04; no solver output was generated.
-- Next task: B04 — Cross-reference and semantic validation
+- Last completed task: B05
+- Verification commands:
+  - `.venv/bin/python -m pytest tests/unit/test_patterns.py -q`
+  - `.venv/bin/python -m pytest tests/unit -q`
+  - `.venv/bin/python -m compileall -q backend/heatshift`
+  - `git diff --check`
+- Results: `10 passed in 0.08s`; `48 passed in 0.09s`; compileall passed; `git diff --check` passed.
+- Files created/changed: `backend/heatshift/patterns.py`, `tests/unit/test_patterns.py`, `TODO.md`, `CHECKPOINT.md`
+- Known limitation: Patterns enforce job-local policy windows only; global rolling constraints across consecutive jobs remain assigned to B06, and no CP-SAT output exists.
+- Next task: B06 — CP-SAT selection, route flow, occupancy, and global rolling constraints
 
 ## Immediate next action
 
-Execute **B04 only** from [docs/IMPLEMENTATION_MASTER_PLAN.md](docs/IMPLEMENTATION_MASTER_PLAN.md) and [docs/BACKEND_IMPLEMENTATION_PLAN.md](docs/BACKEND_IMPLEMENTATION_PLAN.md). Stop after its verification and checkpoint handoff.
+Execute **B06 only** from [docs/IMPLEMENTATION_MASTER_PLAN.md](docs/IMPLEMENTATION_MASTER_PLAN.md) and [docs/BACKEND_IMPLEMENTATION_PLAN.md](docs/BACKEND_IMPLEMENTATION_PLAN.md). Stop after its verification and checkpoint handoff.
 
 Do not begin frontend polish until the solver release gates in [docs/TEST_PLAN.md](docs/TEST_PLAN.md) pass.
 

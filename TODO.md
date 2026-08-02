@@ -4,7 +4,7 @@ This is the implementation ledger. Execute tasks in ID order using [docs/IMPLEME
 
 ## Active task
 
-- [ ] **B04** — Implement cross-reference and semantic validation with stable error paths.
+- [ ] **B06** — Implement CP-SAT selection, route flow, occupancy, and global rolling constraints.
 
 ## Gate G1 — Inputs and patterns
 
@@ -12,8 +12,8 @@ This is the implementation ledger. Execute tasks in ID order using [docs/IMPLEME
 - [x] **B01** — Implement strict canonical Pydantic models.
 - [x] **B02** — Implement tested time-grid, heat-remapping, and matrix helpers.
 - [x] **B03** — Encode the locked deterministic scenario and policy fixtures.
-- [ ] **B04** — Implement cross-reference and semantic validation with stable error paths.
-- [ ] **B05** — Implement deterministic baseline and constrained execution-pattern generation.
+- [x] **B04** — Implement cross-reference and semantic validation with stable error paths.
+- [x] **B05** — Implement deterministic baseline and constrained execution-pattern generation.
 
 ## Gate G2 — Solver evidence
 
