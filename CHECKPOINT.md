@@ -2,7 +2,7 @@
 
 **Last updated:** 2026-08-03
 **Phase:** Phase 2 frontend implementation underway
-**Overall status:** F01 complete; F02 active
+**Overall status:** F02 complete; F03 active
 
 ## Locked product
 
@@ -45,28 +45,29 @@ The final planning pass made previously implicit behavior explicit:
 - Product and engineering specifications exist under `docs/`.
 - `docs/DESIGN.md` and `docs/FRONTEND_PLAN.md` have been reviewed for judge clarity, accessibility, contract fidelity, offline presentation, and deadline feasibility.
 - `docs/IMPLEMENTATION_MASTER_PLAN.md` and `docs/BACKEND_IMPLEMENTATION_PLAN.md` define atomic, gated tasks for low-context implementation agents.
-- Canonical models, pure time-grid/heat/matrix helpers, deterministic scenario/policy fixtures, solver-free validation, deterministic execution patterns, CP-SAT model construction, staged proof capture, timeline/route extraction, metrics, independent policy reconciliation, service orchestration, evidence-backed plan differences, forced-inclusion diagnosis, bounded interventions, +2°C heat shock, declared scenario-tuning evidence, deterministic saved solver evidence, the three FastAPI routes, the backend release report, the pinned React/Vite shell, canonical frontend contract types, genuine fallback loading, and reducer-owned state now exist.
+- Canonical models, pure time-grid/heat/matrix helpers, deterministic scenario/policy fixtures, solver-free validation, deterministic execution patterns, CP-SAT model construction, staged proof capture, timeline/route extraction, metrics, independent policy reconciliation, service orchestration, evidence-backed plan differences, forced-inclusion diagnosis, bounded interventions, +2°C heat shock, declared scenario-tuning evidence, deterministic saved solver evidence, the three FastAPI routes, the backend release report, the pinned React/Vite shell, canonical frontend contract types, genuine fallback loading, reducer-owned state, approved design tokens, local licensed fonts, semantic chapter navigation, and the shared TrustBar now exist.
 - The root `.venv` uses Python 3.12.13 and contains the verified runtime and test dependencies.
 - The implementation branch is `agent/lock-planning-docs`.
 
 ## Active implementation checkpoint
 
-- Last completed task: F01
+- Last completed task: F02
 - Verification commands:
   - `cd frontend && npm ci`
   - `cd frontend && npm run test:run`
   - `cd frontend && npm run build`
   - `cmp backend/heatshift/fixtures/saved/demo-bundle.json frontend/public/fallback/demo.json`
-- Results: `npm ci` exited 0 and audited 130 packages with 0 vulnerabilities; `npm run test:run` reported `5 passed`; `npm run build` exited 0 and produced the Vite production bundle; `cmp` passed. Exact dependency pins are recorded in `frontend/package.json` and the lockfile. npm reports only its install-script review notices and one transitive deprecation warning.
+- Results: `npm ci` exited 0 and audited 130 packages with 0 vulnerabilities; `npm run test:run` reported `7 passed`; `npm run build` exited 0 and produced the Vite production bundle; `cmp` remains passed; no font CDN references were found. Exact dependency pins are recorded in `frontend/package.json` and the lockfile. npm reports only its install-script review notices and one transitive deprecation warning.
 - F00 shell: React 19.2.8, TypeScript 5.9.3, Vite 8.1.5, `lucide-react` 1.17.0, Vitest 3.2.7, React Testing Library 16.3.0, DOM matchers 6.8.0, and jsdom 26.1.0. No router, state library, HTTP library, animation package, or CSS framework was added.
 - F01 evidence: `frontend/public/fallback/demo.json` is an exact copy of the B15 genuine bundle; `parseDemoBundle` rejects malformed required fields; `loadFallbackDemo` validates HTTP/JSON responses; the reducer stores canonical scenario, policy, solve, shock, and diagnosis responses once and selectors derive plan/diff views without copied metrics.
+- F02 evidence: approved OKLCH tokens and type scales are in [frontend/src/styles/tokens.css](frontend/src/styles/tokens.css); local Space Grotesk, DM Sans, and JetBrains Mono WOFF2 files plus OFL texts are under [frontend/public/fonts](frontend/public/fonts); the shell has a first-focusable skip link, native `aria-current="step"` chapter buttons, disabled locked chapters, visible focus styling, and a normal-flow TrustBar that keeps policy disclaimer and solver proof visible.
 - Backend release evidence remains in [backend/RELEASE_EVIDENCE.md](backend/RELEASE_EVIDENCE.md); saved solver artifacts remain canonical under [backend/heatshift/fixtures/saved](backend/heatshift/fixtures/saved).
-- Known limitations: chapter UI, styling, live API client, and visualization tests remain later packets. Backend limitations remain documented in [docs/SAFETY_AND_LIMITATIONS.md](docs/SAFETY_AND_LIMITATIONS.md).
-- Next task: F02 — tokens, bundled fonts, shell, navigation, and TrustBar
+- Known limitations: the brief, plan visualizations, live API client, and responsive screenshot review remain later packets. Backend limitations remain documented in [docs/SAFETY_AND_LIMITATIONS.md](docs/SAFETY_AND_LIMITATIONS.md).
+- Next task: F03 — Tomorrow's Brief
 
 ## Immediate next action
 
-Execute **F02 only** from [docs/IMPLEMENTATION_MASTER_PLAN.md](docs/IMPLEMENTATION_MASTER_PLAN.md) and [docs/FRONTEND_PLAN.md](docs/FRONTEND_PLAN.md). Stop after its verification and checkpoint handoff.
+Execute **F03 only** from [docs/IMPLEMENTATION_MASTER_PLAN.md](docs/IMPLEMENTATION_MASTER_PLAN.md) and [docs/FRONTEND_PLAN.md](docs/FRONTEND_PLAN.md). Stop after its verification and checkpoint handoff.
 
 Do not begin frontend polish beyond the active frontend packet until its packet-specific acceptance commands pass.
 

@@ -4,7 +4,7 @@ This is the implementation ledger. Execute tasks in ID order using [docs/IMPLEME
 
 ## Active task
 
-- [ ] **F02** — Implement tokens, bundled fonts, shell, navigation, and TrustBar.
+- [ ] **F03** — Implement Tomorrow's Brief.
 
 ## Gate G1 — Inputs and patterns
 
@@ -37,7 +37,7 @@ This is the implementation ledger. Execute tasks in ID order using [docs/IMPLEME
 
 - [x] **F00** — Create and pin the minimal React/TypeScript/Vite shell.
 - [x] **F01** — Implement contract types, genuine fallback loading, and reducer state.
-- [ ] **F02** — Implement tokens, bundled fonts, shell, navigation, and TrustBar.
+- [x] **F02** — Implement tokens, bundled fonts, shell, navigation, and TrustBar.
 - [ ] **F03** — Implement Tomorrow's Brief.
 - [ ] **F04** — Implement the complete-day accessible timeline.
 - [ ] **F05** — Implement metrics and plan-difference evidence.

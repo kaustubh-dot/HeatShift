@@ -1,0 +1,178 @@
+@font-face {
+  font-family: "Space Grotesk";
+  src: url("/fonts/space-grotesk-700.woff2") format("woff2");
+  font-weight: 700;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "DM Sans";
+  src: url("/fonts/dm-sans-variable.woff2") format("woff2");
+  font-weight: 400 600;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "JetBrains Mono";
+  src: url("/fonts/jetbrains-mono-variable.woff2") format("woff2");
+  font-weight: 400 500;
+  font-display: swap;
+}
+
+:root {
+  --bg-base: oklch(0.13 0.01 70);
+  --bg-surface: oklch(0.17 0.01 70);
+  --bg-elevated: oklch(0.22 0.012 70);
+  --bg-recessed: oklch(0.1 0.008 70);
+  --text-primary: oklch(0.93 0.02 85);
+  --text-secondary: oklch(0.72 0.015 85);
+  --text-tertiary: oklch(0.52 0.01 85);
+  --text-inverse: oklch(0.13 0.01 70);
+
+  --heat-normal: oklch(0.78 0.14 85);
+  --heat-elevated: oklch(0.68 0.19 55);
+  --heat-severe: oklch(0.55 0.23 35);
+  --heat-extreme: oklch(0.42 0.26 22);
+  --heat-normal-bg: oklch(0.78 0.14 85 / 0.12);
+  --heat-elevated-bg: oklch(0.68 0.19 55 / 0.15);
+  --heat-severe-bg: oklch(0.55 0.23 35 / 0.18);
+  --heat-extreme-bg: oklch(0.42 0.26 22 / 0.2);
+
+  --recovery: oklch(0.72 0.12 210);
+  --recovery-muted: oklch(0.5 0.08 210);
+  --recovery-bg: oklch(0.72 0.12 210 / 0.12);
+  --diff-unchanged: oklch(0.55 0.02 260);
+  --diff-moved-time: oklch(0.68 0.15 270);
+  --diff-moved-crew: oklch(0.65 0.17 300);
+  --diff-recovery-added: oklch(0.72 0.12 210);
+  --diff-served: oklch(0.68 0.16 150);
+  --diff-deferred: oklch(0.55 0.23 35);
+
+  --solver-optimal: oklch(0.72 0.16 150);
+  --solver-feasible: oklch(0.78 0.14 85);
+  --solver-infeasible: oklch(0.55 0.23 25);
+  --solver-unknown: oklch(0.6 0.04 260);
+  --solver-invalid: oklch(0.5 0.2 25);
+
+  --tl-work: oklch(0.65 0.15 85);
+  --tl-work-heavy: oklch(0.58 0.2 50);
+  --tl-work-moderate: oklch(0.7 0.12 85);
+  --tl-recovery: oklch(0.72 0.12 210);
+  --tl-travel: oklch(0.5 0.06 260);
+  --tl-idle: oklch(0.3 0.02 70);
+  --tl-unavailable: oklch(0.18 0.005 0);
+
+  --crew-asphalt: oklch(0.72 0.13 55);
+  --crew-drainage: oklch(0.7 0.14 210);
+  --crew-general: oklch(0.68 0.12 310);
+  --priority-critical: oklch(0.6 0.22 25);
+  --priority-high: oklch(0.72 0.16 55);
+  --priority-planned: oklch(0.62 0.08 260);
+
+  --border-default: oklch(0.3 0.015 70);
+  --border-strong: oklch(0.42 0.02 70);
+  --border-focus: oklch(0.72 0.12 210);
+  --progress-scrim: oklch(0.08 0.01 70 / 0.62);
+
+  --font-display: "Space Grotesk", system-ui, sans-serif;
+  --font-sans: "DM Sans", system-ui, sans-serif;
+  --font-mono: "JetBrains Mono", ui-monospace, monospace;
+  --text-xs: 0.75rem;
+  --text-sm: 0.833rem;
+  --text-base: 1rem;
+  --text-lg: 1.2rem;
+  --text-xl: 1.44rem;
+  --text-2xl: 1.728rem;
+  --text-3xl: 2.074rem;
+  --text-4xl: 2.488rem;
+  --text-5xl: 2.986rem;
+  --text-6xl: 3.583rem;
+  --text-7xl: 4.3rem;
+  --leading-display: 1.05;
+  --leading-heading: 1.2;
+  --leading-body: 1.65;
+  --leading-data: 1.4;
+  --tracking-tight: -0.02em;
+  --tracking-normal: 0;
+  --tracking-wide: 0.06em;
+  --tracking-mono: -0.03em;
+
+  --space-0: 0;
+  --space-1: 0.25rem;
+  --space-2: 0.5rem;
+  --space-3: 0.75rem;
+  --space-4: 1rem;
+  --space-5: 1.25rem;
+  --space-6: 1.5rem;
+  --space-8: 2rem;
+  --space-10: 2.5rem;
+  --space-12: 3rem;
+  --space-16: 4rem;
+  --space-20: 5rem;
+  --space-24: 6rem;
+  --pad-card: var(--space-4);
+  --pad-panel: var(--space-6);
+  --pad-page: var(--space-8);
+  --gap-items: var(--space-3);
+  --gap-sections: var(--space-12);
+  --gap-chapters: 0;
+
+  --ease-enter: cubic-bezier(0.16, 1, 0.3, 1);
+  --ease-exit: cubic-bezier(0.55, 0, 1, 0.45);
+  --ease-move: cubic-bezier(0.45, 0, 0.55, 1);
+  --ease-spring: cubic-bezier(0.34, 1.56, 0.64, 1);
+  --dur-instant: 100ms;
+  --dur-fast: 150ms;
+  --dur-normal: 250ms;
+  --dur-slow: 400ms;
+  --dur-cinematic: 800ms;
+  --dur-dramatic: 1200ms;
+  --diff-highlight-dur: 600ms;
+  --diff-transform-dur: 800ms;
+  --diff-settle-dur: 400ms;
+  --diff-stagger-offset: 60ms;
+  --chapter-exit-dur: 200ms;
+  --chapter-enter-dur: 400ms;
+  --chapter-stagger: 50ms;
+  --shock-flash-dur: 300ms;
+  --shock-heat-dur: 600ms;
+
+  --bp-tablet: 1024px;
+  --bp-laptop: 1280px;
+  --bp-desktop: 1440px;
+  --slot-count: 40;
+  --slot-width-detail: 2.5rem;
+  --timeline-width: 100%;
+  --crew-row-height: 3.5rem;
+  --crew-row-gap: var(--space-2);
+  --heat-strip-height: 0.375rem;
+  --map-aspect-ratio: 4 / 3;
+  --map-viewbox: 0 0 800 600;
+  --map-node-radius: 8;
+  --map-depot-size: 12;
+  --map-route-width: 2;
+  --map-label-offset: 14;
+  --shadow-sm: 0 1px 2px oklch(0 0 0 / 0.3);
+  --shadow-md: 0 4px 8px oklch(0 0 0 / 0.4);
+  --shadow-lg: 0 8px 24px oklch(0 0 0 / 0.5);
+  --shadow-glow-heat: 0 0 16px oklch(0.55 0.23 35 / 0.4);
+  --shadow-glow-recovery: 0 0 12px oklch(0.72 0.12 210 / 0.3);
+  --shadow-glow-focus: 0 0 0 3px oklch(0.72 0.12 210 / 0.4);
+  --radius-xs: 2px;
+  --radius-sm: 4px;
+  --radius-md: 6px;
+  --radius-lg: 8px;
+  --radius-full: 9999px;
+  --grain-opacity: 0.03;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
