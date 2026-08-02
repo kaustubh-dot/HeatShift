@@ -1,0 +1,1243 @@
+{
+  "diagnostics": {
+    "baseline_policy_conflict_count": 11,
+    "baseline_policy_conflict_job_ids": [
+      "job-bus-route",
+      "job-school-potholes"
+    ],
+    "baseline_policy_conflict_rule_ids": [
+      "hs01-heavy-elevated"
+    ],
+    "heat_shock_policy_conflict_count": null,
+    "policy_constrained_policy_conflict_count": 0
+  },
+  "plan_diff": [
+    {
+      "after": {
+        "crew_id": "crew-general",
+        "end": "08:30",
+        "start": "07:45"
+      },
+      "before": {
+        "crew_id": "crew-general",
+        "end": "09:00",
+        "start": "08:15"
+      },
+      "binding_rule_ids": [
+        "hs01-heavy-normal"
+      ],
+      "change": "moved_time",
+      "explanation_code": "MOVED_TIME",
+      "job_id": "job-blocked-inlet"
+    },
+    {
+      "after": null,
+      "before": {
+        "crew_id": "crew-asphalt",
+        "end": "11:00",
+        "start": "09:00"
+      },
+      "binding_rule_ids": [
+        "hs01-heavy-elevated"
+      ],
+      "change": "deferred",
+      "explanation_code": "POLICY_CAPACITY_CONFLICT",
+      "job_id": "job-bus-route"
+    },
+    {
+      "after": {
+        "crew_id": "crew-drainage",
+        "end": "08:30",
+        "start": "07:30"
+      },
+      "before": null,
+      "binding_rule_ids": [],
+      "change": "served",
+      "explanation_code": "SERVED",
+      "job_id": "job-catch-basin"
+    },
+    {
+      "after": null,
+      "before": null,
+      "binding_rule_ids": [],
+      "change": "unchanged",
+      "explanation_code": "UNCHANGED",
+      "job_id": "job-culvert"
+    },
+    {
+      "after": {
+        "crew_id": "crew-drainage",
+        "end": "10:15",
+        "start": "09:45"
+      },
+      "before": null,
+      "binding_rule_ids": [],
+      "change": "served",
+      "explanation_code": "SERVED",
+      "job_id": "job-drain-inspection"
+    },
+    {
+      "after": {
+        "crew_id": "crew-general",
+        "end": "11:30",
+        "start": "10:15"
+      },
+      "before": null,
+      "binding_rule_ids": [],
+      "change": "served",
+      "explanation_code": "SERVED",
+      "job_id": "job-guardrail"
+    },
+    {
+      "after": null,
+      "before": null,
+      "binding_rule_ids": [],
+      "change": "unchanged",
+      "explanation_code": "UNCHANGED",
+      "job_id": "job-residential"
+    },
+    {
+      "after": {
+        "crew_id": "crew-drainage",
+        "end": "11:15",
+        "start": "10:30"
+      },
+      "before": null,
+      "binding_rule_ids": [],
+      "change": "served",
+      "explanation_code": "SERVED",
+      "job_id": "job-roadside-debris"
+    },
+    {
+      "after": {
+        "crew_id": "crew-asphalt",
+        "end": "08:45",
+        "start": "07:15"
+      },
+      "before": {
+        "crew_id": "crew-asphalt",
+        "end": "08:45",
+        "start": "07:15"
+      },
+      "binding_rule_ids": [],
+      "change": "unchanged",
+      "explanation_code": "UNCHANGED",
+      "job_id": "job-school-potholes"
+    },
+    {
+      "after": null,
+      "before": null,
+      "binding_rule_ids": [],
+      "change": "unchanged",
+      "explanation_code": "UNCHANGED",
+      "job_id": "job-sidewalk"
+    },
+    {
+      "after": {
+        "crew_id": "crew-general",
+        "end": "09:30",
+        "start": "08:45"
+      },
+      "before": {
+        "crew_id": "crew-general",
+        "end": "08:00",
+        "start": "07:15"
+      },
+      "binding_rule_ids": [
+        "hs01-moderate-elevated",
+        "hs01-moderate-normal"
+      ],
+      "change": "moved_time",
+      "explanation_code": "MOVED_TIME",
+      "job_id": "job-stop-sign"
+    },
+    {
+      "after": null,
+      "before": null,
+      "binding_rule_ids": [],
+      "change": "unchanged",
+      "explanation_code": "UNCHANGED",
+      "job_id": "job-utility-cut"
+    }
+  ],
+  "plans": {
+    "heat_shock": null,
+    "policy_constrained": {
+      "jobs": [
+        {
+          "crew_id": "crew-general",
+          "end": "08:30",
+          "job_id": "job-blocked-inlet",
+          "served": true,
+          "start": "07:45",
+          "status_reason_code": null
+        },
+        {
+          "crew_id": null,
+          "end": null,
+          "job_id": "job-bus-route",
+          "served": false,
+          "start": null,
+          "status_reason_code": "NOT_SELECTED"
+        },
+        {
+          "crew_id": "crew-drainage",
+          "end": "08:30",
+          "job_id": "job-catch-basin",
+          "served": true,
+          "start": "07:30",
+          "status_reason_code": null
+        },
+        {
+          "crew_id": null,
+          "end": null,
+          "job_id": "job-culvert",
+          "served": false,
+          "start": null,
+          "status_reason_code": "NOT_SELECTED"
+        },
+        {
+          "crew_id": "crew-drainage",
+          "end": "10:15",
+          "job_id": "job-drain-inspection",
+          "served": true,
+          "start": "09:45",
+          "status_reason_code": null
+        },
+        {
+          "crew_id": "crew-general",
+          "end": "11:30",
+          "job_id": "job-guardrail",
+          "served": true,
+          "start": "10:15",
+          "status_reason_code": null
+        },
+        {
+          "crew_id": null,
+          "end": null,
+          "job_id": "job-residential",
+          "served": false,
+          "start": null,
+          "status_reason_code": "NOT_SELECTED"
+        },
+        {
+          "crew_id": "crew-drainage",
+          "end": "11:15",
+          "job_id": "job-roadside-debris",
+          "served": true,
+          "start": "10:30",
+          "status_reason_code": null
+        },
+        {
+          "crew_id": "crew-asphalt",
+          "end": "08:45",
+          "job_id": "job-school-potholes",
+          "served": true,
+          "start": "07:15",
+          "status_reason_code": null
+        },
+        {
+          "crew_id": null,
+          "end": null,
+          "job_id": "job-sidewalk",
+          "served": false,
+          "start": null,
+          "status_reason_code": "NOT_SELECTED"
+        },
+        {
+          "crew_id": "crew-general",
+          "end": "09:30",
+          "job_id": "job-stop-sign",
+          "served": true,
+          "start": "08:45",
+          "status_reason_code": null
+        },
+        {
+          "crew_id": null,
+          "end": null,
+          "job_id": "job-utility-cut",
+          "served": false,
+          "start": null,
+          "status_reason_code": "NOT_SELECTED"
+        }
+      ],
+      "label": "maximum_service_compliant_plan",
+      "maximum_claim_allowed": true,
+      "metrics": {
+        "active_work_minutes": 390,
+        "critical_jobs_scheduled": 3,
+        "critical_jobs_total": 4,
+        "eligible_recovery_minutes": 0,
+        "mandatory_policy_conflicts": 0,
+        "overtime_minutes": 0,
+        "planned_service_value": 368,
+        "travel_minutes": 160
+      },
+      "route_segments": [
+        {
+          "arrival": "07:15",
+          "crew_id": "crew-asphalt",
+          "departure": "07:03",
+          "from_coordinates": [
+            400,
+            300
+          ],
+          "from_location_id": "depot-central",
+          "to_coordinates": [
+            260,
+            160
+          ],
+          "to_location_id": "loc-school",
+          "travel_minutes": 12
+        },
+        {
+          "arrival": "08:58",
+          "crew_id": "crew-asphalt",
+          "departure": "08:45",
+          "from_coordinates": [
+            260,
+            160
+          ],
+          "from_location_id": "loc-school",
+          "to_coordinates": [
+            400,
+            300
+          ],
+          "to_location_id": "depot-central",
+          "travel_minutes": 13
+        },
+        {
+          "arrival": "07:30",
+          "crew_id": "crew-drainage",
+          "departure": "07:06",
+          "from_coordinates": [
+            400,
+            300
+          ],
+          "from_location_id": "depot-central",
+          "to_coordinates": [
+            700,
+            310
+          ],
+          "to_location_id": "loc-catch-basin",
+          "travel_minutes": 24
+        },
+        {
+          "arrival": "09:45",
+          "crew_id": "crew-drainage",
+          "departure": "09:35",
+          "from_coordinates": [
+            700,
+            310
+          ],
+          "from_location_id": "loc-catch-basin",
+          "to_coordinates": [
+            520,
+            410
+          ],
+          "to_location_id": "loc-drain-inspection",
+          "travel_minutes": 10
+        },
+        {
+          "arrival": "10:30",
+          "crew_id": "crew-drainage",
+          "departure": "10:21",
+          "from_coordinates": [
+            520,
+            410
+          ],
+          "from_location_id": "loc-drain-inspection",
+          "to_coordinates": [
+            330,
+            460
+          ],
+          "to_location_id": "loc-roadside-debris",
+          "travel_minutes": 9
+        },
+        {
+          "arrival": "11:32",
+          "crew_id": "crew-drainage",
+          "departure": "11:15",
+          "from_coordinates": [
+            330,
+            460
+          ],
+          "from_location_id": "loc-roadside-debris",
+          "to_coordinates": [
+            400,
+            300
+          ],
+          "to_location_id": "depot-central",
+          "travel_minutes": 17
+        },
+        {
+          "arrival": "07:45",
+          "crew_id": "crew-general",
+          "departure": "07:25",
+          "from_coordinates": [
+            400,
+            300
+          ],
+          "from_location_id": "depot-central",
+          "to_coordinates": [
+            620,
+            180
+          ],
+          "to_location_id": "loc-blocked-inlet",
+          "travel_minutes": 20
+        },
+        {
+          "arrival": "08:45",
+          "crew_id": "crew-general",
+          "departure": "08:32",
+          "from_coordinates": [
+            620,
+            180
+          ],
+          "from_location_id": "loc-blocked-inlet",
+          "to_coordinates": [
+            470,
+            120
+          ],
+          "to_location_id": "loc-stop-sign",
+          "travel_minutes": 13
+        },
+        {
+          "arrival": "10:15",
+          "crew_id": "crew-general",
+          "departure": "09:57",
+          "from_coordinates": [
+            470,
+            120
+          ],
+          "from_location_id": "loc-stop-sign",
+          "to_coordinates": [
+            100,
+            120
+          ],
+          "to_location_id": "loc-guardrail",
+          "travel_minutes": 18
+        },
+        {
+          "arrival": "11:54",
+          "crew_id": "crew-general",
+          "departure": "11:30",
+          "from_coordinates": [
+            100,
+            120
+          ],
+          "from_location_id": "loc-guardrail",
+          "to_coordinates": [
+            400,
+            300
+          ],
+          "to_location_id": "depot-central",
+          "travel_minutes": 24
+        }
+      ],
+      "stages": [
+        {
+          "best_bound": 3,
+          "name": "critical_service",
+          "objective_value": 3,
+          "status": "OPTIMAL",
+          "wall_time_seconds": 0.46008829202037305
+        },
+        {
+          "best_bound": 368,
+          "name": "planned_service_value",
+          "objective_value": 368,
+          "status": "OPTIMAL",
+          "wall_time_seconds": 0.4710620419937186
+        },
+        {
+          "best_bound": 160,
+          "name": "travel_minutes",
+          "objective_value": 160,
+          "status": "OPTIMAL",
+          "wall_time_seconds": 0.2872263340104837
+        },
+        {
+          "best_bound": 0,
+          "name": "overtime_minutes",
+          "objective_value": 0,
+          "status": "OPTIMAL",
+          "wall_time_seconds": 0.31173633300932124
+        },
+        {
+          "best_bound": 0,
+          "name": "standalone_recovery",
+          "objective_value": 0,
+          "status": "OPTIMAL",
+          "wall_time_seconds": 0.2891574999957811
+        }
+      ],
+      "status": "OPTIMAL",
+      "timeline_segments": [
+        {
+          "crew_id": "crew-asphalt",
+          "end": "07:15",
+          "end_slot": 1,
+          "exertion": null,
+          "job_id": null,
+          "location_id": null,
+          "policy_rule_ids": [],
+          "start": "07:00",
+          "start_slot": 0,
+          "state": "travel"
+        },
+        {
+          "crew_id": "crew-asphalt",
+          "end": "08:45",
+          "end_slot": 7,
+          "exertion": "heavy",
+          "job_id": "job-school-potholes",
+          "location_id": "loc-school",
+          "policy_rule_ids": [
+            "hs01-heavy-normal"
+          ],
+          "start": "07:15",
+          "start_slot": 1,
+          "state": "work"
+        },
+        {
+          "crew_id": "crew-asphalt",
+          "end": "09:00",
+          "end_slot": 8,
+          "exertion": null,
+          "job_id": null,
+          "location_id": null,
+          "policy_rule_ids": [],
+          "start": "08:45",
+          "start_slot": 7,
+          "state": "travel"
+        },
+        {
+          "crew_id": "crew-asphalt",
+          "end": "16:30",
+          "end_slot": 38,
+          "exertion": null,
+          "job_id": null,
+          "location_id": null,
+          "policy_rule_ids": [],
+          "start": "09:00",
+          "start_slot": 8,
+          "state": "idle"
+        },
+        {
+          "crew_id": "crew-asphalt",
+          "end": "17:00",
+          "end_slot": 40,
+          "exertion": null,
+          "job_id": null,
+          "location_id": null,
+          "policy_rule_ids": [],
+          "start": "16:30",
+          "start_slot": 38,
+          "state": "unavailable"
+        },
+        {
+          "crew_id": "crew-drainage",
+          "end": "07:30",
+          "end_slot": 2,
+          "exertion": null,
+          "job_id": null,
+          "location_id": null,
+          "policy_rule_ids": [],
+          "start": "07:00",
+          "start_slot": 0,
+          "state": "travel"
+        },
+        {
+          "crew_id": "crew-drainage",
+          "end": "08:30",
+          "end_slot": 6,
+          "exertion": "heavy",
+          "job_id": "job-catch-basin",
+          "location_id": "loc-catch-basin",
+          "policy_rule_ids": [
+            "hs01-heavy-normal"
+          ],
+          "start": "07:30",
+          "start_slot": 2,
+          "state": "work"
+        },
+        {
+          "crew_id": "crew-drainage",
+          "end": "09:30",
+          "end_slot": 10,
+          "exertion": null,
+          "job_id": null,
+          "location_id": null,
+          "policy_rule_ids": [],
+          "start": "08:30",
+          "start_slot": 6,
+          "state": "idle"
+        },
+        {
+          "crew_id": "crew-drainage",
+          "end": "09:45",
+          "end_slot": 11,
+          "exertion": null,
+          "job_id": null,
+          "location_id": null,
+          "policy_rule_ids": [],
+          "start": "09:30",
+          "start_slot": 10,
+          "state": "travel"
+        },
+        {
+          "crew_id": "crew-drainage",
+          "end": "10:15",
+          "end_slot": 13,
+          "exertion": "moderate",
+          "job_id": "job-drain-inspection",
+          "location_id": "loc-drain-inspection",
+          "policy_rule_ids": [
+            "hs01-moderate-elevated"
+          ],
+          "start": "09:45",
+          "start_slot": 11,
+          "state": "work"
+        },
+        {
+          "crew_id": "crew-drainage",
+          "end": "10:30",
+          "end_slot": 14,
+          "exertion": null,
+          "job_id": null,
+          "location_id": null,
+          "policy_rule_ids": [],
+          "start": "10:15",
+          "start_slot": 13,
+          "state": "travel"
+        },
+        {
+          "crew_id": "crew-drainage",
+          "end": "11:15",
+          "end_slot": 17,
+          "exertion": "moderate",
+          "job_id": "job-roadside-debris",
+          "location_id": "loc-roadside-debris",
+          "policy_rule_ids": [
+            "hs01-moderate-elevated"
+          ],
+          "start": "10:30",
+          "start_slot": 14,
+          "state": "work"
+        },
+        {
+          "crew_id": "crew-drainage",
+          "end": "11:45",
+          "end_slot": 19,
+          "exertion": null,
+          "job_id": null,
+          "location_id": null,
+          "policy_rule_ids": [],
+          "start": "11:15",
+          "start_slot": 17,
+          "state": "travel"
+        },
+        {
+          "crew_id": "crew-drainage",
+          "end": "16:30",
+          "end_slot": 38,
+          "exertion": null,
+          "job_id": null,
+          "location_id": null,
+          "policy_rule_ids": [],
+          "start": "11:45",
+          "start_slot": 19,
+          "state": "idle"
+        },
+        {
+          "crew_id": "crew-drainage",
+          "end": "17:00",
+          "end_slot": 40,
+          "exertion": null,
+          "job_id": null,
+          "location_id": null,
+          "policy_rule_ids": [],
+          "start": "16:30",
+          "start_slot": 38,
+          "state": "unavailable"
+        },
+        {
+          "crew_id": "crew-general",
+          "end": "07:15",
+          "end_slot": 1,
+          "exertion": null,
+          "job_id": null,
+          "location_id": null,
+          "policy_rule_ids": [],
+          "start": "07:00",
+          "start_slot": 0,
+          "state": "idle"
+        },
+        {
+          "crew_id": "crew-general",
+          "end": "07:45",
+          "end_slot": 3,
+          "exertion": null,
+          "job_id": null,
+          "location_id": null,
+          "policy_rule_ids": [],
+          "start": "07:15",
+          "start_slot": 1,
+          "state": "travel"
+        },
+        {
+          "crew_id": "crew-general",
+          "end": "08:30",
+          "end_slot": 6,
+          "exertion": "heavy",
+          "job_id": "job-blocked-inlet",
+          "location_id": "loc-blocked-inlet",
+          "policy_rule_ids": [
+            "hs01-heavy-normal"
+          ],
+          "start": "07:45",
+          "start_slot": 3,
+          "state": "work"
+        },
+        {
+          "crew_id": "crew-general",
+          "end": "08:45",
+          "end_slot": 7,
+          "exertion": null,
+          "job_id": null,
+          "location_id": null,
+          "policy_rule_ids": [],
+          "start": "08:30",
+          "start_slot": 6,
+          "state": "travel"
+        },
+        {
+          "crew_id": "crew-general",
+          "end": "09:00",
+          "end_slot": 8,
+          "exertion": "moderate",
+          "job_id": "job-stop-sign",
+          "location_id": "loc-stop-sign",
+          "policy_rule_ids": [
+            "hs01-moderate-normal"
+          ],
+          "start": "08:45",
+          "start_slot": 7,
+          "state": "work"
+        },
+        {
+          "crew_id": "crew-general",
+          "end": "09:30",
+          "end_slot": 10,
+          "exertion": "moderate",
+          "job_id": "job-stop-sign",
+          "location_id": "loc-stop-sign",
+          "policy_rule_ids": [
+            "hs01-moderate-elevated"
+          ],
+          "start": "09:00",
+          "start_slot": 8,
+          "state": "work"
+        },
+        {
+          "crew_id": "crew-general",
+          "end": "09:45",
+          "end_slot": 11,
+          "exertion": null,
+          "job_id": null,
+          "location_id": null,
+          "policy_rule_ids": [],
+          "start": "09:30",
+          "start_slot": 10,
+          "state": "idle"
+        },
+        {
+          "crew_id": "crew-general",
+          "end": "10:15",
+          "end_slot": 13,
+          "exertion": null,
+          "job_id": null,
+          "location_id": null,
+          "policy_rule_ids": [],
+          "start": "09:45",
+          "start_slot": 11,
+          "state": "travel"
+        },
+        {
+          "crew_id": "crew-general",
+          "end": "11:30",
+          "end_slot": 18,
+          "exertion": "moderate",
+          "job_id": "job-guardrail",
+          "location_id": "loc-guardrail",
+          "policy_rule_ids": [
+            "hs01-moderate-elevated"
+          ],
+          "start": "10:15",
+          "start_slot": 13,
+          "state": "work"
+        },
+        {
+          "crew_id": "crew-general",
+          "end": "12:00",
+          "end_slot": 20,
+          "exertion": null,
+          "job_id": null,
+          "location_id": null,
+          "policy_rule_ids": [],
+          "start": "11:30",
+          "start_slot": 18,
+          "state": "travel"
+        },
+        {
+          "crew_id": "crew-general",
+          "end": "16:30",
+          "end_slot": 38,
+          "exertion": null,
+          "job_id": null,
+          "location_id": null,
+          "policy_rule_ids": [],
+          "start": "12:00",
+          "start_slot": 20,
+          "state": "idle"
+        },
+        {
+          "crew_id": "crew-general",
+          "end": "17:00",
+          "end_slot": 40,
+          "exertion": null,
+          "job_id": null,
+          "location_id": null,
+          "policy_rule_ids": [],
+          "start": "16:30",
+          "start_slot": 38,
+          "state": "unavailable"
+        }
+      ],
+      "wall_time_seconds": 1.8192705010296777
+    },
+    "service_first": {
+      "jobs": [
+        {
+          "crew_id": "crew-general",
+          "end": "09:00",
+          "job_id": "job-blocked-inlet",
+          "served": true,
+          "start": "08:15",
+          "status_reason_code": null
+        },
+        {
+          "crew_id": "crew-asphalt",
+          "end": "11:00",
+          "job_id": "job-bus-route",
+          "served": true,
+          "start": "09:00",
+          "status_reason_code": null
+        },
+        {
+          "crew_id": null,
+          "end": null,
+          "job_id": "job-catch-basin",
+          "served": false,
+          "start": null,
+          "status_reason_code": "NOT_SELECTED"
+        },
+        {
+          "crew_id": null,
+          "end": null,
+          "job_id": "job-culvert",
+          "served": false,
+          "start": null,
+          "status_reason_code": "NOT_SELECTED"
+        },
+        {
+          "crew_id": null,
+          "end": null,
+          "job_id": "job-drain-inspection",
+          "served": false,
+          "start": null,
+          "status_reason_code": "NOT_SELECTED"
+        },
+        {
+          "crew_id": null,
+          "end": null,
+          "job_id": "job-guardrail",
+          "served": false,
+          "start": null,
+          "status_reason_code": "NOT_SELECTED"
+        },
+        {
+          "crew_id": null,
+          "end": null,
+          "job_id": "job-residential",
+          "served": false,
+          "start": null,
+          "status_reason_code": "NOT_SELECTED"
+        },
+        {
+          "crew_id": null,
+          "end": null,
+          "job_id": "job-roadside-debris",
+          "served": false,
+          "start": null,
+          "status_reason_code": "NOT_SELECTED"
+        },
+        {
+          "crew_id": "crew-asphalt",
+          "end": "08:45",
+          "job_id": "job-school-potholes",
+          "served": true,
+          "start": "07:15",
+          "status_reason_code": null
+        },
+        {
+          "crew_id": null,
+          "end": null,
+          "job_id": "job-sidewalk",
+          "served": false,
+          "start": null,
+          "status_reason_code": "NOT_SELECTED"
+        },
+        {
+          "crew_id": "crew-general",
+          "end": "08:00",
+          "job_id": "job-stop-sign",
+          "served": true,
+          "start": "07:15",
+          "status_reason_code": null
+        },
+        {
+          "crew_id": null,
+          "end": null,
+          "job_id": "job-utility-cut",
+          "served": false,
+          "start": null,
+          "status_reason_code": "NOT_SELECTED"
+        }
+      ],
+      "label": "service_first_counterfactual",
+      "maximum_claim_allowed": false,
+      "metrics": {
+        "active_work_minutes": 300,
+        "critical_jobs_scheduled": 4,
+        "critical_jobs_total": 4,
+        "eligible_recovery_minutes": 0,
+        "mandatory_policy_conflicts": 11,
+        "overtime_minutes": 0,
+        "planned_service_value": 400,
+        "travel_minutes": 82
+      },
+      "route_segments": [
+        {
+          "arrival": "07:15",
+          "crew_id": "crew-asphalt",
+          "departure": "07:03",
+          "from_coordinates": [
+            400,
+            300
+          ],
+          "from_location_id": "depot-central",
+          "to_coordinates": [
+            260,
+            160
+          ],
+          "to_location_id": "loc-school",
+          "travel_minutes": 12
+        },
+        {
+          "arrival": "09:00",
+          "crew_id": "crew-asphalt",
+          "departure": "08:49",
+          "from_coordinates": [
+            260,
+            160
+          ],
+          "from_location_id": "loc-school",
+          "to_coordinates": [
+            150,
+            260
+          ],
+          "to_location_id": "loc-bus-route",
+          "travel_minutes": 11
+        },
+        {
+          "arrival": "11:17",
+          "crew_id": "crew-asphalt",
+          "departure": "11:00",
+          "from_coordinates": [
+            150,
+            260
+          ],
+          "from_location_id": "loc-bus-route",
+          "to_coordinates": [
+            400,
+            300
+          ],
+          "to_location_id": "depot-central",
+          "travel_minutes": 17
+        },
+        {
+          "arrival": "07:15",
+          "crew_id": "crew-general",
+          "departure": "07:04",
+          "from_coordinates": [
+            400,
+            300
+          ],
+          "from_location_id": "depot-central",
+          "to_coordinates": [
+            470,
+            120
+          ],
+          "to_location_id": "loc-stop-sign",
+          "travel_minutes": 11
+        },
+        {
+          "arrival": "08:15",
+          "crew_id": "crew-general",
+          "departure": "08:03",
+          "from_coordinates": [
+            470,
+            120
+          ],
+          "from_location_id": "loc-stop-sign",
+          "to_coordinates": [
+            620,
+            180
+          ],
+          "to_location_id": "loc-blocked-inlet",
+          "travel_minutes": 12
+        },
+        {
+          "arrival": "09:19",
+          "crew_id": "crew-general",
+          "departure": "09:00",
+          "from_coordinates": [
+            620,
+            180
+          ],
+          "from_location_id": "loc-blocked-inlet",
+          "to_coordinates": [
+            400,
+            300
+          ],
+          "to_location_id": "depot-central",
+          "travel_minutes": 19
+        }
+      ],
+      "stages": [
+        {
+          "best_bound": 13,
+          "name": "critical_service",
+          "objective_value": 4,
+          "status": "FEASIBLE",
+          "wall_time_seconds": 2.5015816249942873
+        }
+      ],
+      "status": "FEASIBLE",
+      "timeline_segments": [
+        {
+          "crew_id": "crew-asphalt",
+          "end": "07:15",
+          "end_slot": 1,
+          "exertion": null,
+          "job_id": null,
+          "location_id": null,
+          "policy_rule_ids": [],
+          "start": "07:00",
+          "start_slot": 0,
+          "state": "travel"
+        },
+        {
+          "crew_id": "crew-asphalt",
+          "end": "08:45",
+          "end_slot": 7,
+          "exertion": "heavy",
+          "job_id": "job-school-potholes",
+          "location_id": "loc-school",
+          "policy_rule_ids": [],
+          "start": "07:15",
+          "start_slot": 1,
+          "state": "work"
+        },
+        {
+          "crew_id": "crew-asphalt",
+          "end": "09:00",
+          "end_slot": 8,
+          "exertion": null,
+          "job_id": null,
+          "location_id": null,
+          "policy_rule_ids": [],
+          "start": "08:45",
+          "start_slot": 7,
+          "state": "travel"
+        },
+        {
+          "crew_id": "crew-asphalt",
+          "end": "11:00",
+          "end_slot": 16,
+          "exertion": "heavy",
+          "job_id": "job-bus-route",
+          "location_id": "loc-bus-route",
+          "policy_rule_ids": [],
+          "start": "09:00",
+          "start_slot": 8,
+          "state": "work"
+        },
+        {
+          "crew_id": "crew-asphalt",
+          "end": "11:30",
+          "end_slot": 18,
+          "exertion": null,
+          "job_id": null,
+          "location_id": null,
+          "policy_rule_ids": [],
+          "start": "11:00",
+          "start_slot": 16,
+          "state": "travel"
+        },
+        {
+          "crew_id": "crew-asphalt",
+          "end": "16:30",
+          "end_slot": 38,
+          "exertion": null,
+          "job_id": null,
+          "location_id": null,
+          "policy_rule_ids": [],
+          "start": "11:30",
+          "start_slot": 18,
+          "state": "idle"
+        },
+        {
+          "crew_id": "crew-asphalt",
+          "end": "17:00",
+          "end_slot": 40,
+          "exertion": null,
+          "job_id": null,
+          "location_id": null,
+          "policy_rule_ids": [],
+          "start": "16:30",
+          "start_slot": 38,
+          "state": "unavailable"
+        },
+        {
+          "crew_id": "crew-drainage",
+          "end": "16:30",
+          "end_slot": 38,
+          "exertion": null,
+          "job_id": null,
+          "location_id": null,
+          "policy_rule_ids": [],
+          "start": "07:00",
+          "start_slot": 0,
+          "state": "idle"
+        },
+        {
+          "crew_id": "crew-drainage",
+          "end": "17:00",
+          "end_slot": 40,
+          "exertion": null,
+          "job_id": null,
+          "location_id": null,
+          "policy_rule_ids": [],
+          "start": "16:30",
+          "start_slot": 38,
+          "state": "unavailable"
+        },
+        {
+          "crew_id": "crew-general",
+          "end": "07:15",
+          "end_slot": 1,
+          "exertion": null,
+          "job_id": null,
+          "location_id": null,
+          "policy_rule_ids": [],
+          "start": "07:00",
+          "start_slot": 0,
+          "state": "travel"
+        },
+        {
+          "crew_id": "crew-general",
+          "end": "08:00",
+          "end_slot": 4,
+          "exertion": "moderate",
+          "job_id": "job-stop-sign",
+          "location_id": "loc-stop-sign",
+          "policy_rule_ids": [],
+          "start": "07:15",
+          "start_slot": 1,
+          "state": "work"
+        },
+        {
+          "crew_id": "crew-general",
+          "end": "08:15",
+          "end_slot": 5,
+          "exertion": null,
+          "job_id": null,
+          "location_id": null,
+          "policy_rule_ids": [],
+          "start": "08:00",
+          "start_slot": 4,
+          "state": "travel"
+        },
+        {
+          "crew_id": "crew-general",
+          "end": "09:00",
+          "end_slot": 8,
+          "exertion": "heavy",
+          "job_id": "job-blocked-inlet",
+          "location_id": "loc-blocked-inlet",
+          "policy_rule_ids": [],
+          "start": "08:15",
+          "start_slot": 5,
+          "state": "work"
+        },
+        {
+          "crew_id": "crew-general",
+          "end": "09:30",
+          "end_slot": 10,
+          "exertion": null,
+          "job_id": null,
+          "location_id": null,
+          "policy_rule_ids": [],
+          "start": "09:00",
+          "start_slot": 8,
+          "state": "travel"
+        },
+        {
+          "crew_id": "crew-general",
+          "end": "16:30",
+          "end_slot": 38,
+          "exertion": null,
+          "job_id": null,
+          "location_id": null,
+          "policy_rule_ids": [],
+          "start": "09:30",
+          "start_slot": 10,
+          "state": "idle"
+        },
+        {
+          "crew_id": "crew-general",
+          "end": "17:00",
+          "end_slot": 40,
+          "exertion": null,
+          "job_id": null,
+          "location_id": null,
+          "policy_rule_ids": [],
+          "start": "16:30",
+          "start_slot": 38,
+          "state": "unavailable"
+        }
+      ],
+      "wall_time_seconds": 2.5015816249942873
+    }
+  },
+  "scenario": {
+    "heat_adjustment_c": 0,
+    "id": "demo-city-day-01",
+    "policy_disclaimer": "Synthetic demonstration policy. Not medical, legal, or workplace-safety guidance. Organizations must supply and approve their own policy.",
+    "policy_id": "demo-city-hs-01",
+    "slot_minutes": 15
+  }
+}

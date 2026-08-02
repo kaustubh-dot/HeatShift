@@ -1,0 +1,68 @@
+{
+  "binding_rule_ids": [
+    "hs01-heavy-elevated",
+    "hs01-heavy-normal",
+    "hs01-heavy-severe"
+  ],
+  "classification": "proven_infeasible",
+  "displaced_job_ids": [],
+  "job_id": "job-bus-route",
+  "objective_delta": {
+    "critical_service": 0,
+    "overtime_minutes": 0,
+    "planned_service_value": 0,
+    "travel_minutes": 0
+  },
+  "proof_status": "INFEASIBLE",
+  "retained_commitments": [
+    "all-mandatory-rules",
+    "original-critical-service-count",
+    "forced-job:job-bus-route"
+  ],
+  "tested_interventions": [
+    {
+      "objective_delta": {
+        "critical_service": 0,
+        "overtime_minutes": 0,
+        "planned_service_value": 0,
+        "travel_minutes": 0
+      },
+      "status": "INFEASIBLE",
+      "type": "deadline_extension",
+      "value_minutes": 15
+    },
+    {
+      "objective_delta": {
+        "critical_service": 0,
+        "overtime_minutes": 0,
+        "planned_service_value": 0,
+        "travel_minutes": 0
+      },
+      "status": "INFEASIBLE",
+      "type": "deadline_extension",
+      "value_minutes": 30
+    },
+    {
+      "objective_delta": {
+        "critical_service": 0,
+        "overtime_minutes": 0,
+        "planned_service_value": 0,
+        "travel_minutes": 0
+      },
+      "status": "INFEASIBLE",
+      "type": "overtime_allowance",
+      "value_minutes": 15
+    },
+    {
+      "objective_delta": {
+        "critical_service": 0,
+        "overtime_minutes": 0,
+        "planned_service_value": 0,
+        "travel_minutes": 0
+      },
+      "status": "INFEASIBLE",
+      "type": "overtime_allowance",
+      "value_minutes": 30
+    }
+  ]
+}

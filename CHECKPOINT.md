@@ -2,7 +2,7 @@
 
 **Last updated:** 2026-08-03
 **Phase:** Planning frozen; backend implementation underway
-**Overall status:** B14 complete; B15 active
+**Overall status:** B15 complete; B16 active
 
 ## Locked product
 
@@ -45,33 +45,34 @@ The final planning pass made previously implicit behavior explicit:
 - Product and engineering specifications exist under `docs/`.
 - `docs/DESIGN.md` and `docs/FRONTEND_PLAN.md` have been reviewed for judge clarity, accessibility, contract fidelity, offline presentation, and deadline feasibility.
 - `docs/IMPLEMENTATION_MASTER_PLAN.md` and `docs/BACKEND_IMPLEMENTATION_PLAN.md` define atomic, gated tasks for low-context implementation agents.
-- Canonical models, pure time-grid/heat/matrix helpers, deterministic scenario/policy fixtures, solver-free validation, deterministic execution patterns, CP-SAT model construction, staged proof capture, timeline/route extraction, metrics, independent policy reconciliation, service orchestration, evidence-backed plan differences, forced-inclusion diagnosis, bounded interventions, +2°C heat shock, and the declared scenario-tuning evidence now exist; API/frontend work has not started.
+- Canonical models, pure time-grid/heat/matrix helpers, deterministic scenario/policy fixtures, solver-free validation, deterministic execution patterns, CP-SAT model construction, staged proof capture, timeline/route extraction, metrics, independent policy reconciliation, service orchestration, evidence-backed plan differences, forced-inclusion diagnosis, bounded interventions, +2°C heat shock, declared scenario-tuning evidence, and deterministic saved solver evidence now exist; API/frontend work has not started.
 - The root `.venv` uses Python 3.12.13 and contains the verified runtime and test dependencies.
 - The implementation branch is `agent/lock-planning-docs`.
 
 ## Active implementation checkpoint
 
-- Last completed task: B14
+- Last completed task: B15
 - Verification commands:
-  - `.venv/bin/python -m pytest tests/integration/test_perturbed_scenario.py -q`
+  - `.venv/bin/python -m backend.heatshift.cli validate`
+  - `.venv/bin/python -m backend.heatshift.cli solve`
+  - `.venv/bin/python -m backend.heatshift.cli diagnose`
+  - `.venv/bin/python -m backend.heatshift.cli solve-heat-shock`
+  - `.venv/bin/python -m backend.heatshift.cli generate-saved`
+  - `.venv/bin/python -m pytest tests/integration/test_determinism.py -q`
   - `.venv/bin/python -m pytest tests/unit tests/integration -q`
   - `.venv/bin/python -m compileall -q backend/heatshift tests`
   - `git diff --check`
-- `.venv/bin/python` exact structural comparison of `scenario.json` and `perturbed-scenario.json`
-- one `.venv/bin/python` diagnostic command printing objective/status vectors, served/deferred IDs, conflicts/rules, route order/travel, recovery minutes, base diff types, diagnosis, and +2°C changes
-- Results: `1 passed in 5.74s`; `82 passed in 5.90s`; compileall passed; `git diff --check` passed; the perturbation comparison reported exactly `jobs.7.active_minutes: 30->45` and `change_count=1`.
-- B14 fixture tuning: one cohesive permitted input adjustment changed source heat slots 2–4 (`07:30`–`08:00`) from 30°C to 29°C. No policy, solver, objective, eligibility, lock, or output semantics changed. The reason and the before/after record are in [backend/heatshift/fixtures/TUNING.md](backend/heatshift/fixtures/TUNING.md).
-- B14 primary diagnostic result: service-first `FEASIBLE`, 4 critical jobs, service value `400`, 11 conflicts, 82 travel minutes; policy-constrained `OPTIMAL`, 3 critical jobs, service value `368`, zero conflicts, 160 travel minutes; base diff includes `moved_time`, `deferred`, and `served`; `job-bus-route` diagnosis is `proven_infeasible` / `INFEASIBLE`.
-- B14 heat-shock result: +2°C `heat_shock` is `OPTIMAL`, zero conflicts, 60 eligible recovery minutes, and seven decision changes including `recovery_added` for `job-catch-basin` and `job-school-potholes`.
-- Perturbation result: `perturbed-scenario.json` validates with zero issues and solves with a reportable zero-conflict policy-constrained plan; `tests/integration/test_perturbed_scenario.py` checks this from computed model output rather than canned demo values.
-- B13 integration evidence: exact source temperatures `[30, 36, 40]` became `[32, 38, 42]` with bands `[elevated, severe, extreme]`; the original heat series remained unchanged. A +2°C solve preserved the unadjusted policy plan fields and compared that plan to `heat_shock` in `plan_diff`.
-- Files created/changed: `backend/heatshift/fixtures/scenario.json`, `backend/heatshift/fixtures/perturbed-scenario.json`, `backend/heatshift/fixtures/TUNING.md`, `tests/integration/test_perturbed_scenario.py`, `TODO.md`, `CHECKPOINT.md`
-- Known limitation: solver wall times and incumbent-vs-optimal status can vary with the configured time budget; B15 will normalize documented runtime fields for deterministic saved-output comparison. API routes and frontend work remain later packets.
-- Next task: B15 — Deterministic saved evidence
+- Results: all five CLI commands exited `0`; `validate` returned `valid: true` with zero issues; `tests/integration/test_determinism.py` reported `1 passed in 34.22s`; the full suite reported `83 passed in 39.85s`; compileall passed; `git diff --check` passed.
+- B15 implementation: `backend/heatshift/cli.py` now exposes validation, base solve, designated `job-bus-route` diagnosis, +2°C solve, and `generate-saved` commands. The generator writes contract-valid base, heat-shock, diagnosis, manifest, and self-contained bundle artifacts under [backend/heatshift/fixtures/saved](backend/heatshift/fixtures/saved).
+- B15 manifest evidence: fixture `demo-v1`; Python `3.12.13`; OR-Tools `9.15.6755`; solver seed `7`; one search worker; stable scenario/policy input hashes; and canonical output hashes for `base-solve.json`, `heat-shock.json`, and `diagnosis-job-bus-route.json`. Only `wall_time_seconds` is excluded from output hashes; `generated_at` remains explicit run metadata.
+- B15 bundle contract: `demo-bundle.json` contains exactly `fixture_version`, `generated_at`, `scenario`, `policy`, `base_solve`, `heat_shock_solve`, `diagnoses`, and `manifest`; the regression test validates each embedded response with the canonical Pydantic models.
+- B14 fixture tuning: one cohesive permitted input adjustment changed source heat slots 2–4 (`07:30`–`08:00`) from 30°C to 29°C. No policy, solver, objective, eligibility, lock, or output semantics changed. The reason and before/after record remain in [backend/heatshift/fixtures/TUNING.md](backend/heatshift/fixtures/TUNING.md).
+- Known limitation: solver wall times and the manifest `generated_at` timestamp vary between runs; canonical hashes intentionally exclude only the documented runtime field and the manifest timestamp is run metadata. API routes and frontend work remain later packets.
+- Next task: B16 — FastAPI endpoints and error mapping
 
 ## Immediate next action
 
-Execute **B15 only** from [docs/IMPLEMENTATION_MASTER_PLAN.md](docs/IMPLEMENTATION_MASTER_PLAN.md) and [docs/BACKEND_IMPLEMENTATION_PLAN.md](docs/BACKEND_IMPLEMENTATION_PLAN.md). Stop after its verification and checkpoint handoff.
+Execute **B16 only** from [docs/IMPLEMENTATION_MASTER_PLAN.md](docs/IMPLEMENTATION_MASTER_PLAN.md) and [docs/BACKEND_IMPLEMENTATION_PLAN.md](docs/BACKEND_IMPLEMENTATION_PLAN.md). Stop after its verification and checkpoint handoff.
 
 Do not begin frontend polish until the solver release gates in [docs/TEST_PLAN.md](docs/TEST_PLAN.md) pass.
 

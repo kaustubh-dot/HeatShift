@@ -1,0 +1,22 @@
+{
+  "canonical_hash_excluded_fields": [
+    "wall_time_seconds"
+  ],
+  "canonical_hash_format": "sorted JSON with compact separators and a trailing newline",
+  "designated_diagnosis_job_id": "job-bus-route",
+  "fixture_version": "demo-v1",
+  "generated_at": "2026-08-02T19:01:48Z",
+  "input_hashes": {
+    "policy.json": "316914a5b9a3580d75881992def6eef05d7226e4cba517caf6e52de1b10cdc77",
+    "scenario.json": "1ed426b915ecb762b12fa6bfb9542b92ca0a10a438af8a004c8d460f54ae2b8c"
+  },
+  "ortools_version": "9.15.6755",
+  "output_hashes": {
+    "base-solve.json": "f2fc17217539af49025a62aca91953eb5e8c87e7b3eff2cbd2af68f249c66cba",
+    "diagnosis-job-bus-route.json": "de9526bf89fc5ec31d622db2b05db0b6fb3a893cbe2b643572bf017087859420",
+    "heat-shock.json": "378baffd2ad1a76a1688268c4a89950dbb6a4d2127f8124bbe25f43942cb2615"
+  },
+  "python_version": "3.12.13",
+  "solver_seed": 7,
+  "solver_workers": 1
+}
