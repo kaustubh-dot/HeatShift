@@ -122,6 +122,97 @@
   font-size: var(--text-xs);
 }
 
+.service-map-panel {
+  display: grid;
+  gap: var(--space-4);
+  min-width: 0;
+  padding: var(--space-6);
+  border: 1px solid var(--border-default);
+  border-radius: var(--radius-md);
+  background: var(--bg-surface);
+  box-shadow: var(--shadow-md);
+}
+
+.service-map-frame {
+  overflow: hidden;
+  aspect-ratio: var(--map-aspect-ratio);
+  border: 1px solid var(--border-default);
+  border-radius: var(--radius-sm);
+  background: var(--bg-recessed);
+}
+
+.service-map {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
+.service-map__background {
+  fill: var(--bg-recessed);
+}
+
+.service-map__route {
+  stroke-width: var(--map-route-width);
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  opacity: 0.7;
+  vector-effect: non-scaling-stroke;
+}
+
+.service-map__depot {
+  fill: var(--text-primary);
+  stroke: var(--bg-recessed);
+  stroke-width: 3;
+  vector-effect: non-scaling-stroke;
+}
+
+.service-map__depot-label,
+.service-map__job-label {
+  fill: var(--text-tertiary);
+  font-family: var(--font-mono);
+  font-size: 12px;
+  pointer-events: none;
+}
+
+.service-map__job-node {
+  cursor: pointer;
+  outline: none;
+}
+
+.service-map__job {
+  fill: var(--text-secondary);
+  stroke: var(--bg-recessed);
+  stroke-width: 2;
+  vector-effect: non-scaling-stroke;
+}
+
+.service-map__selection-ring {
+  fill: none;
+  stroke: transparent;
+  stroke-width: 2;
+  vector-effect: non-scaling-stroke;
+}
+
+.service-map__job-node:hover .service-map__job,
+.service-map__job-node:focus-visible .service-map__job {
+  fill: var(--text-primary);
+}
+
+.service-map__job-node.is-selected .service-map__selection-ring {
+  stroke: var(--border-focus);
+  filter: drop-shadow(0 0 5px var(--border-focus));
+}
+
+.service-map__job-node.is-selected .service-map__job-label {
+  fill: var(--text-primary);
+}
+
+.service-map__caption {
+  margin: 0;
+  color: var(--text-tertiary);
+  font-size: var(--text-xs);
+}
+
 .plan-diff-section {
   display: grid;
   gap: var(--space-4);
@@ -525,6 +616,10 @@
   }
 
   .timeline-panel {
+    padding: var(--space-4);
+  }
+
+  .service-map-panel {
     padding: var(--space-4);
   }
 

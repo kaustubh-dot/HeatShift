@@ -1,4 +1,5 @@
 import { Timeline } from "./Timeline";
+import { ServiceMap } from "./ServiceMap";
 import { MetricsBar, PlanDiffCard, PlanProof } from "./primitives";
 import type { Plan, PlanDiff, Scenario } from "../types";
 
@@ -25,6 +26,14 @@ export function PlanChapter({ scenario, serviceFirstPlan, policyPlan, planDiff, 
         <PlanProof plan={policyPlan} />
       </div>
       <MetricsBar current={policyPlan.metrics} baseline={serviceFirstPlan.metrics} />
+      <ServiceMap
+        crews={scenario.crews}
+        jobs={scenario.jobs}
+        locations={scenario.locations}
+        plan={policyPlan}
+        selectedJobId={selectedJobId}
+        onJobClick={onJobClick}
+      />
       <Timeline
         crews={scenario.crews}
         jobs={scenario.jobs}

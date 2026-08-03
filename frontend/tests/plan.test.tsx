@@ -102,7 +102,7 @@ describe("plan evidence chapter", () => {
     );
 
     expect(
-      screen.getByRole("button", { name: /School-zone pothole cluster \(job-school-potholes\)/ }),
+      screen.getByRole("button", { name: /School-zone pothole cluster \(job-school-potholes\): Unchanged/ }),
     ).toHaveAttribute("aria-expanded", "true");
     expect(screen.getByRole("complementary", { name: "Selected timeline detail" })).toHaveTextContent(
       "School-zone pothole cluster",
