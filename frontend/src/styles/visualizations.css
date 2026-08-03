@@ -19,6 +19,245 @@
   font-size: var(--text-lg);
 }
 
+.plan-proof-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: var(--space-3);
+}
+
+.plan-proof {
+  min-width: 0;
+  padding: var(--space-4);
+  border: 1px solid var(--border-default);
+  border-radius: var(--radius-sm);
+  background: var(--bg-surface);
+}
+
+.plan-proof__header {
+  display: flex;
+  align-items: start;
+  justify-content: space-between;
+  gap: var(--space-3);
+}
+
+.plan-proof__header h2 {
+  max-width: 30ch;
+  margin: var(--space-1) 0 0;
+  font-size: var(--text-lg);
+}
+
+.plan-proof__claim {
+  min-height: 2.5rem;
+  margin: var(--space-3) 0;
+  color: var(--text-secondary);
+  font-size: var(--text-sm);
+  line-height: var(--leading-data);
+}
+
+.stage-list {
+  display: grid;
+  gap: var(--space-2);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.stage-list li {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto auto;
+  gap: var(--space-2);
+  align-items: baseline;
+  padding-top: var(--space-2);
+  border-top: 1px solid var(--border-default);
+  color: var(--text-tertiary);
+  font-family: var(--font-mono);
+  font-size: var(--text-xs);
+}
+
+.stage-list li strong {
+  color: var(--solver-optimal);
+  font-weight: 500;
+}
+
+.stage-list li span:last-child {
+  color: var(--text-secondary);
+}
+
+.metrics-bar {
+  display: grid;
+  grid-template-columns: repeat(7, minmax(0, 1fr));
+  overflow: hidden;
+  border: 1px solid var(--border-default);
+  border-radius: var(--radius-sm);
+  background: var(--bg-surface);
+}
+
+.metric-tile {
+  min-width: 0;
+  padding: var(--space-4);
+  border-right: 1px solid var(--border-default);
+}
+
+.metric-tile:last-child {
+  border-right: 0;
+}
+
+.metric-tile__value {
+  margin: var(--space-2) 0 0;
+  color: var(--text-primary);
+  font-size: var(--text-2xl);
+  line-height: 1;
+}
+
+.metric-tile__unit {
+  min-height: 1.2rem;
+  margin: var(--space-1) 0 0;
+  color: var(--text-tertiary);
+  font-size: var(--text-xs);
+}
+
+.metric-tile__delta {
+  margin: var(--space-2) 0 0;
+  color: var(--text-secondary);
+  font-size: var(--text-xs);
+}
+
+.plan-diff-section {
+  display: grid;
+  gap: var(--space-4);
+}
+
+.plan-diff-section .section-heading-row {
+  margin-bottom: 0;
+}
+
+.plan-diff-section h2 {
+  margin: var(--space-1) 0 0;
+  font-size: var(--text-2xl);
+}
+
+.plan-diff-list {
+  display: grid;
+  gap: var(--space-2);
+}
+
+.plan-diff-card {
+  display: grid;
+  grid-template-columns: minmax(10rem, 1fr) auto minmax(18rem, 1.5fr) minmax(12rem, 1fr);
+  gap: var(--space-3);
+  align-items: center;
+  width: 100%;
+  padding: var(--space-3) var(--space-4);
+  border: 1px solid var(--border-default);
+  border-radius: var(--radius-sm);
+  background: var(--bg-surface);
+  color: var(--text-primary);
+  cursor: pointer;
+  text-align: left;
+  transition:
+    border-color var(--dur-fast) var(--ease-enter),
+    background var(--dur-fast) var(--ease-enter),
+    opacity var(--dur-fast) var(--ease-enter);
+}
+
+.plan-diff-card:hover,
+.plan-diff-card.is-selected {
+  border-color: var(--border-focus);
+  background: var(--bg-elevated);
+}
+
+.plan-diff-card__title,
+.plan-diff-card__states,
+.plan-diff-card__evidence {
+  display: grid;
+  min-width: 0;
+  gap: var(--space-1);
+}
+
+.plan-diff-card__title strong {
+  overflow: hidden;
+  font-family: var(--font-display);
+  font-size: var(--text-sm);
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.plan-diff-card__id,
+.plan-diff-card__evidence,
+.plan-diff-card__states {
+  color: var(--text-tertiary);
+  font-family: var(--font-mono);
+  font-size: var(--text-xs);
+}
+
+.plan-diff-card__states {
+  grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr);
+  align-items: center;
+  gap: var(--space-2);
+}
+
+.plan-diff-card__states span:not(:nth-child(2)) {
+  display: grid;
+  min-width: 0;
+}
+
+.plan-diff-card__states small {
+  color: var(--text-tertiary);
+  font-family: var(--font-sans);
+  font-size: 0.625rem;
+  letter-spacing: var(--tracking-wide);
+  text-transform: uppercase;
+}
+
+.plan-diff-card__evidence code {
+  overflow: hidden;
+  color: var(--text-secondary);
+  font-family: var(--font-mono);
+  font-size: 0.625rem;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.plan-diff-badge {
+  display: inline-flex;
+  min-width: 7rem;
+  justify-content: center;
+  padding: var(--space-1) var(--space-2);
+  border: 1px solid var(--diff-unchanged);
+  border-radius: var(--radius-sm);
+  color: var(--diff-unchanged);
+  font-size: var(--text-xs);
+  font-weight: 600;
+  letter-spacing: var(--tracking-wide);
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+
+.plan-diff-badge[data-change="moved_time"] {
+  border-color: var(--diff-moved-time);
+  color: var(--diff-moved-time);
+}
+
+.plan-diff-badge[data-change="moved_crew"] {
+  border-color: var(--diff-moved-crew);
+  color: var(--diff-moved-crew);
+}
+
+.plan-diff-badge[data-change="recovery_added"] {
+  border-color: var(--diff-recovery-added);
+  color: var(--diff-recovery-added);
+}
+
+.plan-diff-badge[data-change="served"] {
+  border-color: var(--diff-served);
+  color: var(--diff-served);
+}
+
+.plan-diff-badge[data-change="deferred"] {
+  border-color: var(--diff-deferred);
+  color: var(--diff-deferred);
+}
+
 .timeline-panel {
   display: grid;
   gap: var(--space-4);
@@ -260,6 +499,31 @@
 }
 
 @media (max-width: 767px) {
+  .plan-proof-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .metrics-bar {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .metric-tile:nth-child(2n) {
+    border-right: 0;
+  }
+
+  .metric-tile {
+    border-bottom: 1px solid var(--border-default);
+  }
+
+  .plan-diff-card {
+    grid-template-columns: 1fr auto;
+  }
+
+  .plan-diff-card__states,
+  .plan-diff-card__evidence {
+    grid-column: 1 / -1;
+  }
+
   .timeline-panel {
     padding: var(--space-4);
   }

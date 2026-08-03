@@ -60,7 +60,9 @@ export default function App() {
     ) : state.chapter === "plan" && state.solveResult !== null ? (
       <PlanChapter
         scenario={state.scenario}
-        plan={state.solveResult.plans.policy_constrained}
+        serviceFirstPlan={state.solveResult.plans.service_first}
+        policyPlan={state.solveResult.plans.policy_constrained}
+        planDiff={state.solveResult.plan_diff}
         selectedJobId={state.selectedJobId}
         onJobClick={(jobId) => dispatch({ type: "select_job", jobId })}
       />
