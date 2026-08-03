@@ -226,3 +226,14 @@ Two consecutive runs used `/?fallback=true` and `/fallback/demo.json` from the s
 ### Remaining presentation risk
 
 The in-app browser was refreshed once in live mode and once in saved mode. The server returned HTTP `200` for `/api/demo` and `/fallback/demo.json`, but the browser integration layer did not expose the JSON response to the page, leaving the shell in its loading state with chapter buttons disabled. Consequently, these R01 timings prove the production API/story and saved-data path, while manual click completion of all three rendered chapters remains unobserved in this browser surface. The limitation is the test surface, not an API failure; the existing frontend test suite covers the chapter transitions and the exact saved disclosure.
+
+## R02 — Release capture
+
+**Candidate:** `81efa5b` (`R01: rehearse live and disconnected demo`)
+
+The production build was regenerated and the in-app browser was given a temporary `1440×900` viewport request. The browser backend remained capped at `1280×720`, so the actual captures are:
+
+- `docs/release/screenshots/00-production-saved-loading.jpg`
+- `docs/release/screenshots/01-production-live-loading.jpg`
+
+Both are genuine production-build captures. They show the shell, policy boundary, solver evidence trust bar, and the honest live/saved loading states. The browser transport requested the local JSON with HTTP `200`, but the page remained loading; a complete six-frame loaded journey and an exported video were not produced. The exact four-minute narration script and source-backed values are in [docs/release/demo-rehearsal.md](../docs/release/demo-rehearsal.md). No screenshot value was composited, hidden, or changed from the saved release JSON.
