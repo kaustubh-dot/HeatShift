@@ -12,6 +12,7 @@ import type {
   Plan,
   PlanDiff,
   Policy,
+  SavedManifest,
   Scenario,
   SolveResponse,
 } from "../types";
@@ -33,6 +34,7 @@ export interface AppState {
   solveResult: SolveResponse | null;
   heatShockResult: SolveResponse | null;
   diagnoses: Record<string, DiagnosisResponse>;
+  manifest: SavedManifest | null;
   selectedJobId: string | null;
   selectedCrewId: string | null;
   dataSource: DataSource;
@@ -48,6 +50,7 @@ export const initialAppState: AppState = {
   solveResult: null,
   heatShockResult: null,
   diagnoses: {},
+  manifest: null,
   selectedJobId: null,
   selectedCrewId: null,
   dataSource: "live",
@@ -97,6 +100,7 @@ export function appReducer(state: AppState, action: AppAction): AppState {
           solveResult: action.bundle.base_solve,
           heatShockResult: action.bundle.heat_shock_solve,
           diagnoses: action.bundle.diagnoses,
+          manifest: action.bundle.manifest,
           dataSource: action.source,
         },
         "demo",

@@ -4,7 +4,7 @@ This is the implementation ledger. Execute tasks in ID order using [docs/IMPLEME
 
 ## Active task
 
-- [ ] **F08** — Implement the diagnosis chapter.
+- [ ] **F09** — Implement the +2°C heat-shock journey.
 
 ## Gate G1 — Inputs and patterns
 
@@ -43,7 +43,7 @@ This is the implementation ledger. Execute tasks in ID order using [docs/IMPLEME
 - [x] **F05** — Implement metrics and plan-difference evidence.
 - [x] **F06** — Implement the schematic map and synchronized selection.
 - [x] **F07** — Implement the short transformation and reduced-motion path.
-- [ ] **F08** — Implement the diagnosis chapter.
+- [x] **F08** — Implement the diagnosis chapter.
 - [ ] **F09** — Implement the +2°C heat-shock journey.
 - [ ] **F10** — Integrate the live API, exact-match fallback, and failure states.
 - [ ] **F11** — Pass accessibility and presentation-viewport checks.

@@ -2,7 +2,7 @@
 
 **Last updated:** 2026-08-03
 **Phase:** Phase 2 frontend implementation underway
-**Overall status:** F07 complete; F08 active
+**Overall status:** F08 complete; F09 active
 
 ## Locked product
 
@@ -45,18 +45,18 @@ The final planning pass made previously implicit behavior explicit:
 - Product and engineering specifications exist under `docs/`.
 - `docs/DESIGN.md` and `docs/FRONTEND_PLAN.md` have been reviewed for judge clarity, accessibility, contract fidelity, offline presentation, and deadline feasibility.
 - `docs/IMPLEMENTATION_MASTER_PLAN.md` and `docs/BACKEND_IMPLEMENTATION_PLAN.md` define atomic, gated tasks for low-context implementation agents.
-- Canonical models, pure time-grid/heat/matrix helpers, deterministic scenario/policy fixtures, solver-free validation, deterministic execution patterns, CP-SAT model construction, staged proof capture, timeline/route extraction, metrics, independent policy reconciliation, service orchestration, evidence-backed plan differences, forced-inclusion diagnosis, bounded interventions, +2°C heat shock, declared scenario-tuning evidence, deterministic saved solver evidence, the three FastAPI routes, the backend release report, the pinned React/Vite shell, canonical frontend contract types, genuine fallback loading, reducer-owned state, approved design tokens, local licensed fonts, semantic chapter navigation, the shared TrustBar, the scenario-derived Tomorrow's Brief, the complete-day accessible timeline, metrics/plan-difference evidence, the synchronized schematic service map, and the replayable reduced-motion transformation now exist.
+- Canonical models, pure time-grid/heat/matrix helpers, deterministic scenario/policy fixtures, solver-free validation, deterministic execution patterns, CP-SAT model construction, staged proof capture, timeline/route extraction, metrics, independent policy reconciliation, service orchestration, evidence-backed plan differences, forced-inclusion diagnosis, bounded interventions, +2°C heat shock, declared scenario-tuning evidence, deterministic saved solver evidence, the three FastAPI routes, the backend release report, the pinned React/Vite shell, canonical frontend contract types, genuine fallback loading, reducer-owned state, approved design tokens, local licensed fonts, semantic chapter navigation, the shared TrustBar, the scenario-derived Tomorrow's Brief, the complete-day accessible timeline, metrics/plan-difference evidence, the synchronized schematic service map, the replayable reduced-motion transformation, and the saved diagnosis chapter now exist.
 - The root `.venv` uses Python 3.12.13 and contains the verified runtime and test dependencies.
 - The implementation branch is `agent/lock-planning-docs`.
 
 ## Active implementation checkpoint
 
-- Last completed task: F07
+- Last completed task: F08
 - Verification commands:
   - `cd frontend && npm run test:run`
   - `cd frontend && npm run build`
   - `git diff --check`
-- Results: `npm run test:run` reported `19 passed` across seven test files; `npm run build` exited 0 and produced the Vite production bundle; `git diff --check` exited 0. The F04 `npm ci` and fallback `cmp` evidence remain valid; no package or fixture changes were needed for F07.
+- Results: `npm run test:run` reported `21 passed` across eight test files; `npm run build` exited 0 and produced the Vite production bundle; `git diff --check` exited 0. The F04 `npm ci` and fallback `cmp` evidence remain valid; no package or fixture changes were needed for F08.
 - F00 shell: React 19.2.8, TypeScript 5.9.3, Vite 8.1.5, `lucide-react` 1.17.0, Vitest 3.2.7, React Testing Library 16.3.0, DOM matchers 6.8.0, and jsdom 26.1.0. No router, state library, HTTP library, animation package, or CSS framework was added.
 - F01 evidence: `frontend/public/fallback/demo.json` is an exact copy of the B15 genuine bundle; `parseDemoBundle` rejects malformed required fields; `loadFallbackDemo` validates HTTP/JSON responses; the reducer stores canonical scenario, policy, solve, shock, and diagnosis responses once and selectors derive plan/diff views without copied metrics.
 - F02 evidence: approved OKLCH tokens and type scales are in [frontend/src/styles/tokens.css](frontend/src/styles/tokens.css); local Space Grotesk, DM Sans, and JetBrains Mono WOFF2 files plus OFL texts are under [frontend/public/fonts](frontend/public/fonts); the shell has a first-focusable skip link, native `aria-current="step"` chapter buttons, disabled locked chapters, visible focus styling, and a normal-flow TrustBar that keeps policy disclaimer and solver proof visible.
@@ -65,13 +65,14 @@ The final planning pass made previously implicit behavior explicit:
 - F05 evidence: [frontend/src/components/PlanChapter.tsx](frontend/src/components/PlanChapter.tsx) renders the service-first and policy-constrained proof cards, the seven response-supplied metrics with subtraction-only deltas, and every saved `plan_diff` record; [frontend/src/components/primitives.tsx](frontend/src/components/primitives.tsx) exposes explicit change labels/icons, before/after crew-time, binding rule IDs, explanation codes, stage statuses, values, bounds, and claim gating; [frontend/tests/plan.test.tsx](frontend/tests/plan.test.tsx) covers 14 tests across base/heat-shock fixture statuses, diff vocabulary, exact deferred evidence, and shared timeline/diff selection.
 - F06 evidence: [frontend/src/components/ServiceMap.tsx](frontend/src/components/ServiceMap.tsx) renders one responsive `800×600` SVG with submitted location coordinates, depot squares, neutral job circles, and backend-ordered route polylines using crew colors only for route identity; [frontend/tests/service-map.test.tsx](frontend/tests/service-map.test.tsx) verifies all 12 job nodes, the depot, all 10 route records/orderings, keyboard selection, and shared map/timeline/diff selection.
 - F07 evidence: [frontend/src/hooks/usePlanTransformation.ts](frontend/src/hooks/usePlanTransformation.ts) keeps only animation phase in local state and schedules 300ms highlight, 500ms transform, and 250ms settle stages; [frontend/tests/transformation.test.tsx](frontend/tests/transformation.test.tsx) covers fake-timer phase boundaries, replay, final-plan equivalence, immediate reduced-motion output, and usable controls.
+- F08 evidence: [frontend/src/components/WhyChapter.tsx](frontend/src/components/WhyChapter.tsx) defaults through `manifest.designated_diagnosis_job_id`, keeps classification beside proof status, and renders every saved diagnosis field plus intervention objective deltas; [frontend/tests/why.test.tsx](frontend/tests/why.test.tsx) covers the designated `proven_infeasible` response, all four exact classification phrases, and focus after a successful diagnosis request.
 - Backend release evidence remains in [backend/RELEASE_EVIDENCE.md](backend/RELEASE_EVIDENCE.md); saved solver artifacts remain canonical under [backend/heatshift/fixtures/saved](backend/heatshift/fixtures/saved).
-- Known limitations: live API client, diagnosis chapter, and responsive screenshot review remain later packets. Why chapter currently shows a packet handoff placeholder. Backend limitations remain documented in [docs/SAFETY_AND_LIMITATIONS.md](docs/SAFETY_AND_LIMITATIONS.md).
-- Next task: F08 — diagnosis chapter
+- Known limitations: live API client, heat-shock controls, and responsive screenshot review remain later packets. Backend limitations remain documented in [docs/SAFETY_AND_LIMITATIONS.md](docs/SAFETY_AND_LIMITATIONS.md).
+- Next task: F09 — +2°C heat-shock journey
 
 ## Immediate next action
 
-Execute **F08 only** from [docs/IMPLEMENTATION_MASTER_PLAN.md](docs/IMPLEMENTATION_MASTER_PLAN.md) and [docs/FRONTEND_PLAN.md](docs/FRONTEND_PLAN.md). Stop after its verification and checkpoint handoff.
+Execute **F09 only** from [docs/IMPLEMENTATION_MASTER_PLAN.md](docs/IMPLEMENTATION_MASTER_PLAN.md) and [docs/FRONTEND_PLAN.md](docs/FRONTEND_PLAN.md). Stop after its verification and checkpoint handoff.
 
 Do not begin frontend polish beyond the active frontend packet until its packet-specific acceptance commands pass.
 

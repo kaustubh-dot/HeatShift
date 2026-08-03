@@ -3,6 +3,7 @@ import { useEffect } from "react";
 import { BriefChapter } from "./components/BriefChapter";
 import { AppShell } from "./components/AppShell";
 import { PlanChapter } from "./components/PlanChapter";
+import { WhyChapter } from "./components/WhyChapter";
 import { loadFallbackDemo } from "./api/fallback";
 import { useAppDispatch, useAppState } from "./state/appState";
 
@@ -19,6 +20,9 @@ function PendingChapter({ heading, description }: { heading: string; description
 export default function App() {
   const state = useAppState();
   const dispatch = useAppDispatch();
+  const designatedDiagnosisId = state.manifest?.designated_diagnosis_job_id ?? null;
+  const designatedDiagnosis = designatedDiagnosisId === null ? null : state.diagnoses[designatedDiagnosisId] ?? null;
+  const designatedJob = designatedDiagnosis === null ? null : state.scenario?.jobs.find((job) => job.id === designatedDiagnosis.job_id) ?? null;
 
   useEffect(() => {
     if (state.scenario !== null || state.request.demo.status !== "idle") return;
@@ -66,11 +70,15 @@ export default function App() {
         selectedJobId={state.selectedJobId}
         onJobClick={(jobId) => dispatch({ type: "select_job", jobId })}
       />
-    ) : (
-      <PendingChapter
-        heading="Why / What-if"
-        description="The next packets will expose the forced-inclusion diagnosis and +2°C counterfactual."
+    ) : state.chapter === "why" ? (
+      <WhyChapter
+        job={designatedJob}
+        diagnosis={designatedDiagnosis}
+        diagnosisRequestStatus={state.request.diagnosis.status}
+        diagnosisRequestError={state.request.diagnosis.error}
       />
+    ) : (
+      <PendingChapter heading="Why / What-if" description="The diagnosis chapter is waiting for a saved solver response." />
     );
 
   return (
