@@ -1,12 +1,18 @@
 import type {
+  Coordinate,
+  DemoResponse,
+  DiagnoseRequest,
   DiagnosisResponse,
   DemoBundle,
   HeatBand,
   Plan,
   PlanChange,
+  Policy,
   SavedManifest,
+  SavedResultMetadata,
   Scenario,
   SolveResponse,
+  SolveRequest,
   SolverStatus,
 } from "../types";
 
@@ -155,7 +161,7 @@ function validateScenario(value: unknown, path: string): Scenario {
   return value as Scenario;
 }
 
-function validatePolicy(value: unknown, path: string): void {
+function validatePolicy(value: unknown, path: string): Policy {
   const item = record(value, path);
   for (const key of ["id", "name", "disclaimer"]) {
     string(required(item, key, path), `${path}.${key}`);
@@ -178,6 +184,7 @@ function validatePolicy(value: unknown, path: string): void {
     number(required(value, "min_recovery_slots", rulePath), `${rulePath}.min_recovery_slots`);
     boolean(required(value, "stop_work", rulePath), `${rulePath}.stop_work`);
   });
+  return value as Policy;
 }
 
 function validateMetrics(value: unknown, path: string): void {
@@ -271,6 +278,14 @@ function validateDiagnosis(value: unknown, path: string): DiagnosisResponse {
   return value as DiagnosisResponse;
 }
 
+function validateSavedResultMetadata(value: unknown, path: string): SavedResultMetadata {
+  const item = record(value, path);
+  for (const key of ["fixture_version", "generated_at", "solver_version", "sha256"]) {
+    string(required(item, key, path), `${path}.${key}`);
+  }
+  return value as SavedResultMetadata;
+}
+
 function validateMetricsDelta(value: unknown, path: string): void {
   const item = record(value, path);
   for (const key of ["critical_service", "planned_service_value", "travel_minutes", "overtime_minutes"]) {
@@ -326,6 +341,76 @@ export function parseDemoBundle(value: unknown): DemoBundle {
     diagnoses,
     manifest,
   };
+}
+
+export function parseDemoResponse(value: unknown): DemoResponse {
+  const item = record(value, "response");
+  const scenario = validateScenario(required(item, "scenario", "response"), "response.scenario");
+  const policy = validatePolicy(required(item, "policy", "response"), "response.policy");
+  const coordinates = record(required(item, "display_coordinates", "response"), "response.display_coordinates");
+  const displayCoordinates: Record<string, Coordinate> = {};
+  for (const [locationId, coordinateValue] of Object.entries(coordinates)) {
+    const coordinatePath = `response.display_coordinates.${locationId}`;
+    const coordinate = array(coordinateValue, coordinatePath);
+    if (coordinate.length !== 2) {
+      throw new FallbackDataError("expected two coordinates", coordinatePath);
+    }
+    displayCoordinates[locationId] = [
+      number(coordinate[0], `${coordinatePath}[0]`),
+      number(coordinate[1], `${coordinatePath}[1]`),
+    ];
+  }
+  const metadataValue = item.saved_result_metadata ?? null;
+  const savedResultMetadata = metadataValue === null ? null : validateSavedResultMetadata(metadataValue, "response.saved_result_metadata");
+  return {
+    scenario,
+    policy,
+    display_coordinates: displayCoordinates,
+    saved_result_metadata: savedResultMetadata,
+  };
+}
+
+export function parseSolveResponse(value: unknown): SolveResponse {
+  return validateSolveResponse(value, "response");
+}
+
+export function parseDiagnosisResponse(value: unknown): DiagnosisResponse {
+  return validateDiagnosis(value, "response");
+}
+
+function savedSolveCandidate(bundle: DemoBundle, heatAdjustment: number): SolveResponse | null {
+  if (heatAdjustment === 0) return bundle.base_solve;
+  if (heatAdjustment === 2) return bundle.heat_shock_solve;
+  return null;
+}
+
+function matchesSavedSolve(
+  result: SolveResponse,
+  request: Pick<SolveRequest, "scenario" | "policy" | "heat_adjustment_c">,
+): boolean {
+  return (
+    result.scenario.id === request.scenario.id &&
+    result.scenario.policy_id === request.policy.id &&
+    result.scenario.heat_adjustment_c === request.heat_adjustment_c
+  );
+}
+
+export function findSavedSolve(
+  bundle: DemoBundle,
+  request: Pick<SolveRequest, "scenario" | "policy" | "heat_adjustment_c">,
+): SolveResponse | null {
+  const candidate = savedSolveCandidate(bundle, request.heat_adjustment_c);
+  return candidate !== null && matchesSavedSolve(candidate, request) ? candidate : null;
+}
+
+export function findSavedDiagnosis(
+  bundle: DemoBundle,
+  request: Pick<DiagnoseRequest, "scenario" | "policy" | "heat_adjustment_c" | "job_id">,
+): DiagnosisResponse | null {
+  const savedSolve = findSavedSolve(bundle, request);
+  if (savedSolve === null || request.heat_adjustment_c !== 0) return null;
+  const candidate = bundle.diagnoses[request.job_id];
+  return candidate?.job_id === request.job_id ? candidate : null;
 }
 
 export interface FallbackLoadOptions {

@@ -9,6 +9,7 @@ import {
 import type {
   DiagnosisResponse,
   DemoBundle,
+  DemoResponse,
   Plan,
   PlanDiff,
   Policy,
@@ -64,6 +65,7 @@ export const initialAppState: AppState = {
 
 export type AppAction =
   | { type: "navigate"; chapter: ChapterId }
+  | { type: "demo_inputs_loaded"; demo: DemoResponse }
   | { type: "demo_loaded"; bundle: DemoBundle; source: DataSource }
   | { type: "select_job"; jobId: string | null }
   | { type: "select_crew"; crewId: string | null }
@@ -92,6 +94,21 @@ export function appReducer(state: AppState, action: AppAction): AppState {
   switch (action.type) {
     case "navigate":
       return { ...state, chapter: action.chapter };
+    case "demo_inputs_loaded":
+      return withRequest(
+        {
+          ...state,
+          scenario: action.demo.scenario,
+          policy: action.demo.policy,
+          solveResult: null,
+          heatShockResult: null,
+          diagnoses: {},
+          manifest: null,
+          dataSource: "live",
+        },
+        "demo",
+        { status: "success", error: null },
+      );
     case "demo_loaded":
       return withRequest(
         {

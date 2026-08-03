@@ -706,6 +706,15 @@ h3 {
   line-height: var(--leading-data);
 }
 
+.solver-evidence__saved-disclosure {
+  grid-column: 1 / -1;
+  margin: 0;
+  color: var(--heat-elevated);
+  font-family: var(--font-mono);
+  font-size: var(--text-xs);
+  line-height: var(--leading-data);
+}
+
 .solver-evidence__stages {
   display: flex;
   grid-column: 1 / -1;

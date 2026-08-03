@@ -2,7 +2,7 @@
 
 **Last updated:** 2026-08-03
 **Phase:** Phase 2 frontend implementation underway
-**Overall status:** F09 complete; F10 active
+**Overall status:** F10 complete; F11 active
 
 ## Locked product
 
@@ -51,12 +51,12 @@ The final planning pass made previously implicit behavior explicit:
 
 ## Active implementation checkpoint
 
-- Last completed task: F09
+- Last completed task: F10
 - Verification commands:
   - `cd frontend && npm run test:run`
   - `cd frontend && npm run build`
   - `git diff --check`
-- Results: `npm run test:run` reported `26 passed` across nine test files; `npm run build` exited 0 and produced the Vite production bundle; `git diff --check` exited 0. The F04 `npm ci` and fallback `cmp` evidence remain valid; no package or fixture changes were needed for F09.
+- Results: `npm run test:run` reported `34 passed` across ten test files; `npm run build` exited 0 and produced the Vite production bundle; `git diff --check` exited 0. The F04 `npm ci` and fallback `cmp` evidence remain valid; no package or fixture changes were needed for F10.
 - F00 shell: React 19.2.8, TypeScript 5.9.3, Vite 8.1.5, `lucide-react` 1.17.0, Vitest 3.2.7, React Testing Library 16.3.0, DOM matchers 6.8.0, and jsdom 26.1.0. No router, state library, HTTP library, animation package, or CSS framework was added.
 - F01 evidence: `frontend/public/fallback/demo.json` is an exact copy of the B15 genuine bundle; `parseDemoBundle` rejects malformed required fields; `loadFallbackDemo` validates HTTP/JSON responses; the reducer stores canonical scenario, policy, solve, shock, and diagnosis responses once and selectors derive plan/diff views without copied metrics.
 - F02 evidence: approved OKLCH tokens and type scales are in [frontend/src/styles/tokens.css](frontend/src/styles/tokens.css); local Space Grotesk, DM Sans, and JetBrains Mono WOFF2 files plus OFL texts are under [frontend/public/fonts](frontend/public/fonts); the shell has a first-focusable skip link, native `aria-current="step"` chapter buttons, disabled locked chapters, visible focus styling, and a normal-flow TrustBar that keeps policy disclaimer and solver proof visible.
@@ -67,13 +67,14 @@ The final planning pass made previously implicit behavior explicit:
 - F07 evidence: [frontend/src/hooks/usePlanTransformation.ts](frontend/src/hooks/usePlanTransformation.ts) keeps only animation phase in local state and schedules 300ms highlight, 500ms transform, and 250ms settle stages; [frontend/tests/transformation.test.tsx](frontend/tests/transformation.test.tsx) covers fake-timer phase boundaries, replay, final-plan equivalence, immediate reduced-motion output, and usable controls.
 - F08 evidence: [frontend/src/components/WhyChapter.tsx](frontend/src/components/WhyChapter.tsx) defaults through `manifest.designated_diagnosis_job_id`, keeps classification beside proof status, and renders every saved diagnosis field plus intervention objective deltas; [frontend/tests/why.test.tsx](frontend/tests/why.test.tsx) covers the designated `proven_infeasible` response, all four exact classification phrases, and focus after a successful diagnosis request.
 - F09 evidence: [frontend/src/components/WhyChapter.tsx](frontend/src/components/WhyChapter.tsx) sends the exact `{ heat_adjustment_c: 2 }` request, keeps the diagnosis and current plan visible while loading, and renders the returned `plans.heat_shock`, first non-unchanged decision, response metrics, solver proof, and every returned shock diff; [frontend/src/state/appState.tsx](frontend/src/state/appState.tsx) preserves the cached canonical response across reset; [frontend/tests/heat-shock.test.tsx](frontend/tests/heat-shock.test.tsx) covers exact request shape, loading behavior, returned evidence order/count, reset, and reducer preservation.
+- F10 evidence: [frontend/src/api/client.ts](frontend/src/api/client.ts) uses only native fetch for `/api/demo`, `/api/solve`, and `/api/diagnose`, with one 15-second abort timeout and structured error preservation; [frontend/src/api/fallback.ts](frontend/src/api/fallback.ts) validates live responses and selects saved solves/diagnoses only on exact scenario, policy, heat-adjustment, and job matches; [frontend/src/App.tsx](frontend/src/App.tsx) runs live mode by default, activates saved mode only for explicit configuration or network/abort/server failure, preserves current results during requests, and keeps validation/malformed responses visible; [frontend/src/components/SolverEvidence.tsx](frontend/src/components/SolverEvidence.tsx) keeps the saved-run disclosure and provenance visible for the full saved session; [frontend/tests/client.test.tsx](frontend/tests/client.test.tsx) covers live success, demo parsing, exact fallback/rejection, structured 4xx errors, malformed 2xx, abort, server failure, `FEASIBLE` warning, and saved disclosure.
 - Backend release evidence remains in [backend/RELEASE_EVIDENCE.md](backend/RELEASE_EVIDENCE.md); saved solver artifacts remain canonical under [backend/heatshift/fixtures/saved](backend/heatshift/fixtures/saved).
-- Known limitations: the live API client and responsive screenshot review remain later packets. Backend limitations remain documented in [docs/SAFETY_AND_LIMITATIONS.md](docs/SAFETY_AND_LIMITATIONS.md).
-- Next task: F10 — live API, exact-match fallback, and failure states
+- Known limitations: manual accessibility/viewport review and production serving remain later packets. Backend limitations remain documented in [docs/SAFETY_AND_LIMITATIONS.md](docs/SAFETY_AND_LIMITATIONS.md).
+- Next task: F11 — accessibility and presentation-viewport checks
 
 ## Immediate next action
 
-Execute **F10 only** from [docs/IMPLEMENTATION_MASTER_PLAN.md](docs/IMPLEMENTATION_MASTER_PLAN.md) and [docs/FRONTEND_PLAN.md](docs/FRONTEND_PLAN.md). Stop after its verification and checkpoint handoff.
+Execute **F11 only** from [docs/IMPLEMENTATION_MASTER_PLAN.md](docs/IMPLEMENTATION_MASTER_PLAN.md) and [docs/FRONTEND_PLAN.md](docs/FRONTEND_PLAN.md). Stop after its verification and checkpoint handoff.
 
 Do not begin frontend polish beyond the active frontend packet until its packet-specific acceptance commands pass.
 

@@ -1,9 +1,11 @@
 import type { Plan, SolverStatus } from "../types";
+import type { SavedManifest } from "../types";
 import type { DataSource } from "../state/appState";
 
 interface SolverEvidenceProps {
   plan: Plan | null;
   dataSource: DataSource;
+  savedManifest?: SavedManifest | null;
 }
 
 function claimFor(plan: Plan | null): string {
@@ -24,7 +26,7 @@ function claimFor(plan: Plan | null): string {
   }
 }
 
-export function SolverEvidence({ plan, dataSource }: SolverEvidenceProps) {
+export function SolverEvidence({ plan, dataSource, savedManifest = null }: SolverEvidenceProps) {
   const status: SolverStatus | "pending" = plan?.status ?? "pending";
   const sourceLabel = dataSource === "saved" ? "Saved solver run" : "Solver evidence";
 
@@ -37,6 +39,12 @@ export function SolverEvidence({ plan, dataSource }: SolverEvidenceProps) {
         </span>
       </div>
       <p className="solver-evidence__claim">{claimFor(plan)}</p>
+      {dataSource === "saved" && (
+        <p className="solver-evidence__saved-disclosure">
+          SAVED SOLVER RUN · Live API unavailable · Results generated from the locked demo scenario
+          {savedManifest === null ? "" : ` · ${savedManifest.fixture_version} · generated ${savedManifest.generated_at}`}
+        </p>
+      )}
       {plan !== null && (
         <ul className="solver-evidence__stages" aria-label="solver stages">
           {plan.stages.map((stage) => (

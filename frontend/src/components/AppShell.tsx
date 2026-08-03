@@ -16,17 +16,15 @@ const CHAPTERS: ReadonlyArray<{ id: ChapterId; index: string; label: string }> =
 const DEFAULT_DISCLAIMER =
   "Synthetic demonstration policy. Not medical, legal, or workplace-safety guidance. Organizations must supply and approve their own policy.";
 
-function chapterEnabled(chapter: ChapterId, hasSolve: boolean, hasDiagnosis: boolean): boolean {
+function chapterEnabled(chapter: ChapterId, hasSolve: boolean): boolean {
   if (chapter === "brief") return true;
   if (chapter === "plan") return hasSolve;
-  return hasSolve && hasDiagnosis;
+  return hasSolve;
 }
 
 export function AppShell({ children }: AppShellProps) {
   const state = useAppState();
   const dispatch = useAppDispatch();
-  const hasDiagnosis = Object.keys(state.diagnoses).length > 0;
-
   return (
     <div className="app-frame">
       <a className="skip-link" href="#main-content">
@@ -41,7 +39,7 @@ export function AppShell({ children }: AppShellProps) {
           <nav aria-label="Chapter navigation">
             <ol className="chapter-list">
               {CHAPTERS.map((chapter) => {
-                const enabled = chapterEnabled(chapter.id, state.solveResult !== null, hasDiagnosis);
+                const enabled = chapterEnabled(chapter.id, state.solveResult !== null);
                 return (
                   <li key={chapter.id}>
                     <button
@@ -76,6 +74,7 @@ export function AppShell({ children }: AppShellProps) {
           <SolverEvidence
             plan={state.solveResult?.plans.policy_constrained ?? null}
             dataSource={state.dataSource}
+            savedManifest={state.manifest}
           />
         </div>
       </footer>

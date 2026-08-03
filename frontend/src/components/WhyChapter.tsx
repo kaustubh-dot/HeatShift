@@ -82,12 +82,30 @@ export function WhyChapter({
     if (diagnosisRequestStatus === "success") headingRef.current?.focus();
   }, [diagnosisRequestStatus, diagnosis]);
 
-  if (job === null || diagnosis === null) {
+  if (job === null) {
     return (
       <section className="fixture-error" role="alert" aria-labelledby="diagnosis-error-heading">
         <p className="label-caps">Diagnosis unavailable</p>
-        <h1 id="diagnosis-error-heading">The designated diagnosis is missing.</h1>
-        <p>{diagnosisRequestError ?? "The saved solver bundle did not include the designated diagnosis response."}</p>
+        <h1 id="diagnosis-error-heading">No diagnosis job was returned.</h1>
+        <p>{diagnosisRequestError ?? "The scenario has not returned a deferred work order for diagnosis."}</p>
+      </section>
+    );
+  }
+
+  if (diagnosis === null) {
+    const isError = diagnosisRequestStatus === "error";
+    return (
+      <section className="fixture-error" role={isError ? "alert" : "status"} aria-labelledby="diagnosis-pending-heading">
+        <p className="label-caps">Forced-inclusion diagnosis</p>
+        <h1 id="diagnosis-pending-heading">{job.name}</h1>
+        <p className="data-value">{job.id}</p>
+        <p>
+          {isError
+            ? diagnosisRequestError ?? "The diagnosis request failed."
+            : diagnosisRequestStatus === "loading"
+              ? "SOLVING… The current plan remains available while the counterfactual is evaluated."
+              : "The diagnosis is ready to run from the returned constrained plan."}
+        </p>
       </section>
     );
   }
