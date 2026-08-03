@@ -16,6 +16,7 @@ interface ServiceMapProps {
   plan: Plan;
   selectedJobId: string | null;
   onJobClick: (jobId: string) => void;
+  highlightedJobIds?: ReadonlySet<string>;
 }
 
 function routeColor(crewId: string): string {
@@ -32,7 +33,7 @@ function shortJobLabel(jobId: string): string {
   return jobId.replace(/^job-/, "");
 }
 
-export function ServiceMap({ crews, jobs, locations, plan, selectedJobId, onJobClick }: ServiceMapProps) {
+export function ServiceMap({ crews, jobs, locations, plan, selectedJobId, onJobClick, highlightedJobIds = new Set() }: ServiceMapProps) {
   const locationById = new Map(locations.map((location) => [location.id, location]));
   const resultByJobId = new Map(plan.jobs.map((job) => [job.job_id, job]));
   const depotIds = new Set(crews.flatMap((crew) => [crew.start_depot_id, crew.end_depot_id]));
@@ -101,12 +102,13 @@ export function ServiceMap({ crews, jobs, locations, plan, selectedJobId, onJobC
               if (location === undefined) return null;
               const result = resultByJobId.get(job.id);
               const selected = selectedJobId === job.id;
+              const highlighted = highlightedJobIds.has(job.id);
               const assignment = result?.crew_id === null || result === undefined ? "unassigned" : `assigned to ${result.crew_id}`;
               return (
                 <g
                   aria-label={`${job.name} (${job.id}), ${assignment}, location ${job.location_id}${selected ? ", selected" : ""}`}
                   aria-pressed={selected}
-                  className={`service-map__job-node${selected ? " is-selected" : ""}`}
+                  className={`service-map__job-node${selected ? " is-selected" : ""}${highlighted ? " is-diff-highlighted" : ""}`}
                   data-job-id={job.id}
                   data-selected={selected ? "true" : "false"}
                   key={job.id}

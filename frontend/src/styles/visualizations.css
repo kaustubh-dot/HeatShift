@@ -19,6 +19,41 @@
   font-size: var(--text-lg);
 }
 
+.transformation-controls {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-3);
+  min-height: 2.5rem;
+}
+
+.transformation-controls__status {
+  margin: 0;
+  color: var(--text-secondary);
+  font-family: var(--font-mono);
+  font-size: var(--text-xs);
+  letter-spacing: var(--tracking-wide);
+  text-transform: uppercase;
+}
+
+.secondary-button {
+  min-height: 2.25rem;
+  padding: 0 var(--space-3);
+  border: 1px solid var(--border-strong);
+  border-radius: var(--radius-sm);
+  background: transparent;
+  color: var(--text-primary);
+  cursor: pointer;
+  font-family: var(--font-sans);
+  font-size: var(--text-sm);
+}
+
+.secondary-button:hover,
+.secondary-button:focus-visible {
+  border-color: var(--border-focus);
+  background: var(--bg-elevated);
+}
+
 .plan-proof-grid {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -205,6 +240,33 @@
 
 .service-map__job-node.is-selected .service-map__job-label {
   fill: var(--text-primary);
+}
+
+.service-map__job-node.is-diff-highlighted .service-map__selection-ring {
+  stroke: var(--diff-deferred);
+  filter: drop-shadow(0 0 6px var(--diff-deferred));
+}
+
+.service-map__route,
+.timeline-segment {
+  transition:
+    opacity var(--diff-transform-dur) var(--ease-move),
+    transform var(--diff-transform-dur) var(--ease-move);
+}
+
+.timeline-segment.is-diff-highlighted {
+  animation: diff-highlight var(--diff-highlight-dur) var(--ease-spring) both;
+}
+
+@keyframes diff-highlight {
+  0%,
+  100% {
+    filter: drop-shadow(0 0 0 transparent);
+  }
+
+  50% {
+    filter: drop-shadow(0 0 8px var(--diff-deferred));
+  }
 }
 
 .service-map__caption {
@@ -621,6 +683,11 @@
 
   .service-map-panel {
     padding: var(--space-4);
+  }
+
+  .transformation-controls {
+    align-items: stretch;
+    flex-direction: column;
   }
 
   .timeline-grid {

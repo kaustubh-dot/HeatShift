@@ -10,6 +10,7 @@ interface TimelineProps {
   dayEnd: string;
   selectedJobId: string | null;
   onJobClick: (jobId: string) => void;
+  highlightedJobIds?: ReadonlySet<string>;
 }
 
 const STATE_LABELS: Record<TimelineSegment["state"], string> = {
@@ -76,7 +77,7 @@ function SlotHeader({ heatSeries, slotCount }: { heatSeries: HeatSlot[]; slotCou
   );
 }
 
-export function Timeline({ crews, jobs, segments, heatSeries, dayEnd, selectedJobId, onJobClick }: TimelineProps) {
+export function Timeline({ crews, jobs, segments, heatSeries, dayEnd, selectedJobId, onJobClick, highlightedJobIds = new Set() }: TimelineProps) {
   const slotCount = Math.max(heatSeries.length, ...segments.map((segment) => segment.end_slot), 1);
   const jobById = new Map(jobs.map((job) => [job.id, job]));
   const segmentByCrew = new Map<string, TimelineSegment[]>();
@@ -114,6 +115,7 @@ export function Timeline({ crews, jobs, segments, heatSeries, dayEnd, selectedJo
               {segmentByCrew.get(crew.id)?.map((segment) => {
                 const job = segment.job_id === null ? undefined : jobById.get(segment.job_id);
                 const selected = segment.job_id !== null && segment.job_id === selectedJobId;
+                const highlighted = segment.job_id !== null && highlightedJobIds.has(segment.job_id);
                 const dimmed = selectedJobId !== null && !selected;
                 const segmentKey = `${crew.id}-${segment.start_slot}-${segment.end_slot}-${segment.state}-${segment.job_id ?? "state"}`;
                 const commonProps = {
@@ -132,7 +134,7 @@ export function Timeline({ crews, jobs, segments, heatSeries, dayEnd, selectedJo
                       {...commonProps}
                       aria-label={segmentName(segment, crew, job)}
                       aria-selected={selected}
-                      className={`timeline-segment timeline-segment--button${selected ? " is-selected" : ""}${dimmed ? " is-dimmed" : ""}`}
+                      className={`timeline-segment timeline-segment--button${selected ? " is-selected" : ""}${dimmed ? " is-dimmed" : ""}${highlighted ? " is-diff-highlighted" : ""}`}
                       data-job-id={segment.job_id}
                       key={segmentKey}
                       onClick={() => onJobClick(segment.job_id!)}
@@ -149,7 +151,7 @@ export function Timeline({ crews, jobs, segments, heatSeries, dayEnd, selectedJo
                   <div
                     {...commonProps}
                     aria-label={segmentName(segment, crew, job)}
-                    className={`timeline-segment${dimmed ? " is-dimmed" : ""}`}
+                    className={`timeline-segment${dimmed ? " is-dimmed" : ""}${highlighted ? " is-diff-highlighted" : ""}`}
                     key={segmentKey}
                     role="gridcell"
                   >

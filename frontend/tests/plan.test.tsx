@@ -1,9 +1,9 @@
 /** @vitest-environment jsdom */
 
 import "@testing-library/jest-dom/vitest";
-import { cleanup, fireEvent, render, screen, within } from "@testing-library/react";
+import { act, cleanup, fireEvent, render, screen, within } from "@testing-library/react";
 import React from "react";
-import { afterEach, describe, expect, it, vi } from "vitest";
+import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
 import rawBundle from "../public/fallback/demo.json";
 import { parseDemoBundle } from "../src/api/fallback";
@@ -11,14 +11,18 @@ import { PlanChapter } from "../src/components/PlanChapter";
 import { PlanDiffBadge, PlanProof } from "../src/components/primitives";
 import type { PlanChange } from "../src/types";
 
-afterEach(cleanup);
+beforeEach(() => vi.useFakeTimers());
+afterEach(() => {
+  cleanup();
+  vi.useRealTimers();
+});
 
 describe("plan evidence chapter", () => {
   const bundle = parseDemoBundle(rawBundle);
   const baseSolve = bundle.base_solve;
 
   function renderPlan(selectedJobId: string | null = null, onJobClick = vi.fn()) {
-    return render(
+    const view = render(
       <PlanChapter
         scenario={bundle.scenario}
         serviceFirstPlan={baseSolve.plans.service_first}
@@ -28,6 +32,8 @@ describe("plan evidence chapter", () => {
         onJobClick={onJobClick}
       />,
     );
+    act(() => vi.runAllTimers());
+    return view;
   }
 
   it("renders supplied metrics, solver proof, and every base plan difference", () => {
