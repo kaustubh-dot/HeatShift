@@ -1,7 +1,7 @@
 /** @vitest-environment jsdom */
 
 import "@testing-library/jest-dom/vitest";
-import { cleanup, render, screen } from "@testing-library/react";
+import { cleanup, fireEvent, render, screen } from "@testing-library/react";
 import React from "react";
 import { afterEach, describe, expect, it } from "vitest";
 
@@ -41,5 +41,19 @@ describe("F02 application shell", () => {
       "Not medical, legal, or workplace-safety guidance",
     );
     expect(screen.getByRole("main")).toBeVisible();
+  });
+
+  it("moves focus to main content from the skip link", () => {
+    render(
+      <AppStateProvider>
+        <AppShell>
+          <h1>Shell content</h1>
+        </AppShell>
+      </AppStateProvider>,
+    );
+
+    fireEvent.click(screen.getByRole("link", { name: "Skip to main content" }));
+
+    expect(document.activeElement).toBe(screen.getByRole("main"));
   });
 });

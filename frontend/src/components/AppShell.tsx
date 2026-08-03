@@ -27,7 +27,7 @@ export function AppShell({ children }: AppShellProps) {
   const dispatch = useAppDispatch();
   return (
     <div className="app-frame">
-      <a className="skip-link" href="#main-content">
+      <a className="skip-link" href="#main-content" onClick={() => document.getElementById("main-content")?.focus()}>
         Skip to main content
       </a>
 
