@@ -30,6 +30,132 @@
   font-size: var(--text-lg);
 }
 
+.heat-shock-control {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(18rem, 24rem);
+  gap: var(--space-5);
+  align-items: center;
+  padding: var(--space-5);
+  border: 1px solid var(--heat-elevated);
+  border-radius: var(--radius-md);
+  background: var(--bg-elevated);
+}
+
+.heat-shock-control h2 {
+  margin: var(--space-1) 0 var(--space-2);
+  font-size: var(--text-2xl);
+}
+
+.heat-shock-control p:not(.label-caps):not(.heat-shock-status) {
+  margin: 0;
+  color: var(--text-secondary);
+}
+
+.heat-shock-control__actions {
+  display: grid;
+  gap: var(--space-2);
+}
+
+.heat-shock-control__actions .primary-action {
+  width: 100%;
+}
+
+.primary-action:disabled {
+  cursor: wait;
+  opacity: 0.65;
+  transform: none;
+}
+
+.heat-shock-control__actions .secondary-button {
+  justify-self: end;
+}
+
+.heat-shock-status {
+  margin: 0;
+  color: var(--text-secondary);
+  font-family: var(--font-mono);
+  font-size: var(--text-xs);
+  letter-spacing: var(--tracking-wide);
+  text-transform: uppercase;
+}
+
+.heat-shock-status--error {
+  color: var(--solver-infeasible);
+}
+
+.heat-shock-result {
+  display: grid;
+  gap: var(--space-5);
+  padding: var(--space-5);
+  border: 1px solid var(--border-focus);
+  border-radius: var(--radius-md);
+  background: var(--bg-recessed);
+}
+
+.heat-shock-result > .section-heading-row h2 {
+  margin: var(--space-1) 0 0;
+  font-size: var(--text-2xl);
+}
+
+.heat-shock-decision {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: var(--space-3);
+  align-items: start;
+  padding: var(--space-4);
+  border-left: 3px solid var(--heat-elevated);
+  background: var(--bg-surface);
+}
+
+.heat-shock-decision h3 {
+  margin: var(--space-1) 0 var(--space-1);
+  font-size: var(--text-xl);
+}
+
+.heat-shock-decision__job-id {
+  margin: 0;
+  color: var(--text-tertiary);
+}
+
+.heat-shock-decision__states {
+  display: grid;
+  grid-column: 1 / -1;
+  grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr);
+  gap: var(--space-3);
+  align-items: center;
+  color: var(--text-secondary);
+  font-family: var(--font-mono);
+  font-size: var(--text-sm);
+}
+
+.heat-shock-decision__states span:not([aria-hidden="true"]) {
+  display: grid;
+  gap: var(--space-1);
+}
+
+.heat-shock-decision__states small {
+  color: var(--text-tertiary);
+  font-family: var(--font-sans);
+  font-size: var(--text-xs);
+  letter-spacing: var(--tracking-wide);
+  text-transform: uppercase;
+}
+
+.heat-shock-diff-section {
+  display: grid;
+  gap: var(--space-3);
+}
+
+.heat-shock-diff-section h3 {
+  margin: var(--space-1) 0 0;
+  font-size: var(--text-xl);
+}
+
+.heat-shock-diff-list {
+  display: grid;
+  gap: var(--space-2);
+}
+
 .diagnosis-result {
   display: inline-flex;
   flex-wrap: wrap;
@@ -800,6 +926,22 @@
 
   .diagnosis-objective-list {
     grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .heat-shock-control {
+    grid-template-columns: 1fr;
+  }
+
+  .heat-shock-decision {
+    grid-template-columns: 1fr;
+  }
+
+  .heat-shock-decision__states {
+    grid-template-columns: 1fr;
+  }
+
+  .heat-shock-decision__states > span[aria-hidden="true"] {
+    display: none;
   }
 
   .metrics-bar {

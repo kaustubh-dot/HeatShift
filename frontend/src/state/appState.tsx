@@ -71,6 +71,7 @@ export type AppAction =
   | { type: "request_succeeded"; request: "solve" | "heatShock"; result: SolveResponse }
   | { type: "request_succeeded"; request: "diagnosis"; result: DiagnosisResponse }
   | { type: "request_failed"; request: RequestKey; message: string }
+  | { type: "heatShock_reset" }
   | { type: "source_mode_changed"; source: DataSource };
 
 function withRequest(
@@ -136,6 +137,8 @@ export function appReducer(state: AppState, action: AppAction): AppState {
         status: "error",
         error: action.message,
       });
+    case "heatShock_reset":
+      return withRequest(state, "heatShock", { status: "idle", error: null });
     case "source_mode_changed":
       return { ...state, dataSource: action.source };
   }
@@ -147,6 +150,11 @@ export function selectPolicyPlan(state: AppState): Plan | null {
 
 export function selectPlanDiff(state: AppState): PlanDiff[] {
   return state.solveResult?.plan_diff ?? [];
+}
+
+export function selectHeatShockPlan(state: AppState): Plan | null {
+  if (state.request.heatShock.status !== "success") return null;
+  return state.heatShockResult?.plans.heat_shock ?? null;
 }
 
 export function selectSelectedDiagnosis(state: AppState): DiagnosisResponse | null {

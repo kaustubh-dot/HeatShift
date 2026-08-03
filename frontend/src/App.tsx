@@ -42,6 +42,18 @@ export default function App() {
     };
   }, [dispatch, state.request.demo.status, state.scenario]);
 
+  const applyHeatShock = (request: { heat_adjustment_c: 2 }) => {
+    dispatch({ type: "request_started", request: "heatShock" });
+    const result = state.heatShockResult;
+    Promise.resolve().then(() => {
+      if (result?.scenario.heat_adjustment_c !== request.heat_adjustment_c || result.plans.heat_shock === null) {
+        dispatch({ type: "request_failed", request: "heatShock", message: "The saved heat-shock response did not match +2°C." });
+        return;
+      }
+      dispatch({ type: "request_succeeded", request: "heatShock", result });
+    });
+  };
+
   const content =
     state.request.demo.status === "error" ? (
       <section className="fixture-error" role="alert" aria-labelledby="demo-error-heading">
@@ -74,6 +86,15 @@ export default function App() {
       <WhyChapter
         job={designatedJob}
         diagnosis={designatedDiagnosis}
+        jobs={state.scenario.jobs}
+        policyPlan={state.solveResult?.plans.policy_constrained ?? null}
+        heatShockResult={state.heatShockResult}
+        heatShockStatus={state.request.heatShock.status}
+        heatShockError={state.request.heatShock.error}
+        selectedJobId={state.selectedJobId}
+        onJobClick={(jobId) => dispatch({ type: "select_job", jobId })}
+        onApplyHeatShock={applyHeatShock}
+        onResetHeatShock={() => dispatch({ type: "heatShock_reset" })}
         diagnosisRequestStatus={state.request.diagnosis.status}
         diagnosisRequestError={state.request.diagnosis.error}
       />

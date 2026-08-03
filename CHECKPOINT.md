@@ -2,7 +2,7 @@
 
 **Last updated:** 2026-08-03
 **Phase:** Phase 2 frontend implementation underway
-**Overall status:** F08 complete; F09 active
+**Overall status:** F09 complete; F10 active
 
 ## Locked product
 
@@ -51,12 +51,12 @@ The final planning pass made previously implicit behavior explicit:
 
 ## Active implementation checkpoint
 
-- Last completed task: F08
+- Last completed task: F09
 - Verification commands:
   - `cd frontend && npm run test:run`
   - `cd frontend && npm run build`
   - `git diff --check`
-- Results: `npm run test:run` reported `21 passed` across eight test files; `npm run build` exited 0 and produced the Vite production bundle; `git diff --check` exited 0. The F04 `npm ci` and fallback `cmp` evidence remain valid; no package or fixture changes were needed for F08.
+- Results: `npm run test:run` reported `26 passed` across nine test files; `npm run build` exited 0 and produced the Vite production bundle; `git diff --check` exited 0. The F04 `npm ci` and fallback `cmp` evidence remain valid; no package or fixture changes were needed for F09.
 - F00 shell: React 19.2.8, TypeScript 5.9.3, Vite 8.1.5, `lucide-react` 1.17.0, Vitest 3.2.7, React Testing Library 16.3.0, DOM matchers 6.8.0, and jsdom 26.1.0. No router, state library, HTTP library, animation package, or CSS framework was added.
 - F01 evidence: `frontend/public/fallback/demo.json` is an exact copy of the B15 genuine bundle; `parseDemoBundle` rejects malformed required fields; `loadFallbackDemo` validates HTTP/JSON responses; the reducer stores canonical scenario, policy, solve, shock, and diagnosis responses once and selectors derive plan/diff views without copied metrics.
 - F02 evidence: approved OKLCH tokens and type scales are in [frontend/src/styles/tokens.css](frontend/src/styles/tokens.css); local Space Grotesk, DM Sans, and JetBrains Mono WOFF2 files plus OFL texts are under [frontend/public/fonts](frontend/public/fonts); the shell has a first-focusable skip link, native `aria-current="step"` chapter buttons, disabled locked chapters, visible focus styling, and a normal-flow TrustBar that keeps policy disclaimer and solver proof visible.
@@ -66,13 +66,14 @@ The final planning pass made previously implicit behavior explicit:
 - F06 evidence: [frontend/src/components/ServiceMap.tsx](frontend/src/components/ServiceMap.tsx) renders one responsive `800×600` SVG with submitted location coordinates, depot squares, neutral job circles, and backend-ordered route polylines using crew colors only for route identity; [frontend/tests/service-map.test.tsx](frontend/tests/service-map.test.tsx) verifies all 12 job nodes, the depot, all 10 route records/orderings, keyboard selection, and shared map/timeline/diff selection.
 - F07 evidence: [frontend/src/hooks/usePlanTransformation.ts](frontend/src/hooks/usePlanTransformation.ts) keeps only animation phase in local state and schedules 300ms highlight, 500ms transform, and 250ms settle stages; [frontend/tests/transformation.test.tsx](frontend/tests/transformation.test.tsx) covers fake-timer phase boundaries, replay, final-plan equivalence, immediate reduced-motion output, and usable controls.
 - F08 evidence: [frontend/src/components/WhyChapter.tsx](frontend/src/components/WhyChapter.tsx) defaults through `manifest.designated_diagnosis_job_id`, keeps classification beside proof status, and renders every saved diagnosis field plus intervention objective deltas; [frontend/tests/why.test.tsx](frontend/tests/why.test.tsx) covers the designated `proven_infeasible` response, all four exact classification phrases, and focus after a successful diagnosis request.
+- F09 evidence: [frontend/src/components/WhyChapter.tsx](frontend/src/components/WhyChapter.tsx) sends the exact `{ heat_adjustment_c: 2 }` request, keeps the diagnosis and current plan visible while loading, and renders the returned `plans.heat_shock`, first non-unchanged decision, response metrics, solver proof, and every returned shock diff; [frontend/src/state/appState.tsx](frontend/src/state/appState.tsx) preserves the cached canonical response across reset; [frontend/tests/heat-shock.test.tsx](frontend/tests/heat-shock.test.tsx) covers exact request shape, loading behavior, returned evidence order/count, reset, and reducer preservation.
 - Backend release evidence remains in [backend/RELEASE_EVIDENCE.md](backend/RELEASE_EVIDENCE.md); saved solver artifacts remain canonical under [backend/heatshift/fixtures/saved](backend/heatshift/fixtures/saved).
-- Known limitations: live API client, heat-shock controls, and responsive screenshot review remain later packets. Backend limitations remain documented in [docs/SAFETY_AND_LIMITATIONS.md](docs/SAFETY_AND_LIMITATIONS.md).
-- Next task: F09 — +2°C heat-shock journey
+- Known limitations: the live API client and responsive screenshot review remain later packets. Backend limitations remain documented in [docs/SAFETY_AND_LIMITATIONS.md](docs/SAFETY_AND_LIMITATIONS.md).
+- Next task: F10 — live API, exact-match fallback, and failure states
 
 ## Immediate next action
 
-Execute **F09 only** from [docs/IMPLEMENTATION_MASTER_PLAN.md](docs/IMPLEMENTATION_MASTER_PLAN.md) and [docs/FRONTEND_PLAN.md](docs/FRONTEND_PLAN.md). Stop after its verification and checkpoint handoff.
+Execute **F10 only** from [docs/IMPLEMENTATION_MASTER_PLAN.md](docs/IMPLEMENTATION_MASTER_PLAN.md) and [docs/FRONTEND_PLAN.md](docs/FRONTEND_PLAN.md). Stop after its verification and checkpoint handoff.
 
 Do not begin frontend polish beyond the active frontend packet until its packet-specific acceptance commands pass.
 

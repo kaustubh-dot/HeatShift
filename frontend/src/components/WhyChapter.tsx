@@ -1,6 +1,7 @@
 import { useEffect, useRef } from "react";
 
-import type { DiagnosisResponse, Job } from "../types";
+import { MetricsBar, PlanDiffBadge, PlanDiffCard, PlanProof } from "./primitives";
+import type { DiagnosisResponse, Job, Plan, PlanDiff, SolveResponse } from "../types";
 import type { RequestStatus } from "../state/appState";
 
 const CLASSIFICATION_COPY: Record<DiagnosisResponse["classification"], string> = {
@@ -39,14 +40,42 @@ function ObjectiveDeltaList({ delta, label }: { delta: DiagnosisResponse["object
   );
 }
 
+function stateSummary(state: PlanDiff["before"]): string {
+  if (state === null) return "Not scheduled";
+  return `${state.crew_id ?? "Unassigned"} · ${state.start ?? "—"}–${state.end ?? "—"}`;
+}
+
 interface WhyChapterProps {
   job: Job | null;
   diagnosis: DiagnosisResponse | null;
+  jobs?: Job[];
+  policyPlan?: Plan | null;
+  heatShockResult?: SolveResponse | null;
+  heatShockStatus?: RequestStatus;
+  heatShockError?: string | null;
+  selectedJobId?: string | null;
+  onJobClick?: (jobId: string) => void;
+  onApplyHeatShock?: (request: { heat_adjustment_c: 2 }) => void;
+  onResetHeatShock?: () => void;
   diagnosisRequestStatus?: RequestStatus;
   diagnosisRequestError?: string | null;
 }
 
-export function WhyChapter({ job, diagnosis, diagnosisRequestStatus = "idle", diagnosisRequestError = null }: WhyChapterProps) {
+export function WhyChapter({
+  job,
+  diagnosis,
+  jobs = [],
+  policyPlan = null,
+  heatShockResult = null,
+  heatShockStatus = "idle",
+  heatShockError = null,
+  selectedJobId = null,
+  onJobClick = () => undefined,
+  onApplyHeatShock = () => undefined,
+  onResetHeatShock = () => undefined,
+  diagnosisRequestStatus = "idle",
+  diagnosisRequestError = null,
+}: WhyChapterProps) {
   const headingRef = useRef<HTMLHeadingElement>(null);
 
   useEffect(() => {
@@ -64,6 +93,10 @@ export function WhyChapter({ job, diagnosis, diagnosisRequestStatus = "idle", di
   }
 
   const classification = CLASSIFICATION_COPY[diagnosis.classification];
+  const shockPlan = heatShockStatus === "success" ? heatShockResult?.plans.heat_shock ?? null : null;
+  const firstDecision = shockPlan === null ? null : heatShockResult?.plan_diff.find((diff) => diff.change !== "unchanged") ?? null;
+  const jobNames = new Map(jobs.map((candidate) => [candidate.id, candidate.name]));
+
   return (
     <section className="why-chapter" aria-labelledby="diagnosis-heading">
       <header className="why-chapter__hero">
@@ -80,6 +113,97 @@ export function WhyChapter({ job, diagnosis, diagnosisRequestStatus = "idle", di
         </div>
         <p className="why-chapter__summary">This result preserves the listed commitments and reports the solver proof beside the classification.</p>
       </header>
+
+      <section className="heat-shock-control" aria-labelledby="heat-shock-heading">
+        <div>
+          <p className="label-caps">Bounded what-if</p>
+          <h2 id="heat-shock-heading">Test the day at +2°C.</h2>
+          <p>Re-run the constrained plan with the returned heat adjustment and keep this diagnosis in view.</p>
+        </div>
+        <div className="heat-shock-control__actions">
+          <button
+            aria-label="Apply plus 2 degrees Celsius heat shock to re-optimize the plan"
+            className="primary-action"
+            disabled={heatShockStatus === "loading"}
+            onClick={() => onApplyHeatShock({ heat_adjustment_c: 2 })}
+            type="button"
+          >
+            <span>Apply +2°C Heat Shock</span>
+            <span aria-hidden="true">↗</span>
+          </button>
+          {shockPlan !== null && (
+            <button className="secondary-button" onClick={onResetHeatShock} type="button">
+              Reset heat shock
+            </button>
+          )}
+          {heatShockStatus === "loading" && (
+            <p className="heat-shock-status" role="status" aria-live="polite">
+              SOLVING…
+            </p>
+          )}
+          {heatShockStatus === "error" && (
+            <p className="heat-shock-status heat-shock-status--error" role="alert">
+              {heatShockError ?? "The heat-shock response could not be loaded."}
+            </p>
+          )}
+        </div>
+      </section>
+
+      {shockPlan !== null && policyPlan !== null && firstDecision !== null && (
+        <section className="heat-shock-result" aria-labelledby="heat-shock-result-heading" aria-busy={heatShockStatus === "loading"}>
+          <header className="section-heading-row">
+            <div>
+              <p className="label-caps">Returned heat-shock response</p>
+              <h2 id="heat-shock-result-heading">The first decision changes before the supporting totals.</h2>
+            </div>
+            <span className="data-value">+{heatShockResult?.scenario.heat_adjustment_c}°C</span>
+          </header>
+
+          <section className="heat-shock-decision" aria-labelledby="heat-shock-decision-heading">
+            <div>
+              <p className="label-caps">First meaningful decision</p>
+              <h3 id="heat-shock-decision-heading">{jobNames.get(firstDecision.job_id) ?? firstDecision.job_id}</h3>
+              <p className="heat-shock-decision__job-id data-value">{firstDecision.job_id}</p>
+            </div>
+            <PlanDiffBadge change={firstDecision.change} />
+            <div className="heat-shock-decision__states">
+              <span>
+                <small>Before</small>
+                {stateSummary(firstDecision.before)}
+              </span>
+              <span aria-hidden="true">→</span>
+              <span>
+                <small>After</small>
+                {stateSummary(firstDecision.after)}
+              </span>
+            </div>
+          </section>
+
+          <MetricsBar current={shockPlan.metrics} baseline={policyPlan.metrics} />
+          <PlanProof plan={shockPlan} />
+
+          <section className="heat-shock-diff-section" aria-labelledby="heat-shock-diff-heading">
+            <div className="section-heading-row">
+              <div>
+                <p className="label-caps">Returned evidence</p>
+                <h3 id="heat-shock-diff-heading">Every heat-shock difference</h3>
+              </div>
+              <span className="data-value">{heatShockResult?.plan_diff.length ?? 0} work-order records</span>
+            </div>
+            <div className="heat-shock-diff-list">
+              {heatShockResult?.plan_diff.map((diff) => (
+                <PlanDiffCard
+                  diff={diff}
+                  isSelected={diff.job_id === selectedJobId}
+                  jobName={jobNames.get(diff.job_id) ?? diff.job_id}
+                  key={diff.job_id}
+                  onClick={() => onJobClick(diff.job_id)}
+                />
+              ))}
+            </div>
+          </section>
+        </section>
+      )}
 
       <div className="diagnosis-grid">
         <section className="diagnosis-panel" aria-labelledby="commitments-heading">
