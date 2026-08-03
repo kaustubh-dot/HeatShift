@@ -191,3 +191,38 @@ The production smoke checks against that one process returned:
 - `/fallback/demo.json` — `200` JSON.
 
 The in-app browser loaded and refreshed the production HTML and requested the fallback JSON with `200` responses from the server, but its browser layer kept the React app in the loading state for the JSON-backed journey. The three-chapter manual completion could therefore not be observed in that browser surface; the limitation is recorded rather than presented as a successful manual walkthrough. Frontend tests and the one-process endpoint smoke remain green. No global package installation or manual source edit was used in the clean runtime.
+
+## R01 — Live and disconnected demo rehearsals
+
+**Candidate:** `b476da1` (`R00: rehearse fresh release`)
+
+The production build was regenerated with `npm run build`, then one documented Uvicorn process was started on `127.0.0.1:8000`. The rehearsal script used only localhost HTTP calls and did not edit files, restart the process, or change the scenario/policy between runs.
+
+### Live runs
+
+Each run followed the storyboard evidence order: `/api/demo` brief, service-first solve, policy-constrained solve, designated diagnosis, and +2°C solve.
+
+| Run | Duration | Brief | Service-first conflicts | Policy conflicts | Policy status | Diagnosis | Heat-shock recovery |
+| ---: | ---: | --- | ---: | ---: | --- | --- | ---: |
+| 1 | 13.94s | 41°C / 3 crews / 12 work orders | 11 | 0 | `OPTIMAL` | `proven_infeasible` | 60 min |
+| 2 | 14.32s | 41°C / 3 crews / 12 work orders | 11 | 0 | `OPTIMAL` | `proven_infeasible` | 60 min |
+| 3 | 14.18s | 41°C / 3 crews / 12 work orders | 11 | 0 | `OPTIMAL` | `proven_infeasible` | 60 min |
+
+The runs also asserted that the designated diagnosis returned `INFEASIBLE` with four tested interventions and that the heat-shock diff contained `recovery_added`. The live story therefore uses only displayed response values: it does not infer that omission alone proves impossibility, and it names the exact diagnosis classification.
+
+### Failure drill
+
+Without restarting the process, a malformed `/api/solve` request returned HTTP `422` with `INVALID_SCENARIO`. The next `/api/demo` request returned HTTP `200`, proving the presenter could explain the honest validation state and return to the deterministic demo without a machine restart.
+
+### Disconnected runs
+
+Two consecutive runs used `/?fallback=true` and `/fallback/demo.json` from the same production process. Each returned HTTP `200`, matched all three canonical saved output hashes, and verified the saved base, +2°C, and `job-bus-route` diagnosis records. The production bundle contained the exact `SAVED SOLVER RUN` and `Live API unavailable` disclosure strings and referenced only local fallback data. The server log showed local HTML, JavaScript, font, and fallback-JSON requests; no external font, map, analytics, image, or data request was needed.
+
+| Run | Duration | Mode | Disclosure | Hashes | Runtime data |
+| ---: | ---: | --- | --- | --- | --- |
+| 1 | 0.01s | explicit saved mode | `SAVED SOLVER RUN / Live API unavailable` | matched | local only |
+| 2 | 0.00s | explicit saved mode | `SAVED SOLVER RUN / Live API unavailable` | matched | local only |
+
+### Remaining presentation risk
+
+The in-app browser was refreshed once in live mode and once in saved mode. The server returned HTTP `200` for `/api/demo` and `/fallback/demo.json`, but the browser integration layer did not expose the JSON response to the page, leaving the shell in its loading state with chapter buttons disabled. Consequently, these R01 timings prove the production API/story and saved-data path, while manual click completion of all three rendered chapters remains unobserved in this browser surface. The limitation is the test surface, not an API failure; the existing frontend test suite covers the chapter transitions and the exact saved disclosure.
