@@ -4,7 +4,7 @@ This is the implementation ledger. Execute tasks in ID order using [docs/IMPLEME
 
 ## Active task
 
-- [ ] **F12** — Build and serve the frontend through FastAPI.
+- [ ] **R00** — Pass a fresh clone/install/start rehearsal.
 
 ## Gate G1 — Inputs and patterns
 
@@ -47,7 +47,7 @@ This is the implementation ledger. Execute tasks in ID order using [docs/IMPLEME
 - [x] **F09** — Implement the +2°C heat-shock journey.
 - [x] **F10** — Integrate the live API, exact-match fallback, and failure states.
 - [x] **F11** — Pass accessibility and presentation-viewport checks.
-- [ ] **F12** — Build and serve the frontend through FastAPI.
+- [x] **F12** — Build and serve the frontend through FastAPI.
 
 ## Gate G5 — Release and submission
 

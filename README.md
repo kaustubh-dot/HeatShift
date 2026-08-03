@@ -46,3 +46,18 @@ The topic is frozen unless the headless solver spike fails to produce a valid, n
 6. Apply a synthetic +2 C heat shock and re-optimize.
 
 No authentication, LLM, live GPS, street-level routing, multi-day scheduling, worker mobile app, or compliance certification is in launch scope.
+
+## Run the production-shaped app locally
+
+Build the frontend into the FastAPI static directory, then start one server for the API and SPA:
+
+```bash
+cd frontend
+npm ci
+npm run test:run
+npm run build
+cd ..
+.venv/bin/python -m uvicorn backend.heatshift.api:app --host 127.0.0.1 --port 8000
+```
+
+Open `http://127.0.0.1:8000/`. The same process serves `/api/*`, direct app routes, the genuine fallback JSON, and bundled fonts. Use `?fallback=true` for the explicitly disclosed saved-results presentation mode.

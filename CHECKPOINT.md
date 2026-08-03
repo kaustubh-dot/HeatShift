@@ -2,7 +2,7 @@
 
 **Last updated:** 2026-08-03
 **Phase:** Phase 2 frontend implementation underway
-**Overall status:** F11 complete; F12 active
+**Overall status:** F12 complete; R00 active
 
 ## Locked product
 
@@ -51,12 +51,12 @@ The final planning pass made previously implicit behavior explicit:
 
 ## Active implementation checkpoint
 
-- Last completed task: F11
+- Last completed task: F12
 - Verification commands:
   - `cd frontend && npm run test:run`
   - `cd frontend && npm run build`
   - `git diff --check`
-- Results: `npm run test:run` reported `35 passed` across ten test files; `npm run build` exited 0 and produced the Vite production bundle; `git diff --check` exited 0. The F04 `npm ci` and fallback `cmp` evidence remain valid; F11 added no runtime dependency.
+- Results: `npm run test:run` reported `35 passed` across ten test files; `npm run build` exited 0 and emitted `backend/heatshift/static/index.html`, hashed assets, fallback JSON, and bundled fonts; `.venv/bin/python -m pytest -q` reported `98 passed` with one existing Starlette/HTTPX deprecation warning; `git diff --check` exited 0. The F04 `npm ci` and fallback `cmp` evidence remain valid.
 - F00 shell: React 19.2.8, TypeScript 5.9.3, Vite 8.1.5, `lucide-react` 1.17.0, Vitest 3.2.7, React Testing Library 16.3.0, DOM matchers 6.8.0, and jsdom 26.1.0. No router, state library, HTTP library, animation package, or CSS framework was added.
 - F01 evidence: `frontend/public/fallback/demo.json` is an exact copy of the B15 genuine bundle; `parseDemoBundle` rejects malformed required fields; `loadFallbackDemo` validates HTTP/JSON responses; the reducer stores canonical scenario, policy, solve, shock, and diagnosis responses once and selectors derive plan/diff views without copied metrics.
 - F02 evidence: approved OKLCH tokens and type scales are in [frontend/src/styles/tokens.css](frontend/src/styles/tokens.css); local Space Grotesk, DM Sans, and JetBrains Mono WOFF2 files plus OFL texts are under [frontend/public/fonts](frontend/public/fonts); the shell has a first-focusable skip link, native `aria-current="step"` chapter buttons, disabled locked chapters, visible focus styling, and a normal-flow TrustBar that keeps policy disclaimer and solver proof visible.
@@ -69,13 +69,14 @@ The final planning pass made previously implicit behavior explicit:
 - F09 evidence: [frontend/src/components/WhyChapter.tsx](frontend/src/components/WhyChapter.tsx) sends the exact `{ heat_adjustment_c: 2 }` request, keeps the diagnosis and current plan visible while loading, and renders the returned `plans.heat_shock`, first non-unchanged decision, response metrics, solver proof, and every returned shock diff; [frontend/src/state/appState.tsx](frontend/src/state/appState.tsx) preserves the cached canonical response across reset; [frontend/tests/heat-shock.test.tsx](frontend/tests/heat-shock.test.tsx) covers exact request shape, loading behavior, returned evidence order/count, reset, and reducer preservation.
 - F10 evidence: [frontend/src/api/client.ts](frontend/src/api/client.ts) uses only native fetch for `/api/demo`, `/api/solve`, and `/api/diagnose`, with one 15-second abort timeout and structured error preservation; [frontend/src/api/fallback.ts](frontend/src/api/fallback.ts) validates live responses and selects saved solves/diagnoses only on exact scenario, policy, heat-adjustment, and job matches; [frontend/src/App.tsx](frontend/src/App.tsx) runs live mode by default, activates saved mode only for explicit configuration or network/abort/server failure, preserves current results during requests, and keeps validation/malformed responses visible; [frontend/src/components/SolverEvidence.tsx](frontend/src/components/SolverEvidence.tsx) keeps the saved-run disclosure and provenance visible for the full saved session; [frontend/tests/client.test.tsx](frontend/tests/client.test.tsx) covers live success, demo parsing, exact fallback/rejection, structured 4xx errors, malformed 2xx, abort, server failure, `FEASIBLE` warning, and saved disclosure.
 - F11 evidence: [frontend/src/components/AppShell.tsx](frontend/src/components/AppShell.tsx) now moves focus to `#main-content` from the skip link; [frontend/tests/shell.test.tsx](frontend/tests/shell.test.tsx) verifies the focus handoff, enabled/disabled chapter navigation, trust landmarks, and visible main region. The in-app browser observed one skip link, semantic chapter navigation, `<main>`, trust-bar content, no horizontal overflow at its available `1280×720`, and reduced-motion CSS remains covered by the existing transformation tests. Manual full-chapter, 200% zoom, screen-reader, and `1440×900` checks were limited: the browser surface blocked `/fallback/demo.json` with `ERR_BLOCKED_BY_CLIENT`, page fetch remained unavailable, and the viewport override stayed capped at `1280×720`.
+- F12 evidence: [frontend/vite.config.ts](frontend/vite.config.ts) emits to the generated-only `backend/heatshift/static/` directory and proxies `/api`/`/healthz` in development; [backend/heatshift/api.py](backend/heatshift/api.py) serves files with `FileResponse`, keeps exact API routes ahead of the SPA catch-all, rejects unknown `/api/*`, and returns `index.html` for direct app routes; [tests/integration/test_static.py](tests/integration/test_static.py) reports `2 passed` after the build. The elevated Uvicorn smoke run returned `/healthz` 200, `/` and `/why` 200 HTML, `/api/demo` 200 JSON, `/fallback/demo.json` 200 JSON, hashed JavaScript 200 `text/javascript`, and unknown API 404 JSON. `git ls-files backend/heatshift/static` is empty, and the built frontend contains no runtime CDN/font URL.
 - Backend release evidence remains in [backend/RELEASE_EVIDENCE.md](backend/RELEASE_EVIDENCE.md); saved solver artifacts remain canonical under [backend/heatshift/fixtures/saved](backend/heatshift/fixtures/saved).
-- Known limitations: the in-app browser could not complete the saved JSON-backed journey or 1440×900 check; production serving remains the next packet. Backend limitations remain documented in [docs/SAFETY_AND_LIMITATIONS.md](docs/SAFETY_AND_LIMITATIONS.md).
-- Next task: F12 — production frontend serving through FastAPI
+- Known limitations: the in-app browser could not complete the saved JSON-backed journey or 1440×900 check; R00 will provide the fresh-start production rehearsal. Backend limitations remain documented in [docs/SAFETY_AND_LIMITATIONS.md](docs/SAFETY_AND_LIMITATIONS.md).
+- Next task: R00 — fresh clone/install/start rehearsal
 
 ## Immediate next action
 
-Execute **F12 only** from [docs/IMPLEMENTATION_MASTER_PLAN.md](docs/IMPLEMENTATION_MASTER_PLAN.md) and [docs/FRONTEND_PLAN.md](docs/FRONTEND_PLAN.md). Stop after its verification and checkpoint handoff.
+Execute **R00 only** from [docs/IMPLEMENTATION_MASTER_PLAN.md](docs/IMPLEMENTATION_MASTER_PLAN.md) and [docs/RELEASE_IMPLEMENTATION_PLAN.md](docs/RELEASE_IMPLEMENTATION_PLAN.md). Stop after its verification and checkpoint handoff.
 
 Do not begin frontend polish beyond the active frontend packet until its packet-specific acceptance commands pass.
 

@@ -4,11 +4,12 @@ from __future__ import annotations
 
 from collections.abc import Iterable
 import json
+from pathlib import Path
 from typing import Any
 
-from fastapi import FastAPI, Request
+from fastapi import FastAPI, HTTPException, Request
 from fastapi.exceptions import RequestValidationError, ResponseValidationError
-from fastapi.responses import JSONResponse
+from fastapi.responses import FileResponse, JSONResponse
 from starlette.status import (
     HTTP_409_CONFLICT,
     HTTP_422_UNPROCESSABLE_CONTENT,
@@ -38,6 +39,8 @@ from .validation import validate_scenario
 
 
 app = FastAPI(title="HeatShift API")
+STATIC_DIR = FIXTURE_DIR.parent / "static"
+STATIC_ROOT = STATIC_DIR.resolve()
 
 
 @app.get("/healthz")
@@ -98,6 +101,28 @@ def post_diagnose(request: DiagnoseRequest) -> DiagnosisResponse | JSONResponse:
         )
     except SolveServiceError as error:
         return _solve_service_error_response(error)
+
+
+@app.get("/{path:path}", include_in_schema=False)
+def serve_frontend(path: str) -> FileResponse:
+    """Serve compiled assets and fall back to the SPA entry point for app routes."""
+
+    if path == "api" or path.startswith("api/"):
+        raise HTTPException(status_code=404, detail="API route not found")
+    index_path = STATIC_ROOT / "index.html"
+    if not index_path.is_file():
+        raise HTTPException(status_code=404, detail="Frontend build not found")
+    if path == "":
+        return FileResponse(index_path)
+
+    candidate = (STATIC_ROOT / path).resolve()
+    if not candidate.is_relative_to(STATIC_ROOT):
+        raise HTTPException(status_code=404, detail="Asset not found")
+    if candidate.is_file():
+        return FileResponse(candidate)
+    if Path(path).suffix:
+        raise HTTPException(status_code=404, detail="Asset not found")
+    return FileResponse(index_path)
 
 
 def load_bundled_demo() -> DemoResponse:
