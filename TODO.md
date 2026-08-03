@@ -4,7 +4,7 @@ This is the implementation ledger. Execute tasks in ID order using [docs/IMPLEME
 
 ## Active task
 
-- [ ] **R03** — Finalize README evidence, architecture, licenses, and limitations.
+- [ ] **R04** — Audit and submit the Devpost entry.
 
 ## Gate G1 — Inputs and patterns
 
@@ -54,7 +54,7 @@ This is the implementation ledger. Execute tasks in ID order using [docs/IMPLEME
 - [x] **R00** — Pass a fresh clone/install/start rehearsal.
 - [x] **R01** — Pass live and disconnected demo rehearsals.
 - [x] **R02** — Capture release screenshots and the 3–5 minute demo.
-- [ ] **R03** — Finalize README evidence, architecture, licenses, and limitations.
+- [x] **R03** — Finalize README evidence, architecture, licenses, and limitations.
 - [ ] **R04** — Audit and submit the Devpost entry.
 
 ## Explicitly not planned
