@@ -6,6 +6,8 @@
 **Category:** Sustainability & Climate Tech
 **Submission status:** Prepared for review; final external submission requires the owner's confirmation.
 
+The configured GitHub repository is publicly visible. The local R04 candidate is newer than the public `agent/lock-planning-docs` branch; publishing that candidate requires explicit authorization because it exports repository contents to the public remote.
+
 ## Title
 
 HeatShift: Policy-Constrained Service Optimizer
@@ -84,7 +86,7 @@ Open `http://127.0.0.1:8000/`. Add `?fallback=true` to explicitly use the disclo
 | Title and value proposition | Ready | This packet |
 | Sustainability & Climate Tech category | Ready | This packet |
 | Project description | Ready | This packet; no unsupported generalized impact percentage |
-| GitHub repository | Candidate URL recorded | Confirm repository visibility and final candidate SHA in Devpost |
+| GitHub repository | Public visibility verified; candidate URL recorded | Publish the current candidate branch, then confirm its final SHA in Devpost |
 | Demo video | Missing | Record and watch once with audio and once muted; do not claim the current shell captures are the video |
 | Presentation | Optional / missing | Create only if useful; do not block on it unless required by the organizer |
 | Installation instructions | Ready | README and reproduction block above |
