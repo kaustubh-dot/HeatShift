@@ -49,9 +49,17 @@ No authentication, LLM, live GPS, street-level routing, multi-day scheduling, wo
 
 ## Run the production-shaped app locally
 
-Build the frontend into the FastAPI static directory, then start one server for the API and SPA:
+The documented rehearsal uses Python 3.12 and the checked-in Node lockfile. From the repository root:
 
 ```bash
+python3.12 --version
+python3.12 -m venv .venv
+.venv/bin/python -m pip install -r backend/requirements-dev.txt
+.venv/bin/python -m pip check
+.venv/bin/python -m backend.heatshift.cli validate
+saved_dir="$(mktemp -d)"
+.venv/bin/python -m backend.heatshift.cli generate-saved --output-dir "$saved_dir"
+.venv/bin/python -m pytest -q
 cd frontend
 npm ci
 npm run test:run

@@ -114,3 +114,80 @@ The independent base branches run concurrently while each retains its own solver
 HeatShift is an operations-planning prototype using a synthetic scenario and organization-supplied policy inputs. It does not determine medical safety, diagnose or prevent heat illness, create an authoritative work/rest policy, certify regulatory or contractual compliance, or replace worksite measurements, emergency procedures, worker stop-work rights, or qualified professional judgment. The bundled policy is synthetic and is not medical, legal, or workplace-safety guidance.
 
 The prototype is limited to a one-day, 15-minute horizon; a small set of pre-formed crews and jobs; input travel times and a schematic map; simplified recovery conditions; no forecast uncertainty beyond the explicit heat-shock scenario; bounded rather than exhaustive counterfactual interventions; and solver-status/time-limit-dependent optimality. It uses no personal medical information and must not infer individual health or heat tolerance.
+
+## R00 — Fresh-start rehearsal
+
+**Candidate source:** `f6eca22` (`F12: serve frontend through FastAPI`)
+
+The first clean archive intentionally followed the pre-R00 README. The documented server command failed with exit `127` because `.venv/bin/python` did not exist. This exposed that the README assumed a pre-existing virtual environment. The README was corrected to document Python 3.12 venv creation, pinned dependency installation, `pip check`, fixture validation, saved-output generation into a temporary directory, and the backend test command. No source or product behavior was changed to address the documentation gap.
+
+The corrected sequence was then run from a second clean archive with no `.venv`, `node_modules`, caches, or generated static output. The archive was created with:
+
+```text
+git archive f6eca22 | tar -x -C /private/tmp/heatshift-r00-final.0IXb7U
+```
+
+Commands and results:
+
+```text
+python3.12 --version
+Python 3.12.13
+
+python3.12 -m venv .venv
+exit 0
+
+.venv/bin/python -m pip install -r backend/requirements-dev.txt
+exit 0; all pinned packages installed in the clean venv
+
+.venv/bin/python -m pip check
+No broken requirements found.
+
+.venv/bin/python -c "import ortools, pydantic, fastapi, pytest; print('imports-ok')"
+imports-ok
+
+.venv/bin/python -m backend.heatshift.cli validate
+valid=true; scenario_id=demo-city-day-01; policy_id=demo-city-hs-01; issues=[]
+
+.venv/bin/python -m backend.heatshift.cli generate-saved --output-dir /private/tmp/heatshift-r00-final-saved.Iq1aIj
+exit 0; fixture_version=demo-v1; Python=3.12.13; OR-Tools=9.15.6755
+```
+
+The generated saved-output hashes matched the checked-in manifest:
+
+| Saved output | Canonical SHA-256 |
+| --- | --- |
+| `base-solve.json` | `f2fc17217539af49025a62aca91953eb5e8c87e7b3eff2cbd2af68f249c66cba` |
+| `diagnosis-job-bus-route.json` | `de9526bf89fc5ec31d622db2b05db0b6fb3a893cbe2b643572bf017087859420` |
+| `heat-shock.json` | `378baffd2ad1a76a1688268c4a89950dbb6a4d2127f8124bbe25f43942cb2615` |
+
+The full backend suite before the frontend build reported `96 passed, 2 skipped` because the generated-only static directory did not yet exist. After the production build, the same full suite reported `98 passed` with the existing single Starlette/HTTPX deprecation warning.
+
+```text
+.venv/bin/python -m pytest -q
+98 passed, 1 warning in 41.63s
+
+cd frontend
+npm ci
+exit 0; 129 packages installed, 0 vulnerabilities
+
+npm run test:run
+10 files passed; 35 tests passed
+
+npm run build
+exit 0; emitted index.html, hashed JS/CSS, fallback JSON, and bundled fonts
+
+.venv/bin/python -m uvicorn backend.heatshift.api:app --host 127.0.0.1 --port 8000
+started successfully; one process served the API and compiled SPA
+```
+
+The production smoke checks against that one process returned:
+
+- `/healthz` — `200`, `{"status":"ok"}`;
+- `/api/demo` — `200`, `demo-city-day-01`, `demo-v1`;
+- base `/api/solve` — `200`, zero policy conflicts, no heat-shock plan in the zero-adjustment response;
+- `/api/diagnose` for `job-bus-route` — `200`, `proven_infeasible`;
+- `+2°C` `/api/solve` — `200`, heat-shock plan present;
+- `/` and `/why` — `200` HTML; and
+- `/fallback/demo.json` — `200` JSON.
+
+The in-app browser loaded and refreshed the production HTML and requested the fallback JSON with `200` responses from the server, but its browser layer kept the React app in the loading state for the JSON-backed journey. The three-chapter manual completion could therefore not be observed in that browser surface; the limitation is recorded rather than presented as a successful manual walkthrough. Frontend tests and the one-process endpoint smoke remain green. No global package installation or manual source edit was used in the clean runtime.

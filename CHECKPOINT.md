@@ -1,8 +1,8 @@
 # Checkpoint
 
 **Last updated:** 2026-08-03
-**Phase:** Phase 2 frontend implementation underway
-**Overall status:** F12 complete; R00 active
+**Phase:** Phase 3 release and submission
+**Overall status:** R00 complete; R01 active
 
 ## Locked product
 
@@ -51,12 +51,20 @@ The final planning pass made previously implicit behavior explicit:
 
 ## Active implementation checkpoint
 
-- Last completed task: F12
+- Last completed task: R00
 - Verification commands:
-  - `cd frontend && npm run test:run`
-  - `cd frontend && npm run build`
+  - `python3.12 --version`
+  - `python3.12 -m venv .venv`
+  - `.venv/bin/python -m pip install -r backend/requirements-dev.txt`
+  - `.venv/bin/python -m pip check`
+  - `.venv/bin/python -m backend.heatshift.cli validate`
+  - `.venv/bin/python -m backend.heatshift.cli generate-saved --output-dir <temporary-directory>`
+  - `.venv/bin/python -m pytest -q`
+  - `cd frontend && npm ci && npm run test:run && npm run build`
+  - `.venv/bin/python -m uvicorn backend.heatshift.api:app --host 127.0.0.1 --port 8000`
   - `git diff --check`
-- Results: `npm run test:run` reported `35 passed` across ten test files; `npm run build` exited 0 and emitted `backend/heatshift/static/index.html`, hashed assets, fallback JSON, and bundled fonts; `.venv/bin/python -m pytest -q` reported `98 passed` with one existing Starlette/HTTPX deprecation warning; `git diff --check` exited 0. The F04 `npm ci` and fallback `cmp` evidence remain valid.
+- Results: Python `3.12.13` created a clean venv and installed all pinned requirements; imports reported `imports-ok`; `pip check` reported `No broken requirements found`; fixture validation returned `valid=true` with no issues; saved-output generation exited 0 and matched the checked-in canonical output hashes. After the production build, `.venv/bin/python -m pytest -q` reported `98 passed` with one existing Starlette/HTTPX deprecation warning; `npm ci` installed 129 packages with 0 vulnerabilities; `npm run test:run` reported `35 passed` across ten test files; `npm run build` emitted `backend/heatshift/static/index.html`, hashed assets, fallback JSON, and bundled fonts; and `git diff --check` exited 0.
+- R00 fresh-start evidence: a clean archive of candidate `f6eca22` initially exposed the missing venv setup in README; the README was corrected and the exact setup/install/build/start sequence passed from `/private/tmp/heatshift-r00-final.0IXb7U`. The one-process smoke returned `/healthz`, `/api/demo`, base `/api/solve`, designated `/api/diagnose`, +2°C `/api/solve`, `/`, `/why`, and `/fallback/demo.json` with the expected 200 responses and content types. Full details and canonical hashes are in [backend/RELEASE_EVIDENCE.md](backend/RELEASE_EVIDENCE.md).
 - F00 shell: React 19.2.8, TypeScript 5.9.3, Vite 8.1.5, `lucide-react` 1.17.0, Vitest 3.2.7, React Testing Library 16.3.0, DOM matchers 6.8.0, and jsdom 26.1.0. No router, state library, HTTP library, animation package, or CSS framework was added.
 - F01 evidence: `frontend/public/fallback/demo.json` is an exact copy of the B15 genuine bundle; `parseDemoBundle` rejects malformed required fields; `loadFallbackDemo` validates HTTP/JSON responses; the reducer stores canonical scenario, policy, solve, shock, and diagnosis responses once and selectors derive plan/diff views without copied metrics.
 - F02 evidence: approved OKLCH tokens and type scales are in [frontend/src/styles/tokens.css](frontend/src/styles/tokens.css); local Space Grotesk, DM Sans, and JetBrains Mono WOFF2 files plus OFL texts are under [frontend/public/fonts](frontend/public/fonts); the shell has a first-focusable skip link, native `aria-current="step"` chapter buttons, disabled locked chapters, visible focus styling, and a normal-flow TrustBar that keeps policy disclaimer and solver proof visible.
@@ -71,12 +79,12 @@ The final planning pass made previously implicit behavior explicit:
 - F11 evidence: [frontend/src/components/AppShell.tsx](frontend/src/components/AppShell.tsx) now moves focus to `#main-content` from the skip link; [frontend/tests/shell.test.tsx](frontend/tests/shell.test.tsx) verifies the focus handoff, enabled/disabled chapter navigation, trust landmarks, and visible main region. The in-app browser observed one skip link, semantic chapter navigation, `<main>`, trust-bar content, no horizontal overflow at its available `1280×720`, and reduced-motion CSS remains covered by the existing transformation tests. Manual full-chapter, 200% zoom, screen-reader, and `1440×900` checks were limited: the browser surface blocked `/fallback/demo.json` with `ERR_BLOCKED_BY_CLIENT`, page fetch remained unavailable, and the viewport override stayed capped at `1280×720`.
 - F12 evidence: [frontend/vite.config.ts](frontend/vite.config.ts) emits to the generated-only `backend/heatshift/static/` directory and proxies `/api`/`/healthz` in development; [backend/heatshift/api.py](backend/heatshift/api.py) serves files with `FileResponse`, keeps exact API routes ahead of the SPA catch-all, rejects unknown `/api/*`, and returns `index.html` for direct app routes; [tests/integration/test_static.py](tests/integration/test_static.py) reports `2 passed` after the build. The elevated Uvicorn smoke run returned `/healthz` 200, `/` and `/why` 200 HTML, `/api/demo` 200 JSON, `/fallback/demo.json` 200 JSON, hashed JavaScript 200 `text/javascript`, and unknown API 404 JSON. `git ls-files backend/heatshift/static` is empty, and the built frontend contains no runtime CDN/font URL.
 - Backend release evidence remains in [backend/RELEASE_EVIDENCE.md](backend/RELEASE_EVIDENCE.md); saved solver artifacts remain canonical under [backend/heatshift/fixtures/saved](backend/heatshift/fixtures/saved).
-- Known limitations: the in-app browser could not complete the saved JSON-backed journey or 1440×900 check; R00 will provide the fresh-start production rehearsal. Backend limitations remain documented in [docs/SAFETY_AND_LIMITATIONS.md](docs/SAFETY_AND_LIMITATIONS.md).
-- Next task: R00 — fresh clone/install/start rehearsal
+- Known limitations: the in-app browser loaded the production HTML and the server returned `/fallback/demo.json` 200, but the browser layer kept the JSON-backed journey in its loading state, so manual completion of all three chapters was not observable there; the browser viewport also remains capped at `1280×720` for the `1440×900` check. Backend limitations remain documented in [docs/SAFETY_AND_LIMITATIONS.md](docs/SAFETY_AND_LIMITATIONS.md).
+- Next task: R01 — live and disconnected demo rehearsals
 
 ## Immediate next action
 
-Execute **R00 only** from [docs/IMPLEMENTATION_MASTER_PLAN.md](docs/IMPLEMENTATION_MASTER_PLAN.md) and [docs/RELEASE_IMPLEMENTATION_PLAN.md](docs/RELEASE_IMPLEMENTATION_PLAN.md). Stop after its verification and checkpoint handoff.
+Execute **R01 only** from [docs/IMPLEMENTATION_MASTER_PLAN.md](docs/IMPLEMENTATION_MASTER_PLAN.md) and [docs/RELEASE_IMPLEMENTATION_PLAN.md](docs/RELEASE_IMPLEMENTATION_PLAN.md). Stop after its verification and checkpoint handoff.
 
 Do not begin frontend polish beyond the active frontend packet until its packet-specific acceptance commands pass.
 
