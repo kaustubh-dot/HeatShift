@@ -19,6 +19,7 @@ import type {
   StageName,
   TimelineState,
 } from "../types";
+import embeddedFallbackBundle from "../../public/fallback/demo.json";
 
 const SOLVER_STATUSES = new Set<SolverStatus>([
   "OPTIMAL",
@@ -504,20 +505,35 @@ export function findSavedDiagnosis(
 export interface FallbackLoadOptions {
   url?: string;
   fetcher?: typeof fetch;
+  timeoutMs?: number;
+  preferEmbedded?: boolean;
 }
+
+const FALLBACK_REQUEST_TIMEOUT_MS = 3_000;
 
 export async function loadFallbackDemo({
   url = "/fallback/demo.json",
-  fetcher = fetch,
+  fetcher,
+  timeoutMs = FALLBACK_REQUEST_TIMEOUT_MS,
+  preferEmbedded = false,
 }: FallbackLoadOptions = {}): Promise<DemoBundle> {
+  const requestFetcher = fetcher ?? fetch;
+  const allowEmbeddedFallback = fetcher === undefined && url === "/fallback/demo.json";
+  if (preferEmbedded && allowEmbeddedFallback) return parseDemoBundle(embeddedFallbackBundle);
+  const controller = typeof AbortController === "undefined" ? null : new AbortController();
+  const timeoutId = controller === null ? null : setTimeout(() => controller.abort(), timeoutMs);
   let response: Response;
   try {
-    response = await fetcher(url);
+    response = await requestFetcher(url, controller === null ? undefined : { signal: controller.signal });
   } catch (error) {
+    if (allowEmbeddedFallback) return parseDemoBundle(embeddedFallbackBundle);
     const message = error instanceof Error ? error.message : "request failed";
     throw new FallbackDataError(message, "fallback.request");
+  } finally {
+    if (timeoutId !== null) clearTimeout(timeoutId);
   }
   if (!response.ok) {
+    if (allowEmbeddedFallback && response.status >= 500) return parseDemoBundle(embeddedFallbackBundle);
     throw new FallbackDataError(`request returned HTTP ${response.status}`, "fallback.request");
   }
   let payload: unknown;

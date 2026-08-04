@@ -57,7 +57,7 @@ export default function App() {
     void (async () => {
       if (fallbackRequested) {
         try {
-          const bundle = await loadFallbackDemo();
+          const bundle = await loadFallbackDemo({ preferEmbedded: true });
           if (active) dispatch({ type: "demo_loaded", bundle, source: "saved" });
         } catch (error) {
           if (active) dispatch({ type: "request_failed", request: "demo", message: errorMessage(error) });
