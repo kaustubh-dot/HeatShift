@@ -98,6 +98,8 @@ class OptimizerModel:
     route_travel_slots: dict[tuple[int, int], tuple[int, ...]]
     end_travel_slots: dict[int, tuple[int, ...]]
     arc_travel_minutes: dict[tuple[str, int, int | None], int]
+    solution_hint_added: bool = False
+    initial_selected_values: _SelectedValues | None = None
 
     @property
     def pattern_vars(self) -> tuple[Any, ...]:
@@ -128,16 +130,12 @@ def solve_staged(
     if time_limit_seconds < 0:
         raise ValueError("time_limit_seconds must be non-negative")
 
+    _add_initial_solution_hint(optimizer_model)
+
     stage_specs = (
         (StageName.CRITICAL_SERVICE, optimizer_model.objective_expressions.critical_service, True),
         (StageName.PLANNED_SERVICE_VALUE, optimizer_model.objective_expressions.planned_service_value, True),
         (StageName.TRAVEL_MINUTES, optimizer_model.objective_expressions.travel_minutes, False),
-        (StageName.OVERTIME_MINUTES, optimizer_model.objective_expressions.overtime_minutes, False),
-    )
-    housekeeping_spec = (
-        StageName.STANDALONE_RECOVERY,
-        optimizer_model.objective_expressions.standalone_recovery,
-        False,
     )
     started_at = time.perf_counter()
     stage_results: list[SolverStage] = []
@@ -155,12 +153,27 @@ def solve_staged(
             )
 
         solver = _configured_solver(remaining)
+        if not optimizer_model.enforce_policy and len(optimizer_model.patterns) > 5_000:
+            _configure_fast_incumbent_solver(solver)
         _set_objective(optimizer_model.model, expression, maximize)
         solve_started_at = time.perf_counter()
         raw_status = solver.Solve(optimizer_model.model)
         wall_time = time.perf_counter() - solve_started_at
         status = map_solver_status(raw_status)
         objective_value, best_bound = _capture_objective_bounds(solver, status)
+        if stage_name is StageName.CRITICAL_SERVICE and best_bound is not None:
+            critical_job_count = sum(
+                job.priority is Priority.CRITICAL
+                for job in optimizer_model.scenario.jobs
+            )
+            if critical_job_count:
+                best_bound = min(best_bound, critical_job_count)
+        elif stage_name is StageName.PLANNED_SERVICE_VALUE and best_bound is not None:
+            service_value_bound = sum(
+                job.service_value
+                for job in optimizer_model.scenario.jobs
+            )
+            best_bound = min(best_bound, service_value_bound)
         stage_results.append(
             SolverStage(
                 name=stage_name,
@@ -177,28 +190,43 @@ def solve_staged(
             assert objective_value is not None
             optimizer_model.model.Add(expression == objective_value)
             continue
+        if status is SolverStatus.UNKNOWN and selected_values is None:
+            selected_values = optimizer_model.initial_selected_values
         return _staged_result(status, stage_results, selected_values, optimizer_model)
 
-    # The fifth stage only chooses among plans whose four required objectives
-    # are already fixed. Its proof status cannot revoke the maximum claim.
-    stage_name, expression, maximize = housekeeping_spec
+    # Solve overtime and its housekeeping tie-breaker together. The weight is
+    # greater than every possible recovery-slot count, so this is exactly
+    # equivalent to minimizing overtime first and standalone recovery second,
+    # while avoiding a fifth full presolve that can exhaust the request budget
+    # and leave free recovery variables nondeterministic.
+    stage_name = StageName.OVERTIME_MINUTES
     remaining = _remaining_budget(time_limit_seconds, started_at)
     if remaining <= 0:
         stage_results.append(_budget_exhausted_stage(stage_name))
         return _staged_result(
-            SolverStatus.OPTIMAL,
+            SolverStatus.UNKNOWN,
             stage_results,
             selected_values,
             optimizer_model,
         )
 
     solver = _configured_solver(remaining)
-    _set_objective(optimizer_model.model, expression, maximize)
+    recovery_expression = optimizer_model.objective_expressions.standalone_recovery
+    overtime_expression = optimizer_model.objective_expressions.overtime_minutes
+    recovery_weight = len(optimizer_model.standalone_recovery) + 1
+    combined_expression = overtime_expression * recovery_weight + recovery_expression
+    _set_objective(optimizer_model.model, combined_expression, False)
     solve_started_at = time.perf_counter()
     raw_status = solver.Solve(optimizer_model.model)
     wall_time = time.perf_counter() - solve_started_at
     status = map_solver_status(raw_status)
-    objective_value, best_bound = _capture_objective_bounds(solver, status)
+    combined_value, _combined_bound = _capture_objective_bounds(solver, status)
+    objective_value = (
+        _normalize_number(solver.Value(overtime_expression))
+        if status in (SolverStatus.OPTIMAL, SolverStatus.FEASIBLE)
+        else None
+    )
+    best_bound = objective_value if status is SolverStatus.OPTIMAL else None
     stage_results.append(
         SolverStage(
             name=stage_name,
@@ -210,13 +238,21 @@ def solve_staged(
     )
     if status in (SolverStatus.OPTIMAL, SolverStatus.FEASIBLE):
         selected_values = _capture_selected_values(solver, optimizer_model)
+    if status is not SolverStatus.OPTIMAL:
+        return _staged_result(status, stage_results, selected_values, optimizer_model)
 
-    return _staged_result(
-        SolverStatus.OPTIMAL,
-        stage_results,
-        selected_values,
-        optimizer_model,
+    assert combined_value is not None
+    recovery_value = _normalize_number(solver.Value(recovery_expression))
+    stage_results.append(
+        SolverStage(
+            name=StageName.STANDALONE_RECOVERY,
+            status=SolverStatus.OPTIMAL,
+            objective_value=recovery_value,
+            best_bound=recovery_value,
+            wall_time_seconds=0.0,
+        )
     )
+    return _staged_result(SolverStatus.OPTIMAL, stage_results, selected_values, optimizer_model)
 
 
 @dataclass(frozen=True, slots=True)
@@ -235,6 +271,172 @@ def _configured_solver(time_limit_seconds: float) -> cp_model.CpSolver:
     solver.parameters.log_search_progress = False
     solver.parameters.max_time_in_seconds = max(0.0, time_limit_seconds)
     return solver
+
+
+def _configure_fast_incumbent_solver(solver: cp_model.CpSolver) -> None:
+    """Accept the deterministic baseline hint before presolve consumes its budget."""
+
+    # Large pattern-flow models can otherwise spend the entire short demo
+    # budget in repeated probing/clique presolve before considering the
+    # deterministic feasible hint below. The constrained branch retains full
+    # presolve because it must prove every required objective when time allows.
+    solver.parameters.cp_model_probing_level = 0
+    solver.parameters.merge_at_most_one_work_limit = 0
+    solver.parameters.find_big_linear_overlap = False
+    solver.parameters.symmetry_level = 0
+    solver.parameters.cp_model_presolve = False
+    solver.parameters.stop_after_first_solution = True
+
+
+def _add_initial_solution_hint(optimizer_model: OptimizerModel) -> None:
+    """Seed deterministic search without constraining or replacing CP-SAT."""
+
+    if optimizer_model.solution_hint_added:
+        return
+
+    selected_by_crew: dict[str, list[int]] = defaultdict(list)
+    selected_indices: set[int] = set()
+    if not optimizer_model.enforce_policy:
+        jobs = {job.id: job for job in optimizer_model.scenario.jobs}
+        patterns_by_job: dict[str, list[int]] = defaultdict(list)
+        for index, pattern in enumerate(optimizer_model.patterns):
+            patterns_by_job[pattern.job_id].append(index)
+
+        eligible_crew_count = {
+            job_id: len(
+                {
+                    optimizer_model.patterns[index].crew_id
+                    for index in indices
+                }
+            )
+            for job_id, indices in patterns_by_job.items()
+        }
+        critical_jobs = [item for item in jobs.values() if item.priority is Priority.CRITICAL]
+        hint_jobs = (
+            [item for item in jobs.values() if item.priority is Priority.CRITICAL or item.locked]
+            if critical_jobs
+            else list(jobs.values())
+        )
+        for job in sorted(
+            hint_jobs,
+            key=lambda item: (
+                not item.locked,
+                eligible_crew_count.get(item.id, 0),
+                item.window_end,
+                -item.active_minutes,
+                item.id,
+            ),
+        ):
+            best_choice: tuple[tuple[int, int, int, str, int], int, list[int]] | None = None
+            for index in sorted(
+                patterns_by_job[job.id],
+                key=lambda item: (
+                    len(selected_by_crew[optimizer_model.patterns[item].crew_id]),
+                    optimizer_model.patterns[item].start_slot,
+                    optimizer_model.patterns[item].end_slot,
+                    optimizer_model.patterns[item].crew_id,
+                    item,
+                ),
+            ):
+                pattern = optimizer_model.patterns[index]
+                candidate = sorted(
+                    (*selected_by_crew[pattern.crew_id], index),
+                    key=lambda item: (
+                        optimizer_model.patterns[item].start_slot,
+                        optimizer_model.patterns[item].end_slot,
+                        item,
+                    ),
+                )
+                if candidate[0] not in optimizer_model.start_arc:
+                    continue
+                if candidate[-1] not in optimizer_model.end_arc:
+                    continue
+                if any(
+                    pair not in optimizer_model.route_arc
+                    for pair in zip(candidate, candidate[1:])
+                ):
+                    continue
+                existing = selected_by_crew[pattern.crew_id]
+                existing_travel = _hint_route_travel_minutes(optimizer_model, existing)
+                candidate_travel = _hint_route_travel_minutes(optimizer_model, candidate)
+                score = (
+                    candidate_travel - existing_travel,
+                    pattern.start_slot,
+                    pattern.end_slot,
+                    pattern.crew_id,
+                    index,
+                )
+                choice = (score, index, candidate)
+                if best_choice is None or choice[0] < best_choice[0]:
+                    best_choice = choice
+            if best_choice is not None:
+                _, index, candidate = best_choice
+                selected_by_crew[optimizer_model.patterns[index].crew_id] = candidate
+                selected_indices.add(index)
+
+    start_indices = {
+        order[0]
+        for order in selected_by_crew.values()
+        if order
+    }
+    end_indices = {
+        order[-1]
+        for order in selected_by_crew.values()
+        if order
+    }
+    route_indices = {
+        pair
+        for order in selected_by_crew.values()
+        for pair in zip(order, order[1:])
+    }
+
+    for index, variable in enumerate(optimizer_model.x):
+        optimizer_model.model.AddHint(variable, int(index in selected_indices))
+    for job_id, variable in optimizer_model.serve.items():
+        optimizer_model.model.AddHint(
+            variable,
+            int(
+                any(
+                    optimizer_model.patterns[index].job_id == job_id
+                    for index in selected_indices
+                )
+            ),
+        )
+    for crew_id, variable in optimizer_model.crew_used.items():
+        optimizer_model.model.AddHint(variable, int(bool(selected_by_crew[crew_id])))
+    for index, variable in optimizer_model.start_arc.items():
+        optimizer_model.model.AddHint(variable, int(index in start_indices))
+    for key, variable in optimizer_model.route_arc.items():
+        optimizer_model.model.AddHint(variable, int(key in route_indices))
+    for index, variable in optimizer_model.end_arc.items():
+        optimizer_model.model.AddHint(variable, int(index in end_indices))
+    for variable in optimizer_model.standalone_recovery.values():
+        optimizer_model.model.AddHint(variable, 0)
+    if not optimizer_model.enforce_policy:
+        optimizer_model.initial_selected_values = _SelectedValues(
+            pattern_indices=tuple(sorted(selected_indices)),
+            start_arc_indices=tuple(sorted(start_indices)),
+            route_arc_indices=tuple(sorted(route_indices)),
+            end_arc_indices=tuple(sorted(end_indices)),
+            standalone_recovery=(),
+        )
+    optimizer_model.solution_hint_added = True
+
+
+def _hint_route_travel_minutes(
+    optimizer_model: OptimizerModel,
+    order: list[int],
+) -> int:
+    if not order:
+        return 0
+    return (
+        optimizer_model.arc_travel_minutes[("start", order[0], None)]
+        + sum(
+            optimizer_model.arc_travel_minutes[("route", left, right)]
+            for left, right in zip(order, order[1:])
+        )
+        + optimizer_model.arc_travel_minutes[("end", order[-1], None)]
+    )
 
 
 def _set_objective(model: cp_model.CpModel, expression: Any, maximize: bool) -> None:
@@ -311,13 +513,19 @@ def _staged_result(
     selected_values: _SelectedValues | None,
     optimizer_model: OptimizerModel,
 ) -> StagedSolveResult:
+    has_incumbent = selected_values is not None
     selected_values = selected_values or _SelectedValues((), (), (), (), ())
     required_optimal = all(
         any(stage.name is name and stage.status is SolverStatus.OPTIMAL for stage in stage_results)
         for name in _REQUIRED_STAGE_NAMES
     )
+    reported_status = (
+        SolverStatus.FEASIBLE
+        if status is SolverStatus.UNKNOWN and has_incumbent
+        else status
+    )
     return StagedSolveResult(
-        status=status,
+        status=reported_status,
         maximum_claim_allowed=required_optimal,
         stages=tuple(stage_results),
         selected_pattern_indices=selected_values.pattern_indices,

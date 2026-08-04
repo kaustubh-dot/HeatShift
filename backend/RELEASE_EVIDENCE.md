@@ -4,6 +4,12 @@
 **Measured:** 2026-08-03  
 **Result:** PASS
 
+## 2026-08-04 post-merge audit
+
+The teammate merge at `30a00be` was reviewed end to end. The audit corrected intermittent live baseline timeouts, traceback propagation, heat-adjusted diagnosis consistency and validation, canonical evidence provenance, exact saved-fallback matching, nested frontend response validation, and several loading/navigation/result-state defects. The regenerated manifest records a 30-second offline evidence budget; live requests remain at five seconds.
+
+Final audit gates: `102 passed` backend tests, `37 passed` frontend tests, production TypeScript/Vite build successful, `pip check` clean, two production static-serving tests passed, and a one-process HTTP smoke returned the expected Demo City fixture, service-first value 400, and zero policy-constrained conflicts. The only test warning is the already documented upstream Starlette/TestClient deprecation.
+
 ## Runtime and dependency evidence
 
 The release environment uses Python 3.12.13 and the exact pinned packages below:
@@ -60,7 +66,7 @@ The P0 invariant suite passes through the unit and integration tests. It covers 
 
 ## Solver evidence
 
-The bundled base solve uses a five-second request budget and one CP-SAT worker. The reported metrics are extracted from the serialized plans and independently reconciled.
+Live requests use a five-second budget. The committed canonical artifacts use a separate, manifest-recorded 30-second offline evidence budget and one CP-SAT worker. The reported metrics are extracted from the serialized plans and independently reconciled.
 
 | Evidence | Status and objective summary |
 | --- | --- |
@@ -69,7 +75,7 @@ The bundled base solve uses a five-second request budget and one CP-SAT worker. 
 | Forced inclusion: `job-bus-route` | `INFEASIBLE` under all mandatory rules, retained original critical-service count, and forced inclusion; classification `proven_infeasible` |
 | +2°C heat-shock plan | `OPTIMAL` at all required stages; 3/4 critical jobs, value 368, 0 conflicts, 160 travel minutes, 60 eligible recovery minutes |
 
-The +2°C saved response also records the retained unadjusted policy plan honestly: its final overtime stage can be `UNKNOWN` after an incumbent is found within the bounded per-plan budget. The heat-shock plan itself is fully `OPTIMAL`; no `UNKNOWN` result is presented as an infeasibility proof.
+The service-first plan is labeled `FEASIBLE`, not maximum; the constrained and heat-shock plans are fully `OPTIMAL`. No `UNKNOWN` result is presented as an infeasibility proof.
 
 The scenario-quality gates pass:
 
@@ -93,13 +99,13 @@ The command was run twice in separate temporary output directories. Both runs ex
 
 | Saved output | Canonical SHA-256 |
 | --- | --- |
-| `base-solve.json` | `f2fc17217539af49025a62aca91953eb5e8c87e7b3eff2cbd2af68f249c66cba` |
+| `base-solve.json` | `fcb3568add7dca3fc0f970d22cf6c9bc5c234e76135ced8a812e6952a12c0d8a` |
 | `diagnosis-job-bus-route.json` | `de9526bf89fc5ec31d622db2b05db0b6fb3a893cbe2b643572bf017087859420` |
-| `heat-shock.json` | `378baffd2ad1a76a1688268c4a89950dbb6a4d2127f8124bbe25f43942cb2615` |
+| `heat-shock.json` | `88b93471aa08bcb17661eeaee87c16b94433cd0126ad13f3fc073dbdc2e5f651` |
 
 ## Wall-time evidence
 
-Measured on the development laptop with the bundled five-second command budget:
+Historical live-request measurements from the R00 candidate, using its five-second command budget:
 
 | Operation | Wall time | Result |
 | --- | ---: | --- |

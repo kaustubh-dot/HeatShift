@@ -265,6 +265,11 @@ export default function App() {
         <h1 id="solve-error-heading">The live plan could not be loaded.</h1>
         <p>{state.request.solve.error}</p>
       </section>
+    ) : state.chapter === "plan" && state.solveResult === null ? (
+      <PendingChapter
+        heading="Building the policy-constrained plan."
+        description="The returned scenario is ready. The solver plan will appear here when it is available."
+      />
     ) : state.chapter === "plan" && state.solveResult !== null ? (
       <PlanChapter
         scenario={state.scenario}

@@ -111,6 +111,31 @@ def test_feasible_only_never_allows_maximum_claim(monkeypatch) -> None:
     assert result.stages[0].best_bound == 3
 
 
+def test_solver_timeout_retains_the_valid_baseline_hint(monkeypatch) -> None:
+    _, _, model_data = make_solved_model()
+
+    class FakeParameters:
+        max_time_in_seconds = 0.0
+        random_seed = 0
+        num_search_workers = 0
+        log_search_progress = True
+
+    class FakeSolver:
+        def __init__(self) -> None:
+            self.parameters = FakeParameters()
+
+        def Solve(self, model):  # noqa: N802 - mirrors OR-Tools API
+            return cp_model.UNKNOWN
+
+    monkeypatch.setattr(optimizer, "_configured_solver", lambda remaining: FakeSolver())
+    result = solve_staged(model_data, 1)
+
+    assert result.status is SolverStatus.FEASIBLE
+    assert result.maximum_claim_allowed is False
+    assert result.stages[0].status is SolverStatus.UNKNOWN
+    assert len(result.selected_pattern_indices) == 1
+
+
 def test_solver_configuration_is_fixed_for_deterministic_runs() -> None:
     _, _, first_model = make_solved_model()
     _, _, second_model = make_solved_model()

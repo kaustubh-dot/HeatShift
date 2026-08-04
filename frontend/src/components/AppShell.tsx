@@ -33,7 +33,12 @@ export function AppShell({ children }: AppShellProps) {
 
       <header className="chapter-nav">
         <div className="chapter-nav__inner">
-          <a className="brand-mark" href="#main-content" aria-label="HeatShift home">
+          <a
+            className="brand-mark"
+            href="#main-content"
+            aria-label="HeatShift home"
+            onClick={() => dispatch({ type: "navigate", chapter: "brief" })}
+          >
             Heat<span className="brand-mark__accent">Shift</span>
           </a>
           <nav aria-label="Chapter navigation">

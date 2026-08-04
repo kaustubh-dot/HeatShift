@@ -1,12 +1,12 @@
 # HeatShift Devpost submission packet
 
-**Audit date:** 2026-08-03
+**Audit date:** 2026-08-04
 **Repository:** https://github.com/kaustubh-dot/HeatShift
 **Hackathon:** [OrionHackathon](https://orionhackathon.devpost.com/)
 **Category:** Sustainability & Climate Tech
 **Submission status:** Prepared for review; final external submission requires the owner's confirmation.
 
-The configured GitHub repository is publicly visible. The local R04 candidate is newer than the public `agent/lock-planning-docs` branch; publishing that candidate requires explicit authorization because it exports repository contents to the public remote.
+The configured GitHub repository is publicly visible. Teammate work is merged on public `main` through `30a00be`; the 2026-08-04 audit fixes are newer and remain local until the owner explicitly asks to publish them.
 
 ## Title
 

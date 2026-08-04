@@ -61,6 +61,18 @@ describe("heat shock journey", () => {
     expect(decision).toHaveTextContent("Moved time");
   });
 
+  it("keeps a successful heat-shock response visible when every work order is unchanged", () => {
+    const unchangedResult = {
+      ...bundle.heat_shock_solve,
+      plan_diff: bundle.heat_shock_solve.plan_diff.map((diff) => ({ ...diff, change: "unchanged" as const })),
+    };
+    render(<WhyChapter {...chapterProps} heatShockResult={unchangedResult} heatShockStatus="success" />);
+
+    expect(screen.getByRole("heading", { name: "The heat shock returned no changed work-order decision." })).toBeVisible();
+    expect(screen.getByRole("status")).toHaveTextContent("Every returned work order is unchanged");
+    expect(screen.getByText("heat_shock_policy_constrained_plan")).toBeVisible();
+  });
+
   it("resets the displayed shock without requesting another result", () => {
     const onApplyHeatShock = vi.fn();
     const onResetHeatShock = vi.fn();

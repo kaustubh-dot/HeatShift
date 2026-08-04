@@ -26,7 +26,7 @@ from .timegrid import adjust_heat_series
 from .validation import validate_scenario
 
 
-@dataclass(frozen=True, slots=True)
+@dataclass(slots=True)
 class SolveServiceError(ValueError):
     """Precise service-layer failure that the API boundary can map later."""
 

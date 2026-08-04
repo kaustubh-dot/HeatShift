@@ -6,9 +6,11 @@ from pathlib import Path
 from backend.heatshift.cli import (
     BASE_OUTPUT_FILENAME,
     BUNDLE_OUTPUT_FILENAME,
+    CANONICAL_TIME_LIMIT_SECONDS,
     DESIGNATED_DIAGNOSIS_JOB_ID,
     DIAGNOSIS_OUTPUT_FILENAME,
     HEAT_SHOCK_OUTPUT_FILENAME,
+    SAVED_DIR,
     canonical_projection,
     generate_saved,
 )
@@ -33,16 +35,16 @@ def comparable(value: object) -> object:
 
 
 def test_saved_generation_is_contract_shaped_and_canonically_deterministic(tmp_path: Path) -> None:
-    first_dir = tmp_path / "first"
-    second_dir = tmp_path / "second"
-    first_manifest = generate_saved(first_dir, time_limit_seconds=5)
-    second_manifest = generate_saved(second_dir, time_limit_seconds=5)
+    generated_dir = tmp_path / "generated"
+    generated_manifest = generate_saved(generated_dir)
 
-    assert first_manifest["fixture_version"] == "demo-v1"
-    assert first_manifest["designated_diagnosis_job_id"] == DESIGNATED_DIAGNOSIS_JOB_ID
-    assert first_manifest["output_hashes"] == second_manifest["output_hashes"]
-    assert first_manifest["input_hashes"] == second_manifest["input_hashes"]
-    assert first_manifest["canonical_hash_excluded_fields"] == ["wall_time_seconds"]
+    assert generated_manifest["fixture_version"] == "demo-v1"
+    assert generated_manifest["designated_diagnosis_job_id"] == DESIGNATED_DIAGNOSIS_JOB_ID
+    assert generated_manifest["canonical_hash_excluded_fields"] == ["wall_time_seconds"]
+    assert generated_manifest["time_limit_seconds"] == CANONICAL_TIME_LIMIT_SECONDS
+    committed_manifest = read_json(SAVED_DIR / "manifest.json")
+    assert generated_manifest["input_hashes"] == committed_manifest["input_hashes"]
+    assert generated_manifest["output_hashes"] == committed_manifest["output_hashes"]
 
     for filename in (
         BASE_OUTPUT_FILENAME,
@@ -51,12 +53,12 @@ def test_saved_generation_is_contract_shaped_and_canonically_deterministic(tmp_p
         "manifest.json",
         BUNDLE_OUTPUT_FILENAME,
     ):
-        assert comparable(read_json(first_dir / filename)) == comparable(read_json(second_dir / filename))
+        assert comparable(read_json(generated_dir / filename)) == comparable(read_json(SAVED_DIR / filename))
 
-    base = SolveResponse.model_validate(read_json(first_dir / BASE_OUTPUT_FILENAME))
-    heat_shock = SolveResponse.model_validate(read_json(first_dir / HEAT_SHOCK_OUTPUT_FILENAME))
-    diagnosis = DiagnosisResponse.model_validate(read_json(first_dir / DIAGNOSIS_OUTPUT_FILENAME))
-    bundle = read_json(first_dir / BUNDLE_OUTPUT_FILENAME)
+    base = SolveResponse.model_validate(read_json(generated_dir / BASE_OUTPUT_FILENAME))
+    heat_shock = SolveResponse.model_validate(read_json(generated_dir / HEAT_SHOCK_OUTPUT_FILENAME))
+    diagnosis = DiagnosisResponse.model_validate(read_json(generated_dir / DIAGNOSIS_OUTPUT_FILENAME))
+    bundle = read_json(generated_dir / BUNDLE_OUTPUT_FILENAME)
 
     assert base.scenario.heat_adjustment_c == 0
     assert base.plans.heat_shock is None

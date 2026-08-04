@@ -81,6 +81,18 @@ describe("live API boundary and exact fallback", () => {
 
     expect(findSavedSolve(bundle, { ...solveRequest, scenario: { ...bundle.scenario, id: "other-scenario" } })).toBeNull();
     expect(findSavedSolve(bundle, { ...solveRequest, policy: { ...bundle.policy, id: "other-policy" } })).toBeNull();
+    expect(
+      findSavedSolve(bundle, {
+        ...solveRequest,
+        scenario: { ...bundle.scenario, jobs: [{ ...bundle.scenario.jobs[0], service_value: 999 }, ...bundle.scenario.jobs.slice(1)] },
+      }),
+    ).toBeNull();
+    expect(
+      findSavedSolve(bundle, {
+        ...solveRequest,
+        policy: { ...bundle.policy, rules: [{ ...bundle.policy.rules[0], max_active_slots: 99 }, ...bundle.policy.rules.slice(1)] },
+      }),
+    ).toBeNull();
     expect(findSavedSolve(bundle, { ...shockRequest, heat_adjustment_c: 3 })).toBeNull();
     expect(findSavedDiagnosis(bundle, { ...diagnosisRequest, job_id: "job-sidewalk" })).toBeNull();
     expect(findSavedDiagnosis(bundle, { ...diagnosisRequest, heat_adjustment_c: 2 })).toBeNull();
@@ -122,6 +134,19 @@ describe("live API boundary and exact fallback", () => {
     expect(error).toBeInstanceOf(ApiClientError);
     expect(error).toMatchObject({ kind: "malformed", code: "MALFORMED_RESPONSE" });
     expect((error as ApiClientError).canUseSavedFallback).toBe(false);
+  });
+
+  it("rejects malformed nested plan fields before the UI can dereference them", async () => {
+    const malformed = structuredClone(bundle.base_solve) as Record<string, unknown>;
+    const plans = malformed.plans as Record<string, unknown>;
+    const policyPlan = plans.policy_constrained as Record<string, unknown>;
+    const timeline = policyPlan.timeline_segments as Array<Record<string, unknown>>;
+    timeline[0].state = "not-a-timeline-state";
+
+    await expect(createApiClient({ fetcher: async () => jsonResponse(malformed) }).solve(solveRequest)).rejects.toMatchObject({
+      kind: "malformed",
+      code: "MALFORMED_RESPONSE",
+    });
   });
 
   it("marks aborts and server failures as fallback-eligible", async () => {

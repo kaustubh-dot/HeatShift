@@ -25,6 +25,7 @@ from .validation import ScenarioValidationError, validate_scenario
 FIXTURE_VERSION = "demo-v1"
 DESIGNATED_DIAGNOSIS_JOB_ID = "job-bus-route"
 DEFAULT_TIME_LIMIT_SECONDS = 5.0
+CANONICAL_TIME_LIMIT_SECONDS = 30.0
 FIXTURE_DIR = Path(__file__).resolve().parent / "fixtures"
 SAVED_DIR = FIXTURE_DIR / "saved"
 BASE_OUTPUT_FILENAME = "base-solve.json"
@@ -171,7 +172,7 @@ def diagnose_designated_job(*, time_limit_seconds: float = DEFAULT_TIME_LIMIT_SE
 def generate_saved(
     output_dir: Path = SAVED_DIR,
     *,
-    time_limit_seconds: float = DEFAULT_TIME_LIMIT_SECONDS,
+    time_limit_seconds: float = CANONICAL_TIME_LIMIT_SECONDS,
 ) -> dict[str, Any]:
     """Generate canonical solver artifacts and a provenance manifest."""
 
@@ -216,10 +217,15 @@ def generate_saved(
         "ortools_version": ortools.__version__,
         "solver_seed": SOLVER_RANDOM_SEED,
         "solver_workers": SOLVER_NUM_SEARCH_WORKERS,
+        "time_limit_seconds": time_limit_seconds,
         "designated_diagnosis_job_id": DESIGNATED_DIAGNOSIS_JOB_ID,
         "input_hashes": {
-            "scenario.json": _sha256_file(FIXTURE_DIR / "scenario.json"),
-            "policy.json": _sha256_file(FIXTURE_DIR / "policy.json"),
+            "scenario.json": _sha256_bytes(
+                _canonical_json_bytes(scenario.model_dump(mode="json"))
+            ),
+            "policy.json": _sha256_bytes(
+                _canonical_json_bytes(policy.model_dump(mode="json"))
+            ),
         },
         "output_hashes": {
             filename: _sha256_bytes(_canonical_json_bytes(payload))
@@ -278,10 +284,6 @@ def _write_json(path: Path, payload: Any) -> None:
     )
 
 
-def _sha256_file(path: Path) -> str:
-    return hashlib.sha256(path.read_bytes()).hexdigest()
-
-
 def _sha256_bytes(value: bytes) -> str:
     return hashlib.sha256(value).hexdigest()
 
@@ -332,7 +334,7 @@ def _build_parser() -> argparse.ArgumentParser:
         command = commands.add_parser(name, help=help_text)
         command.add_argument("--time-limit-seconds", type=float, default=DEFAULT_TIME_LIMIT_SECONDS)
     generate = commands.add_parser("generate-saved", help="generate saved solver artifacts and manifest")
-    generate.add_argument("--time-limit-seconds", type=float, default=DEFAULT_TIME_LIMIT_SECONDS)
+    generate.add_argument("--time-limit-seconds", type=float, default=CANONICAL_TIME_LIMIT_SECONDS)
     generate.add_argument("--output-dir", type=Path, default=SAVED_DIR)
     return parser
 

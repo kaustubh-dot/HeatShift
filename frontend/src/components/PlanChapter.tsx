@@ -31,7 +31,7 @@ export function PlanChapter({ scenario, serviceFirstPlan, policyPlan, planDiff, 
       <header className="plan-chapter__intro">
         <p className="label-caps">Plan transformation · policy-constrained view</p>
         <h1 id="plan-heading">Policy changes the board.</h1>
-        <p>Every returned metric and plan difference below comes directly from the saved solver response.</p>
+        <p>Every returned metric and plan difference below comes directly from the solver response.</p>
       </header>
       <div className="transformation-controls" aria-label="Plan transformation controls">
         <p className="transformation-controls__status" role="status" aria-live="polite">

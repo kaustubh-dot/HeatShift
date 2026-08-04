@@ -63,3 +63,12 @@ def test_invalid_cross_reference_stops_before_solving() -> None:
 
     assert caught.value.code.value == "INVALID_SCENARIO"
     assert caught.value.details[0].path == "jobs[0].location_id"
+
+
+def test_timeout_from_parallel_branch_preserves_service_error() -> None:
+    scenario, policy = make_case(["normal"] * 8, active_minutes=45)
+
+    with pytest.raises(SolveServiceError) as caught:
+        solve_scenario(scenario, policy, heat_adjustment_c=0, time_limit_seconds=0)
+
+    assert caught.value.code.value == "SOLVER_TIMEOUT"

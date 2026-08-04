@@ -4,6 +4,7 @@ This is the implementation ledger. Execute tasks in ID order using [docs/IMPLEME
 
 ## Active task
 
+- [ ] **R02** — Capture loaded release screenshots and record the missing 3–5 minute demo.
 - [ ] **R04** — Audit and submit the Devpost entry.
 
 ## Gate G1 — Inputs and patterns
@@ -53,7 +54,7 @@ This is the implementation ledger. Execute tasks in ID order using [docs/IMPLEME
 
 - [x] **R00** — Pass a fresh clone/install/start rehearsal.
 - [x] **R01** — Pass live and disconnected demo rehearsals.
-- [x] **R02** — Capture release screenshots and the 3–5 minute demo.
+- [ ] **R02** — Capture release screenshots and the 3–5 minute demo. Loading-state captures and a rehearsal script exist, but the required loaded journey/video do not.
 - [x] **R03** — Finalize README evidence, architecture, licenses, and limitations.
 - [ ] **R04** — Audit and submit the Devpost entry.
 

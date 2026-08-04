@@ -59,7 +59,7 @@ describe("plan evidence chapter", () => {
     expect(serviceProof).toHaveTextContent("Feasible incumbent; optimality was not proven.");
     expect(
       within(serviceProof).getByRole("listitem", {
-        name: "critical_service: FEASIBLE, value 4, bound 13",
+        name: "critical_service: FEASIBLE, value 4, bound 4",
       }),
     ).toBeVisible();
 
@@ -126,17 +126,17 @@ describe("fixture solver statuses and diff vocabulary", () => {
       bundle.heat_shock_solve.plans.policy_constrained.status,
       bundle.diagnoses["job-bus-route"].proof_status,
     ]);
-    expect(fixtureStatuses).toEqual(new Set(["FEASIBLE", "OPTIMAL", "UNKNOWN", "INFEASIBLE"]));
+    expect(fixtureStatuses).toEqual(new Set(["FEASIBLE", "OPTIMAL", "INFEASIBLE"]));
 
     const shockPolicyPlan = bundle.heat_shock_solve.plans.policy_constrained;
     render(
       <PlanProof plan={shockPolicyPlan} />,
     );
-    const unknownProof = screen.getByRole("region", {
+    const shockPolicyProof = screen.getByRole("region", {
       name: `Solver proof for ${shockPolicyPlan.label}`,
     });
-    expect(unknownProof.querySelector(".solver-evidence__status")).toHaveTextContent("UNKNOWN");
-    expect(unknownProof).toHaveTextContent("Maximum-service wording withheld until the required stages prove optimality.");
+    expect(shockPolicyProof.querySelector(".solver-evidence__status")).toHaveTextContent("OPTIMAL");
+    expect(shockPolicyProof).toHaveTextContent("Maximum-service claim permitted by all required objective stages.");
 
     const fixtureChanges = new Set(
       [...bundle.base_solve.plan_diff, ...bundle.heat_shock_solve.plan_diff].map((diff) => diff.change),

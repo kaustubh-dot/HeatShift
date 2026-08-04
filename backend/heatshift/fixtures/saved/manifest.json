@@ -5,18 +5,19 @@
   "canonical_hash_format": "sorted JSON with compact separators and a trailing newline",
   "designated_diagnosis_job_id": "job-bus-route",
   "fixture_version": "demo-v1",
-  "generated_at": "2026-08-02T19:21:21Z",
+  "generated_at": "2026-08-04T06:45:58Z",
   "input_hashes": {
-    "policy.json": "316914a5b9a3580d75881992def6eef05d7226e4cba517caf6e52de1b10cdc77",
-    "scenario.json": "1ed426b915ecb762b12fa6bfb9542b92ca0a10a438af8a004c8d460f54ae2b8c"
+    "policy.json": "9152b15537380a3e35b396bdbf28715a076c67a2e03fb9bccda6f13f7e69e1e1",
+    "scenario.json": "c89e09c467df8c5adff432ed78b3541c888fb52c8371d0c6c18aec6bd7a4aea3"
   },
   "ortools_version": "9.15.6755",
   "output_hashes": {
-    "base-solve.json": "f2fc17217539af49025a62aca91953eb5e8c87e7b3eff2cbd2af68f249c66cba",
+    "base-solve.json": "fcb3568add7dca3fc0f970d22cf6c9bc5c234e76135ced8a812e6952a12c0d8a",
     "diagnosis-job-bus-route.json": "de9526bf89fc5ec31d622db2b05db0b6fb3a893cbe2b643572bf017087859420",
-    "heat-shock.json": "378baffd2ad1a76a1688268c4a89950dbb6a4d2127f8124bbe25f43942cb2615"
+    "heat-shock.json": "88b93471aa08bcb17661eeaee87c16b94433cd0126ad13f3fc073dbdc2e5f651"
   },
-  "python_version": "3.12.13",
+  "python_version": "3.12.8",
   "solver_seed": 7,
-  "solver_workers": 1
+  "solver_workers": 1,
+  "time_limit_seconds": 30.0
 }

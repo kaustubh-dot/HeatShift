@@ -7,8 +7,10 @@ import pytest
 from fastapi.testclient import TestClient
 
 from backend.heatshift import api
-from backend.heatshift.models import ApiErrorCode, DemoResponse, DiagnosisResponse, SolveResponse
+from backend.heatshift.models import ApiErrorCode, DemoResponse, DiagnoseRequest, DiagnosisResponse, SolveResponse
+from backend.heatshift.patterns import generate_policy_constrained_patterns
 from backend.heatshift.service import SolveServiceError
+from tests.unit.test_patterns import make_case
 
 
 FIXTURE_DIR = Path(__file__).parents[2] / "backend" / "heatshift" / "fixtures"
@@ -113,6 +115,54 @@ def test_unknown_diagnosis_job_is_rejected_before_solver(monkeypatch: pytest.Mon
 
     assert response.status_code == 422
     assert response.json()["error"]["details"][0]["code"] == "UNKNOWN_REFERENCE"
+
+
+def test_diagnosis_context_uses_heat_adjusted_scenario(monkeypatch: pytest.MonkeyPatch) -> None:
+    scenario, policy = make_case(["normal"] * 8)
+    request = DiagnoseRequest(
+        scenario=scenario,
+        policy=policy,
+        job_id="job-a",
+        heat_adjustment_c=3,
+        time_limit_seconds=5,
+    )
+    captured_temperatures: list[float] = []
+
+    def capture_patterns(candidate_scenario, candidate_policy):
+        captured_temperatures.extend(slot.temperature_c for slot in candidate_scenario.heat_series)
+        return generate_policy_constrained_patterns(candidate_scenario, candidate_policy)
+
+    monkeypatch.setattr(api, "generate_policy_constrained_patterns", capture_patterns)
+
+    api._build_constrained_context(request)
+
+    assert captured_temperatures == [33] * 8
+    assert [slot.temperature_c for slot in scenario.heat_series] == [30] * 8
+
+
+def test_diagnosis_rejects_rules_missing_after_heat_adjustment(
+    client: TestClient,
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    scenario, policy = make_case(["normal"] * 8)
+    policy.rules = [rule for rule in policy.rules if rule.band.value != "elevated"]
+    payload = {
+        "scenario": scenario.model_dump(mode="json"),
+        "policy": policy.model_dump(mode="json"),
+        "job_id": "job-a",
+        "heat_adjustment_c": 3,
+        "time_limit_seconds": 5,
+    }
+
+    def fail_if_called(_request: object) -> None:
+        raise AssertionError("invalid adjusted scenarios must not reach the solver")
+
+    monkeypatch.setattr(api, "_build_constrained_context", fail_if_called)
+
+    response = client.post("/api/diagnose", json=payload)
+
+    assert response.status_code == 422
+    assert response.json()["error"]["details"][0]["code"] == "MISSING_POLICY_RULE"
 
 
 @pytest.mark.parametrize(

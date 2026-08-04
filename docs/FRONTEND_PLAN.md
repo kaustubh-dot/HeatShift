@@ -184,7 +184,7 @@ Fallback mode may activate when:
 
 Do not silently fall back for a 4xx validation response or a malformed success payload; those are product defects that must remain visible.
 
-For `solve` and `diagnose`, a saved answer may be substituted only when the scenario ID, policy ID, heat adjustment, and diagnosed job match a precomputed entry in the locked fixture. Otherwise show the failure. Never present a saved answer as if it were computed for arbitrary inputs.
+For `solve` and `diagnose`, a saved answer may be substituted only when the complete submitted scenario and policy match the locked fixture structurally, the heat adjustment matches, and the diagnosed job matches a precomputed entry. Otherwise show the failure. Never present a saved answer as if it were computed for arbitrary inputs.
 
 While saved data is active, keep a non-dismissible trust message visible:
 
@@ -570,7 +570,7 @@ Steps:
 3. Use live mode by default.
 4. Activate saved mode only from explicit query/env configuration, network failure, abort, or server failure.
 5. Do not fall back on 4xx validation or malformed 2xx data.
-6. For solve/diagnosis fallback, match scenario ID, policy ID, heat adjustment, and job ID exactly to a saved entry.
+6. For solve/diagnosis fallback, match the complete scenario and policy, heat adjustment, and job ID exactly to a saved entry.
 7. Keep the saved-run disclosure non-dismissible for the entire saved-mode session.
 8. A live `FEASIBLE` response is success with an optimality warning, not an error.
 

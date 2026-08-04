@@ -167,35 +167,45 @@ export function WhyChapter({
         </div>
       </section>
 
-      {shockPlan !== null && policyPlan !== null && firstDecision !== null && (
+      {shockPlan !== null && policyPlan !== null && (
         <section className="heat-shock-result" aria-labelledby="heat-shock-result-heading" aria-busy={heatShockStatus === "loading"}>
           <header className="section-heading-row">
             <div>
               <p className="label-caps">Returned heat-shock response</p>
-              <h2 id="heat-shock-result-heading">The first decision changes before the supporting totals.</h2>
+              <h2 id="heat-shock-result-heading">
+                {firstDecision === null
+                  ? "The heat shock returned no changed work-order decision."
+                  : "The first decision changes before the supporting totals."}
+              </h2>
             </div>
             <span className="data-value">+{heatShockResult?.scenario.heat_adjustment_c}°C</span>
           </header>
 
-          <section className="heat-shock-decision" aria-labelledby="heat-shock-decision-heading">
-            <div>
-              <p className="label-caps">First meaningful decision</p>
-              <h3 id="heat-shock-decision-heading">{jobNames.get(firstDecision.job_id) ?? firstDecision.job_id}</h3>
-              <p className="heat-shock-decision__job-id data-value">{firstDecision.job_id}</p>
-            </div>
-            <PlanDiffBadge change={firstDecision.change} />
-            <div className="heat-shock-decision__states">
-              <span>
-                <small>Before</small>
-                {stateSummary(firstDecision.before)}
-              </span>
-              <span aria-hidden="true">→</span>
-              <span>
-                <small>After</small>
-                {stateSummary(firstDecision.after)}
-              </span>
-            </div>
-          </section>
+          {firstDecision === null ? (
+            <p className="heat-shock-decision" role="status">
+              Every returned work order is unchanged; supporting metrics and solver evidence are shown below.
+            </p>
+          ) : (
+            <section className="heat-shock-decision" aria-labelledby="heat-shock-decision-heading">
+              <div>
+                <p className="label-caps">First meaningful decision</p>
+                <h3 id="heat-shock-decision-heading">{jobNames.get(firstDecision.job_id) ?? firstDecision.job_id}</h3>
+                <p className="heat-shock-decision__job-id data-value">{firstDecision.job_id}</p>
+              </div>
+              <PlanDiffBadge change={firstDecision.change} />
+              <div className="heat-shock-decision__states">
+                <span>
+                  <small>Before</small>
+                  {stateSummary(firstDecision.before)}
+                </span>
+                <span aria-hidden="true">→</span>
+                <span>
+                  <small>After</small>
+                  {stateSummary(firstDecision.after)}
+                </span>
+              </div>
+            </section>
+          )}
 
           <MetricsBar current={shockPlan.metrics} baseline={policyPlan.metrics} />
           <PlanProof plan={shockPlan} />

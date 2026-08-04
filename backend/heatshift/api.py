@@ -18,7 +18,7 @@ from starlette.status import (
 )
 
 from .cli import FIXTURE_DIR, load_fixtures
-from .diagnostics import DiagnosisValidationError, diagnose_job
+from .diagnostics import DiagnosisValidationError, _adjust_scenario, diagnose_job
 from .metrics import ModelReconciliationError, extract_plan_facts
 from .models import (
     ApiError,
@@ -79,6 +79,19 @@ def post_diagnose(request: DiagnoseRequest) -> DiagnosisResponse | JSONResponse:
                 ApiErrorCode.INVALID_SCENARIO,
                 "Scenario and policy validation failed.",
                 scenario_issues,
+                HTTP_422_UNPROCESSABLE_CONTENT,
+            )
+        adjusted_scenario = _adjust_scenario(
+            request.scenario,
+            request.policy,
+            request.heat_adjustment_c,
+        )
+        adjusted_issues = validate_scenario(adjusted_scenario, request.policy)
+        if adjusted_issues:
+            return _error_response(
+                ApiErrorCode.INVALID_SCENARIO,
+                "Scenario and policy validation failed.",
+                adjusted_issues,
                 HTTP_422_UNPROCESSABLE_CONTENT,
             )
 
@@ -178,9 +191,14 @@ def _reject_unknown_job_before_solving(request: DiagnoseRequest) -> None:
 
 
 def _build_constrained_context(request: DiagnoseRequest):
-    patterns = generate_policy_constrained_patterns(request.scenario, request.policy)
-    optimizer_model = build_optimizer_model(
+    scenario = _adjust_scenario(
         request.scenario,
+        request.policy,
+        request.heat_adjustment_c,
+    )
+    patterns = generate_policy_constrained_patterns(scenario, request.policy)
+    optimizer_model = build_optimizer_model(
+        scenario,
         request.policy,
         patterns,
         enforce_policy=True,

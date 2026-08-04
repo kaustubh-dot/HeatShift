@@ -286,6 +286,7 @@ export interface SavedManifest {
   ortools_version: string;
   solver_seed: number;
   solver_workers: number;
+  time_limit_seconds: number;
   designated_diagnosis_job_id: string;
   canonical_hash_excluded_fields: string[];
   canonical_hash_format: string;
