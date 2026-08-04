@@ -88,15 +88,19 @@ Produces the canonical result contract:
 
 ```text
 backend/
-  domain/          scenario, policy, plan, and diagnosis models
-  validation/      schema and cross-reference validation
-  patterns/        valid execution-pattern generation
-  solver/          CP-SAT construction and staged objectives
-  diagnostics/     forced inclusion and bounded interventions
-  metrics/         reconciliation from solved assignments
-  serialization/   canonical API result objects
-  fixtures/        deterministic demo inputs and saved results
-  api/             FastAPI routes and error mapping
+  heatshift/
+    models.py      canonical Pydantic request, response, and domain models
+    timegrid.py    slot parsing, heat remapping, and travel-to-slot helpers
+    validation.py  schema, cross-reference, and semantic validation
+    patterns.py    valid baseline and policy-constrained execution patterns
+    optimizer.py   CP-SAT model construction, staged objectives, and proof capture
+    metrics.py     timeline, route, metric, and independent policy reconciliation
+    differences.py baseline-to-plan change extraction
+    diagnostics.py forced inclusion and bounded intervention catalogue
+    service.py     solve orchestration for base and heat-shock requests
+    cli.py         fixture validation and deterministic saved-output generation
+    api.py         FastAPI routes, errors, and production static serving
+    fixtures/      deterministic scenario, policy, and genuine saved results
 ```
 
 Keep modules cohesive; do not create wrappers or abstractions without a second concrete caller.
@@ -128,11 +132,13 @@ The frontend labels the visualization **Schematic service map**. It never implie
 
 Production packaging uses one container/process boundary:
 
-1. Build the React application.
-2. Copy compiled assets into the FastAPI static directory.
-3. Start FastAPI, serving both `/api/*` and the single-page application.
+1. Run `cd frontend && npm run build`; Vite emits the compiled application into the generated-only `backend/heatshift/static/` directory.
+2. Start FastAPI with `backend.heatshift.api:app`.
+3. FastAPI serves exact `/healthz`, `/api/demo`, `/api/solve`, and `/api/diagnose` routes before the SPA catch-all; it also serves direct app routes, bundled fonts, and `/fallback/demo.json` from the same process.
 
 No database is required for the launch journey. Bundled JSON is the source of truth; optional local persistence must not block the demo.
+
+The release build has no runtime CDN, map, analytics, image, or external data dependency. Vite development mode proxies `/api` and `/healthz` to a separately running local FastAPI process; that proxy is not used by the production shape.
 
 ## 8. Failure behavior
 
