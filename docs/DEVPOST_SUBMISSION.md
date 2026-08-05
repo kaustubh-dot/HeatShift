@@ -1,12 +1,12 @@
 # HeatShift Devpost submission packet
 
-**Audit date:** 2026-08-04
+**Audit date:** 2026-08-05
 **Repository:** https://github.com/kaustubh-dot/HeatShift
 **Hackathon:** [OrionHackathon](https://orionhackathon.devpost.com/)
 **Category:** Sustainability & Climate Tech
-**Submission status:** Prepared for review; final external submission requires the owner's confirmation.
+**Submission status:** Implementation ready; final external submission assets and owner confirmation remain.
 
-The configured GitHub repository is publicly visible. Teammate work is merged on public `main` through `30a00be`; the 2026-08-04 audit fixes are newer and remain local until the owner explicitly asks to publish them.
+The configured GitHub repository is publicly visible. The audited implementation is on public `main` at commit `4ebb44f` (`Ensure saved JSON loads in browser fallback`).
 
 ## Title
 
@@ -86,7 +86,7 @@ Open `http://127.0.0.1:8000/`. Add `?fallback=true` to explicitly use the disclo
 | Title and value proposition | Ready | This packet |
 | Sustainability & Climate Tech category | Ready | This packet |
 | Project description | Ready | This packet; no unsupported generalized impact percentage |
-| GitHub repository | Public visibility verified; candidate URL recorded | Publish the current candidate branch, then confirm its final SHA in Devpost |
+| GitHub repository | Ready | Public repository: `https://github.com/kaustubh-dot/HeatShift`; final audited SHA: `4ebb44f` |
 | Demo video | Missing | Record and watch once with audio and once muted; do not claim the current shell captures are the video |
 | Presentation | Optional / missing | Create only if useful; do not block on it unless required by the organizer |
 | Installation instructions | Ready | README and reproduction block above |

@@ -1,8 +1,8 @@
 # Checkpoint
 
-**Last updated:** 2026-08-04
+**Last updated:** 2026-08-05
 **Phase:** Phase 3 release and submission
-**Overall status:** Implementation audited and verified; R02 video/loaded captures and R04 submission remain manual
+**Overall status:** Implementation audited, browser-verified, and pushed; video/assets and R04 submission remain manual
 
 ## Locked product
 
@@ -47,7 +47,7 @@ The final planning pass made previously implicit behavior explicit:
 - `docs/IMPLEMENTATION_MASTER_PLAN.md` and `docs/BACKEND_IMPLEMENTATION_PLAN.md` define atomic, gated tasks for low-context implementation agents.
 - Canonical models, pure time-grid/heat/matrix helpers, deterministic scenario/policy fixtures, solver-free validation, deterministic execution patterns, CP-SAT model construction, staged proof capture, timeline/route extraction, metrics, independent policy reconciliation, service orchestration, evidence-backed plan differences, forced-inclusion diagnosis, bounded interventions, +2°C heat shock, declared scenario-tuning evidence, deterministic saved solver evidence, the three FastAPI routes, the backend release report, the pinned React/Vite shell, canonical frontend contract types, genuine fallback loading, reducer-owned state, approved design tokens, local licensed fonts, semantic chapter navigation, the shared TrustBar, the scenario-derived Tomorrow's Brief, the complete-day accessible timeline, metrics/plan-difference evidence, the synchronized schematic service map, the replayable reduced-motion transformation, and the saved diagnosis chapter now exist.
 - The root `.venv` uses Python 3.12.13 and contains the verified runtime and test dependencies.
-- The implementation branch is `main`; teammate work is present through merge commit `30a00be`, with the 2026-08-04 audit fixes currently local and unpushed.
+- The implementation branch is `main`; the audited implementation is pushed to `origin/main` at `4ebb44f`.
 
 ## Active implementation checkpoint
 
