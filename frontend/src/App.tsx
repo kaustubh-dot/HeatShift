@@ -75,7 +75,7 @@ export default function App() {
           return;
         }
         try {
-          const bundle = await loadFallbackDemo();
+          const bundle = await loadFallbackDemo({ preferEmbedded: true });
           if (active) dispatch({ type: "demo_loaded", bundle, source: "saved" });
         } catch (fallbackError) {
           if (active) dispatch({ type: "request_failed", request: "demo", message: `${errorMessage(error)} Saved fallback failed: ${errorMessage(fallbackError)}` });
@@ -119,7 +119,7 @@ export default function App() {
           return;
         }
         try {
-          const bundle = await loadFallbackDemo();
+          const bundle = await loadFallbackDemo({ preferEmbedded: true });
           const savedResult = findSavedSolve(bundle, request);
           if (savedResult === null) {
             dispatch({ type: "request_failed", request: "solve", message: `${errorMessage(error)} No exact saved solve matches the returned scenario, policy, and heat adjustment.` });
@@ -172,7 +172,7 @@ export default function App() {
           return;
         }
         try {
-          const bundle = await loadFallbackDemo();
+          const bundle = await loadFallbackDemo({ preferEmbedded: true });
           const savedResult = findSavedDiagnosis(bundle, request);
           if (savedResult === null) {
             dispatch({ type: "request_failed", request: "diagnosis", message: `${errorMessage(error)} No exact saved diagnosis matches the returned scenario, policy, heat adjustment, and job.` });
@@ -226,7 +226,7 @@ export default function App() {
           return;
         }
         try {
-          const bundle = await loadFallbackDemo();
+          const bundle = await loadFallbackDemo({ preferEmbedded: true });
           const savedResult = findSavedSolve(bundle, solveRequest);
           if (savedResult === null || savedResult.plans.heat_shock === null) {
             dispatch({ type: "request_failed", request: "heatShock", message: `${errorMessage(error)} No exact saved heat-shock response matches the returned scenario, policy, and adjustment.` });
