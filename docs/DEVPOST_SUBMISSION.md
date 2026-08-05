@@ -1,100 +1,71 @@
-# HeatShift Devpost submission packet
+# HeatShift project copy
 
-**Audit date:** 2026-08-05
-**Repository:** https://github.com/kaustubh-dot/HeatShift
-**Hackathon:** [OrionHackathon](https://orionhackathon.devpost.com/)
-**Category:** Sustainability & Climate Tech
-**Submission status:** Implementation ready; final external submission assets and owner confirmation remain.
-
-The configured GitHub repository is publicly visible. The audited implementation is on public `main` at commit `4ebb44f` (`Ensure saved JSON loads in browser fallback`).
+This page contains the public project claims and short copy used for the OrionHackathon Devpost entry. The detailed field-by-field upload instructions are in [SUBMISSION_GUIDE.md](SUBMISSION_GUIDE.md).
 
 ## Title
 
 HeatShift: Policy-Constrained Service Optimizer
 
-## One-line value proposition
+## Elevator pitch
 
-HeatShift shows a municipal maintenance supervisor the highest proven service available under an approved heat policy, then proves what it costs to bring deferred work back into the plan.
+HeatShift helps municipal teams plan essential maintenance during extreme heat. It finds the highest service level that meets an approved heat policy, then explains each trade-off.
 
 ## Project description
 
-Heat alerts tell a supervisor that conditions are dangerous; they do not show which work orders, crews, routes, recovery periods, or policy rules must change. HeatShift turns that operational question into a transparent optimization workflow for a municipal planned-maintenance supervisor.
+### Inspiration
 
-The application loads a deterministic synthetic Demo City scenario with three pre-formed crews and twelve work orders. It first exposes a service-first counterfactual and its policy conflicts, then solves the policy-constrained plan with OR-Tools CP-SAT. The UI makes critical service, weighted service, travel, recovery, overtime, route order, timeline changes, and solver proof visible. A selected deferred job is forced back into the plan and classified under retained commitments. A synthetic `+2°C` shock produces a new plan and an explicit diff.
+Extreme heat does not pause public maintenance. Roads still need repairs, drainage still needs clearing, and crews still need a schedule that respects the limits their organization has approved. A weather alert tells a supervisor that the day will be difficult. It does not tell them which work order should move, where recovery belongs, or whether a deferred repair can still fit without breaking the policy.
 
-The contribution is counterfactual diagnosis, not a generic heat alert. The bundled policy is synthetic and organization-supplied. HeatShift does not create or certify a safety policy, diagnose heat illness, certify legal compliance, or replace worksite measurements, emergency procedures, worker stop-work rights, or qualified judgment.
+We built HeatShift around that operational gap.
 
-## Evidence-backed demo claims
+### What it does
 
-| Claim | Exact evidence |
+HeatShift plans one day of municipal maintenance for a synthetic Demo City. It starts with a service-first counterfactual, then produces a policy-constrained plan using the same crews, jobs, travel times, and heat conditions. The interface makes the trade-off visible through timelines, a schematic service map, route order, recovery, travel, overtime, service value, and solver proof.
+
+The most important interaction starts after a job has been deferred. Selecting that job launches a forced-inclusion counterfactual. HeatShift either finds a feasible alternative, shows the work that would need to move, or proves that no feasible plan exists under the retained commitments. A synthetic +2°C heat shock then re-plans the same day and shows the exact changes.
+
+### How we built it
+
+The frontend is React and TypeScript. FastAPI serves the API and the compiled single-page app. The scheduling engine uses OR-Tools CP-SAT with deterministic inputs, a fixed seed, one search worker, and versioned saved results for repeatable demos.
+
+The model schedules crews, equipment, travel, work, and recovery in 15-minute slots. It first maximizes critical jobs served, then service value, then minimizes travel and overtime. The final tie-breaker minimizes standalone recovery. The frontend receives solver-derived metrics, route sequences, timelines, differences, and proof states instead of recreating planning logic in the browser.
+
+### Challenges we ran into
+
+The hard part was avoiding a polished but misleading planner. A job omitted from one schedule is not necessarily impossible, so we built a separate forced-inclusion solve instead of labelling every deferral as infeasible. We also had to enforce rolling work and recovery rules across a crew's full day, not just inside individual jobs.
+
+We kept the demo reproducible by committing the scenario, policy, and saved solver outputs. That makes the result inspectable and gives judges a reliable fallback if live solving is unavailable.
+
+### Accomplishments we are proud of
+
+HeatShift turns an abstract safety constraint into a concrete operational decision. In the bundled scenario, the service-first plan handles all four critical jobs but creates 11 policy conflicts. The policy-constrained plan is `OPTIMAL`, has zero conflicts, serves three of four critical jobs, and shows exactly what changed.
+
+The deferred bus-route repair is classified as `proven_infeasible` only after a forced-inclusion solve returns `INFEASIBLE` under stated commitments. The +2°C scenario keeps the plan policy-constrained while adding 60 eligible recovery minutes. These are synthetic-demo results, not estimates of real municipal performance.
+
+### What we learned
+
+The useful output is not a black-box schedule. A supervisor needs to understand why work moved and what a change would cost. Showing proof status, constraints, and plan differences made the optimization easier to inspect without pretending the model can replace human judgment.
+
+### What is next
+
+A production version would need an organization-approved policy, local operational data, worker participation, privacy review, worksite measurements, emergency escalation, and jurisdiction-specific validation. Those are deliberately outside this prototype.
+
+## Evidence used in the demo
+
+| Moment | Bundled result |
 |---|---|
-| Opening scenario | 41°C, 3 crews, 12 work orders from `backend/heatshift/fixtures/scenario.json` |
-| Service-first view | `FEASIBLE`, 4/4 critical jobs, value 400, 11 mandatory conflicts, 82 travel minutes |
-| Constrained view | `OPTIMAL`, 3/4 critical jobs, value 368, zero conflicts, 160 travel minutes, zero overtime |
-| Deferred job | `job-bus-route` classified `proven_infeasible` with `INFEASIBLE` proof and four bounded interventions |
-| Heat shock | `OPTIMAL`, zero conflicts, 60 eligible recovery minutes, and a `recovery_added` diff |
+| Opening brief | 41°C, 3 crews, 12 work orders |
+| Service-first counterfactual | 4 of 4 critical jobs, value 400, 11 conflicts, 82 travel minutes |
+| Policy-constrained plan | `OPTIMAL`, 3 of 4 critical jobs, value 368, 0 conflicts, 160 travel minutes, 0 overtime |
+| Deferred bus-route repair | `proven_infeasible` with `INFEASIBLE` proof under retained commitments |
+| +2°C heat shock | `OPTIMAL`, 0 conflicts, 60 eligible recovery minutes added |
 
-All result values above are copied from `backend/heatshift/fixtures/saved/*.json`; the full mapping is in [docs/EVIDENCE_AUDIT.md](EVIDENCE_AUDIT.md).
-
-## Demo and repository assets
-
-- Four-minute source-backed narration: [docs/release/demo-rehearsal.md](release/demo-rehearsal.md)
-- Production capture: [saved-mode shell](release/screenshots/00-production-saved-loading.jpg), [live-mode shell](release/screenshots/01-production-live-loading.jpg)
-- Installation and production run: [README](../README.md)
-- Architecture: [docs/ARCHITECTURE.md](ARCHITECTURE.md)
-- Safety boundary: [docs/SAFETY_AND_LIMITATIONS.md](SAFETY_AND_LIMITATIONS.md)
-- Attribution: [THIRD_PARTY_NOTICES.md](../THIRD_PARTY_NOTICES.md)
-
-The available capture environment could not render the JSON-backed journey beyond its honest loading states, so no loaded journey video is claimed here. A real 3–5 minute recording remains a submission asset to produce in a browser that can render the local JSON response.
+The source map for these values is in [EVIDENCE_AUDIT.md](EVIDENCE_AUDIT.md).
 
 ## Technology
 
-Python 3.12, OR-Tools CP-SAT, Pydantic, FastAPI, Uvicorn, React 19, TypeScript, Vite, Lucide React, Vitest, React Testing Library, and bundled DM Sans, JetBrains Mono, and Space Grotesk fonts. The production shape is one FastAPI process serving the API and compiled SPA; no database or external runtime data service is required.
+Python 3.12, OR-Tools CP-SAT, Pydantic, FastAPI, Uvicorn, React, TypeScript, Vite, Vitest, React Testing Library, and local bundled fonts.
 
-## Judge-criteria mapping
+## Claim boundary
 
-| Criterion | Submission evidence | Claim boundary |
-|---|---|---|
-| Innovation & Creativity | Forced-inclusion diagnosis distinguishes omission from proven infeasibility; this is the core differentiator beyond a heat alert. | No “first” or market-superiority claim. |
-| Technical Excellence | CP-SAT pattern/route model, global rolling constraints, staged proof capture, independent metric reconciliation, deterministic saved hashes, and 98 backend tests. | One-day synthetic prototype; no production-scale claim. |
-| Real-world Impact | Municipal supervisor workflow and an exact synthetic service/policy trade-off. | No generalized percentage or real-world outcome claim. |
-| User Experience & Design | Three chapters, complete-day timeline, synchronized schematic map/diffs, keyboard/reduced-motion coverage, and visible trust boundary. | Browser capture limitation is disclosed. |
-| Presentation & Demo | Four-minute narration, before/after plan, diagnosis, +2°C re-plan, architecture, and limitations. | Exported video still must be recorded and checked. |
-
-## Reproduction
-
-```bash
-python3.12 -m venv .venv
-.venv/bin/python -m pip install -r backend/requirements-dev.txt
-.venv/bin/python -m backend.heatshift.cli validate
-.venv/bin/python -m backend.heatshift.cli generate-saved --output-dir "$(mktemp -d)"
-.venv/bin/python -m pytest -q
-cd frontend
-npm ci
-npm run test:run
-npm run build
-cd ..
-.venv/bin/python -m uvicorn backend.heatshift.api:app --host 127.0.0.1 --port 8000
-```
-
-Open `http://127.0.0.1:8000/`. Add `?fallback=true` to explicitly use the disclosed exact-match saved result presentation.
-
-## Submission audit
-
-| Devpost requirement | Status | Evidence or remaining action |
-|---|---|---|
-| Title and value proposition | Ready | This packet |
-| Sustainability & Climate Tech category | Ready | This packet |
-| Project description | Ready | This packet; no unsupported generalized impact percentage |
-| GitHub repository | Ready | Public repository: `https://github.com/kaustubh-dot/HeatShift`; final audited SHA: `4ebb44f` |
-| Demo video | Missing | Record and watch once with audio and once muted; do not claim the current shell captures are the video |
-| Presentation | Optional / missing | Create only if useful; do not block on it unless required by the organizer |
-| Installation instructions | Ready | README and reproduction block above |
-| Team details | Requires owner input | Enter names, roles, and contact details in Devpost; do not infer them from Git metadata |
-| Technology list | Ready | Technology section and `THIRD_PARTY_NOTICES.md` |
-| Synthetic policy/data disclosure | Ready | README, TrustBar, narration, and description |
-| Limitations and attribution | Ready | Safety doc, evidence audit, and third-party notices |
-| Private/incognito link audit | Pending | Check the public repository and any video/demo URL after publishing |
-| Final submission | Pending confirmation | Ask the owner before clicking the irreversible submit action |
-
-The official hackathon page currently lists the deadline as 5 August 2026 at 17:00 EDT and requests a project description, GitHub repository, demo video, recommended presentation, installation instructions, and team details. Confirm the page and account state immediately before submission.
+HeatShift uses a synthetic scenario and a synthetic demonstration policy. It does not provide medical, legal, or workplace-safety guidance; certify compliance; diagnose heat illness; replace worksite measurements; or determine individual fitness for work. The map is schematic and the travel model uses a supplied directed matrix rather than street navigation.

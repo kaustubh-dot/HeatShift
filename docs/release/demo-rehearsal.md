@@ -1,41 +1,51 @@
-# R02 release capture and demo rehearsal
+# HeatShift demo recording script
 
-**Candidate:** `81efa5b` (`R01: rehearse live and disconnected demo`)
+Use this script to record one clean four-minute Devpost demo. Record from the deterministic saved mode so every figure shown in the video matches the committed evidence.
 
-## Production capture
+## Before recording
 
-The production build was regenerated with:
+1. Build and start the production-shaped app from the repository root.
 
-```text
-cd frontend
-npm run build
-```
+   ```powershell
+   cd frontend
+   npm run build
+   cd ..
+   .\.venv\Scripts\python.exe -m uvicorn backend.heatshift.api:app --host 127.0.0.1 --port 8000
+   ```
 
-The in-app browser was asked for `1440×900`, but the available surface remained `1280×720`. The two captures below are therefore labeled with their actual dimensions:
+2. Open `http://127.0.0.1:8000/?fallback=true` in a normal browser window.
+3. Set the browser zoom to 100 percent. Close unrelated tabs, notifications, terminals, and private information.
+4. Start the screen recording. Capture the browser window only, with microphone audio enabled.
+5. Wait for the brief to finish loading before speaking.
 
-- [saved-mode loading state, 1280×720](screenshots/00-production-saved-loading.jpg)
-- [live-mode loading state, 1280×720](screenshots/01-production-live-loading.jpg)
+## Four-minute script
 
-The captures are honest production states: the shell, policy boundary, and solver evidence trust bar render, while the browser integration layer prevents the local JSON response from reaching the React state. The requested six loaded journey frames were not fabricated or composited.
+| Time | On-screen action | Spoken script |
+|---|---|---|
+| 0:00 to 0:20 | Start on Tomorrow's Brief. Keep the temperature, crews, work-order count, and policy notice visible. | "This is HeatShift, a planning tool for municipal maintenance during extreme heat. Tomorrow's synthetic Demo City scenario reaches 41°C. It has three crews and twelve work orders." |
+| 0:20 to 0:40 | Point to the policy disclosure or Trust Bar. | "The policy shown here is synthetic and organization-supplied. HeatShift applies the policy to a plan. It does not provide medical advice, certify compliance, or replace supervisor judgment." |
+| 0:40 to 1:05 | Click Plan Transformation. Pause on the service-first view. | "First, I ask what happens if we prioritize service before applying the heat-policy constraints. This counterfactual serves all four critical jobs and reaches service value 400, but it creates 11 policy conflicts. That makes it useful as a comparison, not as a recommendation." |
+| 1:05 to 1:45 | Trigger or reveal the policy-constrained plan. Show the proof card, headline metrics, timeline, and schematic map. | "Now HeatShift solves the same day under the policy. This result is OPTIMAL. It serves three of four critical jobs, has service value 368, zero policy conflicts, 160 travel minutes, and zero overtime. The timeline and schematic map show where crews work, travel, and recover. The solver status is visible because the wording of the result depends on what was actually proven." |
+| 1:45 to 2:10 | Point out the deferred bus-route repair and its plan difference. | "One job, the bus-route pavement repair, is deferred. HeatShift does not call that job impossible just because it is missing from this plan. Instead, it treats the deferral as a question that needs evidence." |
+| 2:10 to 2:55 | Click Why / What-if. Open the bus-route diagnosis and let the proof and interventions appear. | "I force the bus-route repair into a new solve while retaining the stated commitments. The diagnosis is proven infeasible, with an INFEASIBLE proof. HeatShift also shows the rules that bind and four bounded interventions it tested. That is the difference between saying a job was not selected and showing why it cannot be retained under this version of the plan." |
+| 2:55 to 3:30 | Click Apply +2°C Heat Shock. Keep the resulting metrics and changed decision visible. | "Next, I apply a synthetic two-degree heat shock. The re-plan is still OPTIMAL and still has zero policy conflicts. It adds 60 eligible recovery minutes, and the interface lists the decision that changed. The shift is visible instead of being hidden behind a new total." |
+| 3:30 to 4:00 | Return attention to solver proof, the headline, or the architecture link in the repository. | "HeatShift uses a React and TypeScript interface, a FastAPI service, and an OR-Tools CP-SAT model. The scenario, policy, and saved solver outputs are versioned in the repository, so judges can reproduce the demo without accounts, API keys, or external data services." |
+| 4:00 to 4:20 | End with the policy disclosure or limits section. | "This is a one-day synthetic prototype. It is not a medical, legal, safety, or routing certification system. Its purpose is to make the service trade-offs created by an approved heat policy clear and testable." |
 
-## Four-minute narration script
+## If something goes wrong while recording
 
-This script uses the canonical saved outputs and the three successful R01 live runs. Values are sourced from `backend/heatshift/fixtures/saved/*.json`.
+- If the page takes more than a few seconds to settle, reload the same `?fallback=true` URL and restart the recording.
+- If a click misses, restart from the beginning. A clean single take is more credible than a jump cut between states.
+- If audio is too low, record a short ten-second test, listen once with headphones, then record the full take.
+- If you need a shorter video, remove the architecture paragraph but keep the safety boundary in the closing.
 
-| Time | Presenter action and exact language | Visible evidence |
-| ---: | --- | --- |
-| 0:00–0:20 | “Tomorrow is 41°C. This synthetic Demo City has three crews and twelve work orders.” | Scenario brief: `41°C`, `3`, `12` |
-| 0:20–0:45 | “The user is a municipal planned-maintenance supervisor. The policy is synthetic and organization-supplied; this tool executes it and does not medically or legally validate it.” | Policy boundary / TrustBar |
-| 0:45–1:15 | “First, I show the service-first counterfactual. It schedules all four critical jobs and value 400, but it is only `FEASIBLE` and carries 11 mandatory policy conflicts.” | Service-first proof card and conflict count |
-| 1:15–1:55 | “Now the policy-constrained solve is `OPTIMAL`: three of four critical jobs, value 368, zero mandatory conflicts, 160 travel minutes, and no overtime. The saved proof permits the highest-service claim within this locked scenario.” | Final timeline, schematic map, metrics, proof status |
-| 1:55–2:25 | “The cost of compliance is visible as moved, served, and deferred decisions. I select `job-bus-route`; omission alone is not called impossible.” | Plan difference with binding rule `hs01-heavy-elevated` |
-| 2:25–3:10 | “The forced-inclusion diagnosis retains the original commitments, reports `proven_infeasible` with `INFEASIBLE` proof, and shows four bounded interventions, each also `INFEASIBLE`.” | Diagnosis result and intervention table |
-| 3:10–3:45 | “With a synthetic +2°C shock, the re-plan is `OPTIMAL`, keeps zero mandatory conflicts, and adds 60 eligible recovery minutes. The changed decision is shown rather than hidden.” | Heat-shock metrics, recovery-added diff |
-| 3:45–4:20 | “The stack is a React/Vite client served by FastAPI, with OR-Tools CP-SAT, deterministic seed 7, one worker, saved canonical hashes, and a local fallback. The map is schematic and the horizon is one day.” | Architecture/test evidence and provenance |
-| 4:20–4:40 | “This is a synthetic planning prototype, not a medical, legal, safety, routing, or compliance certification system. It does not replace measurements, emergency procedures, stop-work rights, or qualified judgment.” | TrustBar and limitations |
+## Review before upload
 
-## Capture status and risk
+Watch the finished recording twice.
 
-- The narration is ready and uses exact saved evidence; no unsupported percentage or medical claim is included.
-- A loaded six-frame screenshot set and an exported 3–5 minute recording could not be produced in the available browser surface because both live and explicit saved mode remained in their honest loading states after the server returned HTTP `200` for the requested JSON.
-- R01 still verified three live API story runs and two saved-mode runs without edits or restart. The remaining risk is visual capture, not solver/API determinism.
+1. First pass with sound: confirm every number is spoken correctly and the explanation sounds natural.
+2. Second pass muted: confirm the important figures, solver statuses, and plan changes remain readable.
+3. Confirm there is no unrelated notification, personal data, API token, or terminal output on screen.
+4. Confirm the video shows the opening brief, constrained plan, diagnosis, and heat shock in one continuous story.
+
+Upload the final file to YouTube as Unlisted. Copy its watch URL into Devpost's required Video demo link field. Do not use a local file path or a localhost URL in Devpost.

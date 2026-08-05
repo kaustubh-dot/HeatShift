@@ -1,62 +1,56 @@
-# Safety, Responsible Use, and Limitations
+# Safety and limitations
 
-## 1. Product boundary
+## What HeatShift does
 
-HeatShift is an operations-planning prototype. It applies policy inputs supplied by an organization to a synthetic or user-provided work scenario.
+HeatShift is an operations-planning prototype. It applies an organization's policy inputs to a synthetic or user-provided work scenario and produces a schedule subject to those inputs.
 
-It does not:
+The bundled Demo City policy is synthetic. It exists to demonstrate the product and is not medical, legal, or workplace-safety guidance.
+
+## What HeatShift does not do
+
+HeatShift does not:
 
 - determine whether work is medically safe;
 - diagnose, predict, or prevent heat illness;
-- create an authoritative work/rest policy;
-- certify OSHA, NIOSH, local-law, union, or contractual compliance;
-- replace worksite measurements, emergency procedures, worker stop-work rights, or qualified professional judgment.
+- create or validate a work and recovery policy;
+- certify OSHA, NIOSH, legal, union, or contractual compliance;
+- replace worksite measurements, emergency procedures, worker stop-work rights, or qualified professional judgment;
+- evaluate individual fitness for work or use personal medical information.
 
-## 2. Bundled-policy disclaimer
+## Claims the demo may make
 
-The demo must display near the policy and result:
+- On the bundled synthetic scenario, HeatShift found a plan with zero conflicts against Demo City Policy HS-01.
+- The counterfactual displays the service, travel, recovery, and overtime trade-offs produced by the stated inputs.
+- HeatShift may call a result maximum only when the relevant solver stages return `OPTIMAL`.
+- HeatShift may state that no feasible plan exists only when a forced-inclusion diagnosis returns `INFEASIBLE` under the visible retained commitments.
 
-> Synthetic demonstration policy. Not medical, legal, or workplace-safety guidance. Organizations must supply and approve their own policy.
+## Claims the demo must not make
 
-Do not describe the bundled numeric thresholds as OSHA-, NIOSH-, or medically approved.
+- "HeatShift makes schedules safe."
+- "HeatShift prevents heat illness."
+- "HeatShift guarantees compliance."
+- "HeatShift is the first heat-aware scheduler."
+- "This job cannot be served" when it was only absent from one selected plan.
+- "This is the smallest necessary change" when the tool tested only a bounded intervention catalogue.
+- A generalized safety, productivity, compliance, or public-impact percentage based on the synthetic demo.
 
-## 3. Permitted claims
+## Data and privacy
 
-Examples:
+The launch prototype uses no personal medical data. Crews are represented as pre-formed operational resources. HeatShift does not infer or expose a person's health, medication, age, pregnancy, illness history, or heat tolerance.
 
-- “On the bundled synthetic scenario, HeatShift produced a plan with zero conflicts against Demo City Policy HS-01.”
-- “The counterfactual retained all critical jobs and changed the planned-service/travel trade-off by the displayed amounts.”
-- “The optimizer proved the stated result optimal” only when the relevant stages return `OPTIMAL`.
-- “No feasible plan exists under these retained commitments” only after an `INFEASIBLE` proof.
+An employer may assign a crew policy class as an approved input. HeatShift treats that class as opaque and does not justify the personnel decision behind it.
 
-## 4. Prohibited claims
+## Technical limits
 
-- “HeatShift makes schedules safe.”
-- “HeatShift prevents heat illness.”
-- “HeatShift guarantees compliance.”
-- “HeatShift is the first heat-aware scheduler.”
-- “This job cannot be served” when it was merely absent from one selected optimum.
-- “This is the smallest necessary change” when only a bounded catalogue was tested.
-- Generalized impact percentages derived from the synthetic scenario.
-
-## 5. Data and privacy
-
-The launch prototype uses no personal medical information. Crews are pre-formed resources. The system must not infer or expose individual fitness, medication, age, pregnancy, illness history, or heat tolerance.
-
-If an employer assigns a crew policy class, HeatShift treats it as an opaque approved input and does not explain or validate the personnel decision behind it.
-
-## 6. Technical limitations
-
-- Synthetic scenario and policy
-- One-day horizon and 15-minute discretization
-- Small number of pre-formed crews and work orders
-- Input travel-time matrix rather than street routing
-- Schematic map rather than geographic navigation
+- One planning day in 15-minute slots
+- Three pre-formed crews and twelve synthetic work orders in the bundled demo
+- Supplied travel-time matrix rather than street navigation
+- Schematic map rather than geographic directions
 - Simplified recovery conditions
-- No forecast uncertainty model beyond the explicit heat-shock scenario
-- Counterfactual interventions are bounded, not exhaustive
-- Optimality depends on solver status and time limit
+- No forecast uncertainty model beyond the explicit +2°C scenario
+- Bounded interventions rather than an exhaustive search for every possible operational change
+- Solver proof that depends on model status and time limit
 
-## 7. Worker and organizational safeguards
+## What a production deployment would need
 
-A production system would require domain validation, organizational governance, worker participation, privacy review, real worksite measurements, emergency escalation, jurisdiction-specific review, and integration with existing safety-management processes. These are future requirements, not implied capabilities of the hackathon prototype.
+A real deployment would require an organization-approved policy, domain validation, worker participation, privacy review, current worksite measurements, emergency escalation, jurisdiction-specific review, and integration with existing safety-management processes. Those requirements are outside this hackathon prototype.

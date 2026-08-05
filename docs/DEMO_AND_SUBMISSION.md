@@ -1,79 +1,64 @@
-# Demo and Submission Plan
+# Demo and submission plan
 
-## 1. Judge thesis
+HeatShift should be judged as an operations-planning prototype, not as a weather dashboard. The demo needs to prove one idea: an approved heat policy changes a real service plan, and the optimizer makes the resulting trade-offs inspectable.
 
-> Heat alerts tell supervisors that conditions are dangerous. HeatShift answers the operational question that remains: what is the highest public service we can deliver under our approved policy, and what would it cost to add the work we had to defer?
+## Judge thesis
 
-## 2. Three-to-five-minute storyboard
+Heat alerts identify dangerous conditions. HeatShift answers the scheduling question that follows: what is the highest public service available under the policy, and what would it cost to add the work that had to be deferred?
 
-| Time | Action | Evidence |
-|---:|---|---|
-| 0:00–0:20 | “41 C. Three crews. Twelve work orders.” | Specific problem and user |
-| 0:20–0:45 | Reveal crews, jobs, heat profile, and synthetic-policy disclaimer | Real inputs and honest boundary |
-| 0:45–1:15 | Build service-first plan | Genuine counterfactual; conflicts appear |
-| 1:15–1:55 | Find highest compliant service | Work/recovery/route transformation |
-| 1:55–2:25 | Compare service, conflicts, travel, and recovery | Measurable trade-off |
-| 2:25–3:15 | Select deferred job and ask what it costs to include | Counterfactual differentiator |
-| 3:15–3:50 | Apply +2 C heat shock and re-optimize | Dynamic decision support |
-| 3:50–4:20 | Show stage statuses, architecture, and tests | Technical credibility |
-| 4:20–4:40 | Restate impact and limitations | Responsible close |
+## Story for a three to five minute demo
 
-A three-minute cut keeps the baseline, transformation, one diagnosis, and heat shock.
+| Time | Presenter action | What the judge should take away |
+|---|---|---|
+| 0:00 to 0:25 | Open Tomorrow's Brief and state the scenario. | The problem is concrete: 41°C, three crews, twelve work orders. |
+| 0:25 to 0:50 | Point out the synthetic-policy notice. | HeatShift applies supplied policy. It does not invent safety guidance. |
+| 0:50 to 1:25 | Open the service-first view. | Serving all four critical jobs creates 11 policy conflicts. |
+| 1:25 to 2:05 | Transform to the constrained plan and inspect its timeline and map. | The `OPTIMAL` plan has zero conflicts, three critical jobs, value 368, and no overtime. |
+| 2:05 to 2:45 | Select the deferred bus-route repair. | A deferral is a question to test, not a conclusion. |
+| 2:45 to 3:25 | Show the forced-inclusion diagnosis and intervention results. | The tool proves `INFEASIBLE` only under visible retained commitments. |
+| 3:25 to 3:55 | Apply the synthetic +2°C heat shock. | The plan changes transparently and adds 60 eligible recovery minutes. |
+| 3:55 to 4:25 | Close on the architecture and the boundary. | The prototype is technically reproducible and clear about its limits. |
 
-## 3. Demo rules
+For a three-minute cut, keep the opening scenario, constrained-plan transformation, one diagnosis, and the heat shock. Do not spend time editing inputs live.
 
-- Use only actual solver outputs.
-- Keep the bundled scenario preloaded.
-- Do not spend demo time editing tables.
-- Click-drive transitions; do not depend on scroll timing.
-- Keep solver proof/status visible but secondary to the plan.
-- State “synthetic policy” once verbally and keep the disclaimer visible.
-- Use saved genuine output fallback if live solving becomes unreliable.
+## Demo rules
 
-## 4. Required evidence
+- Start at `http://127.0.0.1:8000/?fallback=true` for a deterministic recording.
+- Use the bundled scenario. Do not alter figures while recording.
+- Show the solver status beside each major claim.
+- Say "synthetic policy" once and leave the boundary visible.
+- Do not call an omitted job impossible until the diagnosis reports `INFEASIBLE`.
+- Do not claim medical validation, legal compliance, real-world impact percentages, or turn-by-turn routing.
+- If the recording fails, restart at the brief and record the full story again. Do not splice different scenarios together.
 
-- Input scenario and policy committed to the repository
-- Reproducible service-first, compliant, diagnosis, and heat-shock outputs
-- Solver stage statuses and bounds
-- Tests for recovery, travel, counterfactuals, and language gates
-- Architecture diagram
-- Fresh-start instructions
-- Safety and limitations section
+## What supports the demo
 
-## 5. Devpost content checklist
+- Versioned scenario, policy, and saved solver outputs in the repository
+- OR-Tools CP-SAT scheduling with staged objectives and proof states
+- Complete timelines, route records, metrics, and plan differences from the solver response
+- Forced-inclusion diagnosis for deferred work
+- Synthetic +2°C re-plan
+- Local fallback results that match the bundled scenario exactly
+- Fresh-start setup instructions, tests, and an evidence audit
 
-- Project title and one-line value proposition
-- Sustainability & Climate Tech track
-- Municipal planned-maintenance problem
-- Working application link
-- Public source repository
-- Three-to-five-minute video
-- Installation and test commands
-- Technology list and architecture diagram
-- Exact scenario metrics, not generalized claims
-- “Built during Orion” scope statement
-- Third-party licenses and attributions
-- Synthetic-data/policy disclosure
-- Known limitations and responsible-use language
-
-## 6. Thirty-second pitch
-
-Municipal crews still have to repair roads, clear drainage, and protect public infrastructure during extreme heat. Existing schedules optimize service; heat tools warn about risk. HeatShift connects the two. It calculates the highest-service crew plan that satisfies an employer's approved heat policy, inserts eligible recovery, and proves what it would cost to include every deferred job. When tomorrow becomes two degrees hotter, it rebuilds the plan in seconds—with every operational compromise visible.
-
-## 7. Hard judge questions
+## Likely judge questions
 
 ### Is the policy medically validated?
 
-No. The bundled policy is synthetic. HeatShift's contribution is executing an organization's approved policy consistently, not creating or certifying that policy.
+No. The bundled policy is synthetic. HeatShift applies an organization-approved policy consistently; it does not create or certify one.
 
-### Is the deferred job actually impossible?
+### Is the deferred work actually impossible?
 
-Omission does not imply impossibility. HeatShift forces the job into a new solve and reports whether an equivalent alternative exists, what must be displaced, or whether infeasibility was proven under clearly stated retained commitments.
+Not because it is absent from one plan. HeatShift forces the selected job into a new solve and reports a feasible alternative, a visible displacement, or an `INFEASIBLE` proof under the listed commitments.
 
-### Is this real routing?
+### Is this street routing?
 
-It is crew sequencing using a directed travel-time matrix. The map is deliberately labelled schematic and does not claim turn-by-turn navigation.
+No. The optimizer sequences crew travel using a directed travel-time matrix. The interface calls the visual a schematic service map and does not provide navigation.
 
-### How is this different from weather-aware scheduling?
+### Why is this more than weather-aware scheduling?
 
-The core differentiator is solver-derived counterfactual diagnosis: it quantifies the service, travel, overtime, or operational change required to include deferred work under mandatory policy constraints.
+The useful difference is counterfactual diagnosis. HeatShift shows the service, travel, overtime, and recovery consequences of including deferred work while keeping the policy constraints visible.
+
+## Submission materials
+
+Use [SUBMISSION_GUIDE.md](SUBMISSION_GUIDE.md) for the exact Devpost fields, copy, build tags, image plan, video upload steps, and final pre-submit checklist. Use [release/demo-rehearsal.md](release/demo-rehearsal.md) while recording.
