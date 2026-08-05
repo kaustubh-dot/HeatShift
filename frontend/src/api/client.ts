@@ -9,6 +9,11 @@ import type {
 } from "../types";
 
 export const API_TIMEOUT_MS = 15_000;
+const API_BASE_URL = (import.meta.env.VITE_API_BASE_URL ?? "").replace(/\/+$/, "");
+
+function apiUrl(path: string): string {
+  return `${API_BASE_URL}${path}`;
+}
 
 export type ApiFailureKind = "network" | "abort" | "client" | "server" | "malformed";
 
@@ -139,15 +144,15 @@ async function requestJson<T>(
 
 export function createApiClient(options: ApiClientOptions = {}): ApiClient {
   return {
-    getDemo: () => requestJson("/api/demo", parseDemoResponse, options),
+    getDemo: () => requestJson(apiUrl("/api/demo"), parseDemoResponse, options),
     solve: (request) =>
-      requestJson("/api/solve", parseSolveResponse, options, {
+      requestJson(apiUrl("/api/solve"), parseSolveResponse, options, {
         method: "POST",
         headers: { "content-type": "application/json" },
         body: JSON.stringify(request),
       }),
     diagnose: (request) =>
-      requestJson("/api/diagnose", parseDiagnosisResponse, options, {
+      requestJson(apiUrl("/api/diagnose"), parseDiagnosisResponse, options, {
         method: "POST",
         headers: { "content-type": "application/json" },
         body: JSON.stringify(request),

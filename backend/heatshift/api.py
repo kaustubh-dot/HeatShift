@@ -5,11 +5,13 @@ from __future__ import annotations
 from collections.abc import Iterable
 import json
 from pathlib import Path
+import os
 from typing import Any
 
 from fastapi import FastAPI, HTTPException, Request
 from fastapi.exceptions import RequestValidationError, ResponseValidationError
 from fastapi.responses import FileResponse, JSONResponse
+from fastapi.middleware.cors import CORSMiddleware
 from starlette.status import (
     HTTP_409_CONFLICT,
     HTTP_422_UNPROCESSABLE_CONTENT,
@@ -39,6 +41,19 @@ from .validation import validate_scenario
 
 
 app = FastAPI(title="HeatShift API")
+CORS_ORIGINS = tuple(
+    origin.strip()
+    for origin in os.getenv("CORS_ORIGINS", "").split(",")
+    if origin.strip()
+)
+if CORS_ORIGINS:
+    app.add_middleware(
+        CORSMiddleware,
+        allow_origins=list(CORS_ORIGINS),
+        allow_credentials=False,
+        allow_methods=["GET", "POST", "OPTIONS"],
+        allow_headers=["content-type"],
+    )
 STATIC_DIR = FIXTURE_DIR.parent / "static"
 STATIC_ROOT = STATIC_DIR.resolve()
 
