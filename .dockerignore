@@ -1,0 +1,13 @@
+.git
+.gitignore
+.venv
+.pytest_cache
+.tmp
+__pycache__
+*.py[cod]
+node_modules
+frontend/dist
+backend/heatshift/static
+tests
+docs
+*.log
